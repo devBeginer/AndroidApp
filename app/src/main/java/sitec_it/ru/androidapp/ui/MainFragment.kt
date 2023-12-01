@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
 import sitec_it.ru.androidapp.viewModels.MainViewModel
@@ -33,7 +35,16 @@ class MainFragment: Fragment() {
         viewModel.prepopulate()
         viewModel.user.observe(viewLifecycleOwner, Observer {
             if(it!=null){
-                Toast.makeText(context, "Пользователь: ${it.name}", Toast.LENGTH_LONG).show()
+                val snackbar: Snackbar = Snackbar.make(
+                    requireView(),
+                    it, Snackbar.LENGTH_LONG
+                )
+                val view = snackbar.view
+                val txtv = view.findViewById<View>(com.google.android.material.R.id.snackbar_text) as TextView
+                txtv.maxLines = 5
+                snackbar.show()
+                //Toast.makeText(context, "$it", Toast.LENGTH_LONG).show()
+                //Toast.makeText(context, "Пользователь: ${it.name}", Toast.LENGTH_LONG).show()
                 activity?.supportFragmentManager?.beginTransaction()
                     ?.replace(R.id.nav_host_fragment, MenuFragment())
                     ?.commit()
@@ -46,11 +57,12 @@ class MainFragment: Fragment() {
         val editTextLogin = view.findViewById<EditText>(R.id.et_login)
         val editTextPassword = view.findViewById<EditText>(R.id.et_password)
         buttonLogin.setOnClickListener {
-            if(editTextLogin.text.isNotEmpty() && editTextPassword.text.isNotEmpty()){
+            viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
+            /*if(editTextLogin.text.isNotEmpty() && editTextPassword.text.isNotEmpty()){
                 viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
             }else{
                 Toast.makeText(context, "Не все поля заполнены", Toast.LENGTH_LONG).show()
-            }
+            }*/
         }
     }
 }

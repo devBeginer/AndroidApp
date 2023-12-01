@@ -11,6 +11,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import sitec_it.ru.androidapp.network.NetworkHelper
 import javax.inject.Singleton
 
@@ -18,7 +19,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
     @Provides
-    fun provideBaseUrl() = "https://someUrl"
+    fun provideBaseUrl() = "http://dev2.sitec24.ru/mav_WMSLite/"
 
     @Provides
     @Singleton
@@ -51,7 +52,8 @@ object NetworkModule {
         gson: Gson
     ): Retrofit =
         Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            //.addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(ScalarsConverterFactory.create())
             //.addCallAdapterFactory(CoroutineCallAdapterFactory())
             .baseUrl(BASE_URL)
             .client(okHttpClient)

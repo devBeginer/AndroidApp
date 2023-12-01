@@ -67,9 +67,10 @@ class NetworkHelper constructor(private val context: Context) {
         if(!isNetworkConnected()) return Result.Error(IOException("$errorMessage, ERROR - Connection error"))
         val response = call.invoke()
         return if (response.isSuccessful)
-            response.body()?.let { Result.Success(response.body()!!) }
+            response.body()?.let { body->Result.Success(body) }
                 ?: Result.Error(IOException("$errorMessage, ERROR - Empty result (${response.code()})"))
-        else Result.Error(IOException("$errorMessage, ERROR - Api call error (${response.code()})"))
+        else
+            Result.Error(IOException("$errorMessage, ERROR - Api call error (${response.code()})"))
     }
 
 }

@@ -14,16 +14,20 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(val repository: Repository): ViewModel() {
 
-    private val userMutableLiveData: MutableLiveData<User?> = MutableLiveData()
-    val user: LiveData<User?>
+    //private val userMutableLiveData: MutableLiveData<User?> = MutableLiveData()
+    private val userMutableLiveData: MutableLiveData<String?> = MutableLiveData()
+    val user: LiveData<String?>
+    //val user: LiveData<User?>
         get() = userMutableLiveData
 
 
 
     fun login(login: String, password: String){
         viewModelScope.launch(Dispatchers.IO) {
-            val foundUser = repository.userDao.getUserByLogin(login)
-            if(foundUser!=null && foundUser.password.equals(password)){
+            /*val foundUser = repository.userDao.getUserByLogin(login)
+            if(foundUser!=null && foundUser.password.equals(password)){*/
+            val foundUser = repository.getTestFromApi(login, password)
+            if(foundUser!=null){
                 userMutableLiveData.postValue(foundUser)
             }else{
                 userMutableLiveData.postValue(null)
