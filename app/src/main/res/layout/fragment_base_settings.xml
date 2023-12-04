@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView
+        android:id="@+id/tv_base_settings_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ПОДКЛЮЧЕНИ"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/tv_base_settings_server"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintHorizontal_weight="3"
+        android:text="Сервер"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/et_base_settings_server"
+        app:layout_constraintBottom_toBottomOf="@id/et_base_settings_server"
+        app:layout_constraintEnd_toStartOf="@id/et_base_settings_server"
+        android:layout_marginStart="12dp"/>
+
+    <EditText
+        android:id="@+id/et_base_settings_server"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintHorizontal_weight="7"
+        android:autofillHints=""
+        android:ems="10"
+        android:inputType="textNoSuggestions"
+        app:layout_constraintStart_toEndOf="@id/tv_base_settings_server"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_base_settings_header"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"/>
+
+    <TextView
+        android:id="@+id/tv_base_settings_port"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintHorizontal_weight="3"
+        android:text="Порт"
+        app:layout_constraintEnd_toStartOf="@id/et_base_settings_port"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/et_base_settings_port"
+        app:layout_constraintBottom_toBottomOf="@id/et_base_settings_port"
+
+        android:layout_marginStart="12dp"/>
+
+    <EditText
+        android:id="@+id/et_base_settings_port"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintHorizontal_weight="7"
+        android:autofillHints=""
+        android:ems="10"
+        android:inputType="number"
+
+        app:layout_constraintStart_toEndOf="@id/tv_base_settings_port"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_base_settings_server"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"/>
+
+    <Switch
+        android:id="@+id/switch_base_settings_UseHTTPS"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintHorizontal_weight="3"
+        android:gravity="end"
+        android:text="SSL"
+        android:textAlignment="viewEnd"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_base_settings_port"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"/>
+
+    <TextView
+        android:id="@+id/tv_base_settings_base"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintHorizontal_weight="3"
+        android:text="База"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/et_base_settings_base"
+        app:layout_constraintBottom_toBottomOf="@id/et_base_settings_base"
+        app:layout_constraintEnd_toStartOf="@id/et_base_settings_base"
+        android:layout_marginStart="12dp"/>
+
+    <EditText
+        android:id="@+id/et_base_settings_base"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintHorizontal_weight="7"
+        android:autofillHints=""
+        android:ems="10"
+        android:inputType="textNoSuggestions"
+
+        app:layout_constraintStart_toEndOf="@id/tv_base_settings_base"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/switch_base_settings_UseHTTPS"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp" />
+
+    <TextView
+        android:id="@+id/tv_base_settings_login"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintHorizontal_weight="3"
+        android:text="Логин"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/et_base_settings_login"
+        app:layout_constraintBottom_toBottomOf="@id/et_base_settings_login"
+        app:layout_constraintEnd_toStartOf="@id/et_base_settings_login"
+        android:layout_marginStart="12dp"/>
+
+    <EditText
+        android:id="@+id/et_base_settings_login"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintHorizontal_weight="7"
+        android:autofillHints=""
+        android:inputType="textNoSuggestions"
+
+        app:layout_constraintStart_toEndOf="@id/tv_base_settings_login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_base_settings_base"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"/>
+
+
+    <TextView
+        android:id="@+id/tv_base_settings_password"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintHorizontal_weight="3"
+        android:text="Пароль"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/et_base_settings_password"
+        app:layout_constraintBottom_toBottomOf="@id/et_base_settings_password"
+        app:layout_constraintEnd_toStartOf="@id/et_base_settings_password"
+        android:layout_marginStart="12dp"/>
+
+    <EditText
+        android:id="@+id/et_base_settings_password"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintHorizontal_weight="7"
+        android:autofillHints=""
+        android:inputType="textPassword"
+
+        app:layout_constraintStart_toEndOf="@id/tv_base_settings_password"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_base_settings_login"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,8 +9,7 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface ApiService {
-    //@FormUrlEncoded
-    //@POST("hs/service/test")
+
     @Headers("Content-Type: application/json;charset=UTF-8")
     @GET("hs/service/test")
     suspend fun getTest(@Header("Authorization")  credentials: String): Response<String>

@@ -7,12 +7,12 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import sitec_it.ru.androidapp.data.models.User
+import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.repository.Repository
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(val repository: Repository): ViewModel() {
+class MainViewModel @Inject constructor(private val repository: Repository): ViewModel() {
 
     //private val userMutableLiveData: MutableLiveData<User?> = MutableLiveData()
     private val userMutableLiveData: MutableLiveData<String?> = MutableLiveData()
@@ -37,9 +37,15 @@ class MainViewModel @Inject constructor(val repository: Repository): ViewModel()
 
     fun prepopulate(){
         viewModelScope.launch(Dispatchers.IO) {
-            repository.insertUser(User(name = "User1", login = "login1", password = "password1"))
-            repository.insertUser(User(name = "User2", login = "login2", password = "password2"))
-            repository.insertUser(User(name = "User3", login = "login3", password = "password3"))
+            repository.insertProfile(Profile(
+                name = "По умолчанию",
+                base = "WMS_TMP_Test",
+                server = "dev2.sitec24.ru",
+                ssl = false,
+                port = "9090",
+                login = "web",
+                password = "web"
+            ))
         }
     }
 }

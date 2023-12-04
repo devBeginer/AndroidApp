@@ -8,7 +8,7 @@ import android.util.Log
 import retrofit2.Response
 import java.io.IOException
 
-class NetworkHelper constructor(private val context: Context) {
+class NetworkHelper (private val context: Context) {
 
     fun isNetworkConnected(): Boolean {
         var result = false
@@ -42,7 +42,7 @@ class NetworkHelper constructor(private val context: Context) {
         return result
     }
 
-    suspend fun <T> safeApiCall(
+    /*suspend fun <T> safeApiCall(
         call: suspend () -> Response<T>,
         errorMessage: String
     ): T? {
@@ -71,6 +71,52 @@ class NetworkHelper constructor(private val context: Context) {
                 ?: Result.Error(IOException("$errorMessage, ERROR - Empty result (${response.code()})"))
         else
             Result.Error(IOException("$errorMessage, ERROR - Api call error (${response.code()})"))
+    }*/
+
+    suspend fun <T> safeApiCall(
+        call: suspend () -> Response<T>,
+        errorMessage: String
+    ): T? {
+        val result: Result<T> = if(!isNetworkConnected()){
+            Result.Error(IOException("$errorMessage, ERROR - Connection error"))
+        }else{
+            val response = call.invoke()
+
+            when(response.code()){
+                200 -> {
+                    response.body()?.let { body -> Result.Success(body) } ?: Result.Error(
+                        IOException("$errorMessage, ERROR - Empty result (${response.code()})")
+                    )
+                }
+                201 -> {
+                    response.body()?.let { body -> Result.Success(body) } ?: Result.Error(
+                        IOException("$errorMessage, ERROR - Empty result (${response.code()})")
+                    )
+                }
+                202 -> {
+                    response.body()?.let { body -> Result.Success(body) } ?: Result.Error(
+                        IOException("$errorMessage, ERROR - Empty result (${response.code()})")
+                    )
+                }
+                404 -> Result.Error(IOException("$errorMessage, ERROR - Not found (${response.code()})"))
+                403 -> Result.Error(IOException("$errorMessage, ERROR - Forbidden (${response.code()})"))
+                401 -> Result.Error(IOException("$errorMessage, ERROR - Unauthorized (${response.code()})"))
+                400 -> Result.Error(IOException("$errorMessage, ERROR - Bad request (${response.code()})"))
+                500 -> Result.Error(IOException("$errorMessage, ERROR - Internal Server Error (${response.code()})"))
+                else -> Result.Error(IOException("$errorMessage, ERROR - Unknown error (${response.code()})"))
+
+            }
+        }
+
+        var data: T? = when (result) {
+            is Result.Success -> result.data
+            is Result.Error -> {
+                Log.d("safeApiCall", "${result.exception}")
+                null
+            }
+        }
+
+        return data
     }
 
 }

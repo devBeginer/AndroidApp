@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
+import sitec_it.ru.androidapp.ui.settings.SettingsContainerFragment
 import sitec_it.ru.androidapp.viewModels.MainViewModel
 
 @AndroidEntryPoint
@@ -33,6 +34,7 @@ class MainFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.prepopulate()
+
         viewModel.user.observe(viewLifecycleOwner, Observer {
             if(it!=null){
                 val snackbar: Snackbar = Snackbar.make(
@@ -47,6 +49,7 @@ class MainFragment: Fragment() {
                 //Toast.makeText(context, "Пользователь: ${it.name}", Toast.LENGTH_LONG).show()
                 activity?.supportFragmentManager?.beginTransaction()
                     ?.replace(R.id.nav_host_fragment, MenuFragment())
+                    ?.addToBackStack(null)
                     ?.commit()
             }else{
                 Toast.makeText(context, "Неверный логин или пароль", Toast.LENGTH_LONG).show()

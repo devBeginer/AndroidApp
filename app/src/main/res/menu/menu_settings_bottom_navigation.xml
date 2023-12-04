@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/baseFragment"
+        android:icon="@drawable/baseline_autorenew_24"
+        android:enabled="true"
+        android:title="" />
+
+    <item
+        android:id="@+id/licenseFragment"
+        android:icon="@drawable/baseline_vpn_key_24"
+        android:enabled="true"
+        android:title="" />
+    <item
+        android:id="@+id/additionFragment"
+        android:icon="@drawable/baseline_build_24"
+        android:enabled="true"
+        android:title="" />
+</menu>
