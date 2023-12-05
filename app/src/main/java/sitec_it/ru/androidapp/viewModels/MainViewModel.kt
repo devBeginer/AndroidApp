@@ -14,13 +14,14 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(private val repository: Repository): ViewModel() {
 
-    //private val userMutableLiveData: MutableLiveData<User?> = MutableLiveData()
     private val userMutableLiveData: MutableLiveData<String?> = MutableLiveData()
     val user: LiveData<String?>
-    //val user: LiveData<User?>
         get() = userMutableLiveData
 
 
+    fun initView(){
+        userMutableLiveData.postValue(null)
+    }
 
     fun login(login: String, password: String){
         viewModelScope.launch(Dispatchers.IO) {
