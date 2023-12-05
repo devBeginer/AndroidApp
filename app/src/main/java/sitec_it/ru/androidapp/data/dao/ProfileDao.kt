@@ -23,5 +23,5 @@ interface ProfileDao {
     suspend fun getProfileByName(name: String): Profile?
 
     @Query("SELECT * FROM Profile WHERE id == :id")
-    suspend fun getProfileById(id: Int): Profile?
+    suspend fun getProfileById(id: Long): Profile?
 }

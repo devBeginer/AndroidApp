@@ -27,6 +27,12 @@ object SharedPreferencesUtils {
         editor.apply()
     }
 
+    fun SharedPreferences.editPref(key: String?, value: Long) {
+        val editor: SharedPreferences.Editor = this.edit()
+        editor.putLong(key, value)
+        editor.apply()
+    }
+
     fun SharedPreferences.removePref(key: String?) {
         val editor: SharedPreferences.Editor = this.edit()
         editor.remove(key)

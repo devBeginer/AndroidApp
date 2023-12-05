@@ -23,6 +23,7 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
         viewModelScope.launch(Dispatchers.IO) {
             val foundProfile = repository.getProfile(name)
             if(foundProfile!=null){
+                repository.saveProfileToSP(foundProfile.id)
                 profileMutableLiveData.postValue(foundProfile)
             }else{
                 profileMutableLiveData.postValue(null)
