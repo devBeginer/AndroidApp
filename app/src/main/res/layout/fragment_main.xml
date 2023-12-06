@@ -21,15 +21,6 @@
             app:title="Авториация"
             app:titleMarginStart="32dp"
             app:titleTextAppearance="?attr/textAppearanceHeadline6">
-            <!--<ImageView
-                android:id="@+id/iv_settings"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/baseline_settings_24"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"/>-->
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
     <ScrollView
@@ -91,7 +82,9 @@
                     android:id="@+id/et_login"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/sign_in_login"/>
+                    android:hint="@string/sign_in_login"
+                    android:imeOptions="actionNext"
+                    android:singleLine="true"/>
             </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -123,6 +116,19 @@
                 android:layout_height="wrap_content"
                 android:text="@string/sign_in_btn"
                 app:layout_constraintTop_toBottomOf="@id/til_password"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="42dp"
+                android:layout_marginEnd="42dp"/>
+
+
+            <Button
+                android:id="@+id/btn_sign_in_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Настройки"
+                app:layout_constraintTop_toBottomOf="@id/btn_sign_in"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"

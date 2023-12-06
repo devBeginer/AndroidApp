@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(private val repository: Repository): ViewModel() {
 
-    private val userMutableLiveData: MutableLiveData<String?> = MutableLiveData()
+    private val userMutableLiveData: MutableLiveData<String?> = MutableLiveData(null)
     val user: LiveData<String?>
         get() = userMutableLiveData
 

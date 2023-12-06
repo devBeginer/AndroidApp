@@ -4,12 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -17,14 +16,13 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
-import sitec_it.ru.androidapp.ui.settings.BaseSettingsFragment
 import sitec_it.ru.androidapp.ui.settings.SettingsContainerFragment
 import sitec_it.ru.androidapp.viewModels.MainViewModel
 
 @AndroidEntryPoint
-class MainFragment: Fragment() {
+class MainFragment : Fragment() {
 
-    private val viewModel:MainViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,10 +35,13 @@ class MainFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //viewModel.prepopulate()
-        //viewModel.initView()
+        val buttonLogin = view.findViewById<Button>(R.id.btn_sign_in)
+        val editTextLogin = view.findViewById<EditText>(R.id.et_login)
+        val editTextPassword = view.findViewById<EditText>(R.id.et_password)
+        val btnSettings = view.findViewById<Button>(R.id.btn_sign_in_settings)
+        val toolbar = view.findViewById<MaterialToolbar>(R.id.toolbar_main)
 
-        viewModel.user.observe(viewLifecycleOwner, Observer {
+        /*viewModel.user.observe(viewLifecycleOwner, Observer {
             if(it!=null){
                 val snackbar: Snackbar = Snackbar.make(
                     requireView(),
@@ -58,13 +59,56 @@ class MainFragment: Fragment() {
             }else{
                 Toast.makeText(context, "Неверный логин или пароль", Toast.LENGTH_LONG).show()
             }
-        })
+        })*/
+        viewModel.user.observe(viewLifecycleOwner, object : Observer<String?> {
+            var isFirst = true
 
-        val buttonLogin = view.findViewById<Button>(R.id.btn_sign_in)
-        val editTextLogin = view.findViewById<EditText>(R.id.et_login)
-        val editTextPassword = view.findViewById<EditText>(R.id.et_password)
-        //val imageViewSettings = view.findViewById<ImageView>(R.id.iv_settings)
-        val toolbar = view.findViewById<MaterialToolbar>(R.id.toolbar_main)
+            override fun onChanged(value: String?) {
+                if (isFirst) {
+                    isFirst = false
+                } else {
+                    if (value != null) {
+                        val snackbar: Snackbar = Snackbar.make(
+                            requireView(),
+                            value, Snackbar.LENGTH_LONG
+                        )
+                        val view = snackbar.view
+                        val txtv =
+                            view.findViewById<View>(com.google.android.material.R.id.snackbar_text) as TextView
+                        txtv.maxLines = 5
+                        snackbar.show()
+
+                        activity?.supportFragmentManager?.beginTransaction()
+                            ?.replace(R.id.nav_host_fragment, MenuFragment())
+                            //?.addToBackStack(null)
+                            ?.commit()
+                    } else {
+                        Toast.makeText(context, "Неверный логин или пароль", Toast.LENGTH_LONG)
+                            .show()
+                    }
+                }
+            }
+        })
+        /*viewModel.user.observeFutureEvents(viewLifecycleOwner, Observer {
+            if(it!=null){
+                val snackbar: Snackbar = Snackbar.make(
+                    requireView(),
+                    it, Snackbar.LENGTH_LONG
+                )
+                val view = snackbar.view
+                val txtv = view.findViewById<View>(com.google.android.material.R.id.snackbar_text) as TextView
+                txtv.maxLines = 5
+                snackbar.show()
+
+                activity?.supportFragmentManager?.beginTransaction()
+                    ?.replace(R.id.nav_host_fragment, MenuFragment())
+                    ?.addToBackStack(null)
+                    ?.commit()
+            }else{
+                Toast.makeText(context, "Неверный логин или пароль", Toast.LENGTH_LONG).show()
+            }
+        })*/
+
         buttonLogin.setOnClickListener {
             viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
             /*if(editTextLogin.text.isNotEmpty() && editTextPassword.text.isNotEmpty()){
@@ -73,15 +117,22 @@ class MainFragment: Fragment() {
                 Toast.makeText(context, "Не все поля заполнены", Toast.LENGTH_LONG).show()
             }*/
         }
+        editTextPassword.setOnEditorActionListener { textView, id, keyEvent ->
+            if (id == EditorInfo.IME_ACTION_DONE) {
+                viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
+        }
 
-        /*imageViewSettings.setOnClickListener {
+        btnSettings.setOnClickListener {
             activity?.supportFragmentManager?.beginTransaction()
                 ?.replace(R.id.nav_host_fragment, SettingsContainerFragment())
-                ?.addToBackStack(null)
+                //?.addToBackStack(null)
                 ?.commit()
-        }*/
-        toolbar.inflateMenu(R.menu.menu_toolbar_main_fragment)
-        toolbar.setOnMenuItemClickListener {item->
+        }
+        /*toolbar.inflateMenu(R.menu.menu_toolbar_main_fragment)
+        toolbar.setOnMenuItemClickListener { item ->
             if (item.itemId == R.id.item_settings) {
                 activity?.supportFragmentManager?.beginTransaction()
                     ?.replace(R.id.nav_host_fragment, SettingsContainerFragment())
@@ -90,7 +141,7 @@ class MainFragment: Fragment() {
             }
 
             return@setOnMenuItemClickListener false
-        }
+        }*/
 
     }
 }
