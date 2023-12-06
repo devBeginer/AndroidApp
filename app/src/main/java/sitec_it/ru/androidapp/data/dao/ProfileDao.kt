@@ -11,7 +11,7 @@ import sitec_it.ru.androidapp.data.models.Profile
 @Dao
 interface ProfileDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertProfile(profile: Profile)
+    suspend fun insertProfile(profile: Profile): Long
 
     @Update
     suspend fun updateProfile(profile: Profile)
@@ -21,6 +21,9 @@ interface ProfileDao {
 
     @Query("SELECT * FROM Profile WHERE name == :name")
     suspend fun getProfileByName(name: String): Profile?
+
+    @Query("SELECT * FROM Profile")
+    suspend fun getAllProfile(): List<Profile>
 
     @Query("SELECT * FROM Profile WHERE id == :id")
     suspend fun getProfileById(id: Long): Profile?

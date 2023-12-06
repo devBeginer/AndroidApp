@@ -14,31 +14,33 @@ import javax.inject.Inject
 class StartViewModel @Inject constructor(private val repository: Repository): ViewModel()  {
     fun initDefaultProfile(){
         viewModelScope.launch(Dispatchers.IO) {
-            repository.insertProfile(
-                Profile(
-                name = "По умолчанию",
-                base = "WMS_TMP_Test",
-                server = "dev2.sitec24.ru",
-                ssl = false,
-                port = "9090",
-                login = "web",
-                password = "web"
-            )
-            )
-
-            val newProfile = repository.getProfile("По умолчанию")
-
-            if (newProfile != null) {
-                repository.saveProfileToSP(newProfile.id)
-                repository.insertProfileLicense(
-                    ProfileLicense(
-                        profile = newProfile.id,
+            if(repository.getProfileCount()==0){
+                val id = repository.insertProfile(
+                    Profile(
+                        name = "По умолчанию",
+                        base = "WMS_TMP_Test",
                         server = "dev2.sitec24.ru",
+                        ssl = false,
                         port = "9090",
-                        login = "tsd",
-                        password = "sitecmobile"
+                        login = "web",
+                        password = "web"
                     )
                 )
+
+                val newProfile = repository.getProfile("По умолчанию")
+
+                if (newProfile != null) {
+                    repository.saveProfileToSP(newProfile.id)
+                    repository.insertProfileLicense(
+                        ProfileLicense(
+                            profile = newProfile.id,
+                            server = "dev2.sitec24.ru",
+                            port = "9090",
+                            login = "tsd",
+                            password = "sitecmobile"
+                        )
+                    )
+                }
             }
         }
     }

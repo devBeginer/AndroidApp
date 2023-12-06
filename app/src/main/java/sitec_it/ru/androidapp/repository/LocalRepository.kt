@@ -10,8 +10,14 @@ import javax.inject.Inject
 
 class LocalRepository @Inject constructor(private val profileDao: ProfileDao, private val profileLicenseDao: ProfileLicenseDao, private val sharedPreferences: SharedPreferences) {
     suspend fun updateProfile(profile: Profile) = profileDao.updateProfile(profile)
-    suspend fun insertProfile(profile: Profile) = profileDao.insertProfile(profile)
+    suspend fun insertProfile(profile: Profile): Long = profileDao.insertProfile(profile)
+    suspend fun deleteProfile(profile: Profile) = profileDao.deleteProfile(profile)
     suspend fun getProfile(name: String) = profileDao.getProfileByName(name)
+    suspend fun getProfileById(id: Long) = profileDao.getProfileById(id)
+    suspend fun getProfileList() = profileDao.getAllProfile()
+    suspend fun getProfileCount(): Int {
+        return profileDao.getAllProfile().count()
+    }
     suspend fun updateProfileLicense(profileLicense: ProfileLicense) = profileLicenseDao.updateProfileLicense(profileLicense)
     suspend fun insertProfileLicense(profileLicense: ProfileLicense) = profileLicenseDao.insertProfileLicense(profileLicense)
     suspend fun getProfileLicense(id: Long) = profileLicenseDao.getProfileLicenseById(id)

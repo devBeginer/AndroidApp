@@ -10,8 +10,12 @@ import javax.inject.Inject
 class Repository @Inject constructor(private val localRepository: LocalRepository, private val remoteRepository: RemoteRepository, private val networkHelper: NetworkHelper) {
 
     suspend fun updateProfile(profile: Profile) = localRepository.updateProfile(profile)
-    suspend fun insertProfile(profile: Profile) = localRepository.insertProfile(profile)
+    suspend fun insertProfile(profile: Profile): Long = localRepository.insertProfile(profile)
+    suspend fun deleteProfile(profile: Profile) = localRepository.deleteProfile(profile)
     suspend fun getProfile(name: String) = localRepository.getProfile(name)
+    suspend fun getProfileById(id: Long) = localRepository.getProfileById(id)
+    suspend fun getProfileList() = localRepository.getProfileList()
+    suspend fun getProfileCount() = localRepository.getProfileCount()
     suspend fun updateProfileLicense(profileLicense: ProfileLicense) = localRepository.updateProfileLicense(profileLicense)
     suspend fun insertProfileLicense(profileLicense: ProfileLicense) = localRepository.insertProfileLicense(profileLicense)
     suspend fun getProfileLicense(id: Long) = localRepository.getProfileLicenseByProfile(id)

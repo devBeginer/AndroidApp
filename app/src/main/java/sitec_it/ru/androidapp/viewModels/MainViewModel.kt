@@ -37,31 +37,4 @@ class MainViewModel @Inject constructor(private val repository: Repository): Vie
         }
     }
 
-    fun prepopulate(){
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.insertProfile(Profile(
-                name = "По умолчанию",
-                base = "WMS_TMP_Test",
-                server = "dev2.sitec24.ru",
-                ssl = false,
-                port = "9090",
-                login = "web",
-                password = "web"
-            ))
-
-            val newProfile = repository.getProfile("По умолчанию")
-
-            if (newProfile != null) {
-                repository.insertProfileLicense(
-                    ProfileLicense(
-                        profile = newProfile.id,
-                        server = "dev2.sitec24.ru",
-                        port = "9090",
-                        login = "tsd",
-                        password = "sitecmobile"
-                    )
-                )
-            }
-        }
-    }
 }

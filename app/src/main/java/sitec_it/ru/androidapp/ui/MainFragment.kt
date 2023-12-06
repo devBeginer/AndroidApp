@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -35,7 +36,7 @@ class MainFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.prepopulate()
+        //viewModel.prepopulate()
         //viewModel.initView()
 
         viewModel.user.observe(viewLifecycleOwner, Observer {
@@ -62,6 +63,7 @@ class MainFragment: Fragment() {
         val editTextLogin = view.findViewById<EditText>(R.id.et_login)
         val editTextPassword = view.findViewById<EditText>(R.id.et_password)
         val imageViewSettings = view.findViewById<ImageView>(R.id.iv_settings)
+        val toolbar = view.findViewById<Toolbar>(R.id.toolbar_main)
         buttonLogin.setOnClickListener {
             viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
             /*if(editTextLogin.text.isNotEmpty() && editTextPassword.text.isNotEmpty()){
@@ -77,6 +79,10 @@ class MainFragment: Fragment() {
                 ?.addToBackStack(null)
                 ?.commit()
         }
+        toolbar.inflateMenu(R.menu.menu_toolbar_main_fragment)
+        /*toolbar.setOnMenuItemClickListener {
+            if()
+        }*/
 
     }
 }
