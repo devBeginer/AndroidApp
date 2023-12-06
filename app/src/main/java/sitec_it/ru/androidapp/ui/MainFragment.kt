@@ -13,6 +13,7 @@ import android.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
@@ -62,8 +63,8 @@ class MainFragment: Fragment() {
         val buttonLogin = view.findViewById<Button>(R.id.btn_sign_in)
         val editTextLogin = view.findViewById<EditText>(R.id.et_login)
         val editTextPassword = view.findViewById<EditText>(R.id.et_password)
-        val imageViewSettings = view.findViewById<ImageView>(R.id.iv_settings)
-        val toolbar = view.findViewById<Toolbar>(R.id.toolbar_main)
+        //val imageViewSettings = view.findViewById<ImageView>(R.id.iv_settings)
+        val toolbar = view.findViewById<MaterialToolbar>(R.id.toolbar_main)
         buttonLogin.setOnClickListener {
             viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
             /*if(editTextLogin.text.isNotEmpty() && editTextPassword.text.isNotEmpty()){
@@ -73,16 +74,23 @@ class MainFragment: Fragment() {
             }*/
         }
 
-        imageViewSettings.setOnClickListener {
+        /*imageViewSettings.setOnClickListener {
             activity?.supportFragmentManager?.beginTransaction()
                 ?.replace(R.id.nav_host_fragment, SettingsContainerFragment())
                 ?.addToBackStack(null)
                 ?.commit()
-        }
-        toolbar.inflateMenu(R.menu.menu_toolbar_main_fragment)
-        /*toolbar.setOnMenuItemClickListener {
-            if()
         }*/
+        toolbar.inflateMenu(R.menu.menu_toolbar_main_fragment)
+        toolbar.setOnMenuItemClickListener {item->
+            if (item.itemId == R.id.item_settings) {
+                activity?.supportFragmentManager?.beginTransaction()
+                    ?.replace(R.id.nav_host_fragment, SettingsContainerFragment())
+                    ?.addToBackStack(null)
+                    ?.commit()
+            }
+
+            return@setOnMenuItemClickListener false
+        }
 
     }
 }
