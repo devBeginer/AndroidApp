@@ -16,6 +16,8 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
+import sitec_it.ru.androidapp.Utils.observeFutureEvents
+import sitec_it.ru.androidapp.data.models.User
 import sitec_it.ru.androidapp.ui.settings.SettingsContainerFragment
 import sitec_it.ru.androidapp.viewModels.MainViewModel
 
@@ -40,6 +42,13 @@ class MainFragment : Fragment() {
         val editTextPassword = view.findViewById<EditText>(R.id.et_password)
         val btnSettings = view.findViewById<Button>(R.id.btn_sign_in_settings)
         val toolbar = view.findViewById<MaterialToolbar>(R.id.toolbar_main)
+        viewModel.prepopulateUser()
+        viewModel.login.observeFutureEvents(viewLifecycleOwner, Observer {login->
+            editTextLogin.setText(login)
+        })
+
+        viewModel.initLoginField()
+
 
         /*viewModel.user.observe(viewLifecycleOwner, Observer {
             if(it!=null){
@@ -60,7 +69,7 @@ class MainFragment : Fragment() {
                 Toast.makeText(context, "Неверный логин или пароль", Toast.LENGTH_LONG).show()
             }
         })*/
-        viewModel.user.observe(viewLifecycleOwner, object : Observer<String?> {
+        viewModel.apiResult.observe(viewLifecycleOwner, object : Observer<String?> {
             var isFirst = true
 
             override fun onChanged(value: String?) {
@@ -77,17 +86,26 @@ class MainFragment : Fragment() {
                             view.findViewById<View>(com.google.android.material.R.id.snackbar_text) as TextView
                         txtv.maxLines = 5
                         snackbar.show()
-
-                        activity?.supportFragmentManager?.beginTransaction()
-                            ?.replace(R.id.nav_host_fragment, MenuFragment())
-                            //?.addToBackStack(null)
-                            ?.commit()
                     } else {
-                        Toast.makeText(context, "Неверный логин или пароль", Toast.LENGTH_LONG)
+                        Toast.makeText(context, "Ошибка api запроса", Toast.LENGTH_LONG)
                             .show()
                     }
                 }
             }
+        })
+        viewModel.user.observeFutureEvents(viewLifecycleOwner, Observer<User?> {user->
+
+            if (user != null) {
+
+                activity?.supportFragmentManager?.beginTransaction()
+                    ?.replace(R.id.nav_host_fragment, MenuFragment())
+                    ?.commit()
+            } else {
+                Toast.makeText(context, "Неверный логин", Toast.LENGTH_LONG)
+                    .show()
+            }
+
+
         })
         /*viewModel.user.observeFutureEvents(viewLifecycleOwner, Observer {
             if(it!=null){

@@ -4,11 +4,20 @@ import android.content.SharedPreferences
 import sitec_it.ru.androidapp.SharedPreferencesUtils.editPref
 import sitec_it.ru.androidapp.data.dao.ProfileDao
 import sitec_it.ru.androidapp.data.dao.ProfileLicenseDao
+import sitec_it.ru.androidapp.data.dao.UserDao
 import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
+import sitec_it.ru.androidapp.data.models.User
 import javax.inject.Inject
 
-class LocalRepository @Inject constructor(private val profileDao: ProfileDao, private val profileLicenseDao: ProfileLicenseDao, private val sharedPreferences: SharedPreferences) {
+class LocalRepository @Inject constructor(private val profileDao: ProfileDao, private val profileLicenseDao: ProfileLicenseDao, private val userDao: UserDao, private val sharedPreferences: SharedPreferences) {
+    companion object{
+        const val PROFILE_ID = "profile_id"
+        const val USER_LOGIN = "user_login"
+    }
+
+
+
     suspend fun updateProfile(profile: Profile) = profileDao.updateProfile(profile)
     suspend fun insertProfile(profile: Profile): Long = profileDao.insertProfile(profile)
     suspend fun deleteProfile(profile: Profile) = profileDao.deleteProfile(profile)
@@ -18,16 +27,38 @@ class LocalRepository @Inject constructor(private val profileDao: ProfileDao, pr
     suspend fun getProfileCount(): Int {
         return profileDao.getAllProfile().count()
     }
+
+
+    suspend fun updateUser(user: User) = userDao.updateUser(user)
+    suspend fun insertUser(user: User): Long = userDao.insertUser(user)
+    suspend fun deleteUser(user: User) = userDao.deleteUser(user)
+    suspend fun getUser(login: String) = userDao.getUserByLogin(login)
+
+
+
+
     suspend fun updateProfileLicense(profileLicense: ProfileLicense) = profileLicenseDao.updateProfileLicense(profileLicense)
     suspend fun insertProfileLicense(profileLicense: ProfileLicense) = profileLicenseDao.insertProfileLicense(profileLicense)
     suspend fun getProfileLicense(id: Long) = profileLicenseDao.getProfileLicenseById(id)
     suspend fun getProfileLicenseByProfile(id: Long) = profileLicenseDao.getProfileLicenseByProfile(id)
 
+
+
     fun getCurrentProfileIdFromSP(): Long{
-        return sharedPreferences.getLong("profile_id", 1)
+        return sharedPreferences.getLong(PROFILE_ID, 1)
     }
 
     fun saveCurrentProfileIdToSP(id: Long){
-        return sharedPreferences.editPref("profile_id", id)
+        return sharedPreferences.editPref(PROFILE_ID, id)
+    }
+
+
+
+    fun getCurrentUserLoginFromSP(): String{
+        return sharedPreferences.getString(USER_LOGIN, "") ?: ""
+    }
+
+    fun saveCurrentUserLoginToSP(login: String){
+        return sharedPreferences.editPref(USER_LOGIN, login)
     }
 }

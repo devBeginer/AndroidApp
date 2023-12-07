@@ -9,6 +9,7 @@ import dagger.hilt.components.SingletonComponent
 import sitec_it.ru.androidapp.data.AppDatabase
 import sitec_it.ru.androidapp.data.dao.ProfileDao
 import sitec_it.ru.androidapp.data.dao.ProfileLicenseDao
+import sitec_it.ru.androidapp.data.dao.UserDao
 import javax.inject.Singleton
 
 @Module
@@ -31,4 +32,8 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideProfileLicenseDao(db: AppDatabase): ProfileLicenseDao = db.profileLicenseDao()
+
+    @Provides
+    @Singleton
+    fun provideUserDao(db: AppDatabase): UserDao = db.userDao()
 }
