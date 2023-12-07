@@ -42,10 +42,15 @@ class Repository @Inject constructor(private val localRepository: LocalRepositor
 
     suspend fun getTestFromApi( username: String,  password: String): String?{
         return if(networkHelper.isNetworkConnected()){
-            remoteRepository.getTestFromApi(username, password)
+            remoteRepository.getTestFromApi(username, password, isDisableCheckCertificate())
         }else {
             null
         }
     }
 
+
+    private suspend fun isDisableCheckCertificate(): Boolean{
+        return localRepository.getProfileById(getProfileFromSP())
+            ?.let { profile -> profile.notCheckCertificate && profile.ssl } ?: false
+    }
 }

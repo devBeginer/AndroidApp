@@ -18,12 +18,12 @@ class StartViewModel @Inject constructor(private val repository: Repository): Vi
                 val id = repository.insertProfile(
                     Profile(
                         name = "По умолчанию",
-                        base = "WMS_TMP_Test",
-                        server = "dev2.sitec24.ru",
+                        base = "TMP_Test",
+                        server = "192.168.1.0",
                         ssl = false,
-                        port = "9090",
-                        login = "web",
-                        password = "web"
+                        port = "8080",
+                        login = "test",
+                        password = "test"
                     )
                 )
 
@@ -34,10 +34,10 @@ class StartViewModel @Inject constructor(private val repository: Repository): Vi
                     repository.insertProfileLicense(
                         ProfileLicense(
                             profile = newProfile.id,
-                            server = "dev2.sitec24.ru",
-                            port = "9090",
-                            login = "tsd",
-                            password = "sitecmobile"
+                            server = "192.168.1.0",
+                            port = "8080",
+                            login = "test",
+                            password = "test"
                         )
                     )
                 }

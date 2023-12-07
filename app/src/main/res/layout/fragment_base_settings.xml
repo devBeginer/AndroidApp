@@ -5,6 +5,16 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <ImageView
+        android:id="@+id/iv_base_settings_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/baseline_arrow_back_24"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"/>
+
     <TextView
         android:id="@+id/tv_base_settings_header"
         android:layout_width="wrap_content"
@@ -89,9 +99,23 @@
         android:text="SSL"
         android:textAlignment="viewEnd"
 
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_base_settings_port"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"/>
+
+    <Switch
+        android:id="@+id/switch_base_settings_DisableCheckSSL"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintHorizontal_weight="3"
+        android:gravity="end"
+        android:text="Не проверять сертификат"
+        android:textAlignment="viewEnd"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_base_settings_port"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="12dp"/>
 

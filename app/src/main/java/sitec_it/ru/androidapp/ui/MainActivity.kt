@@ -1,13 +1,13 @@
 package sitec_it.ru.androidapp.ui
 
+import android.content.DialogInterface
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
-import sitec_it.ru.androidapp.viewModels.MainViewModel
 import sitec_it.ru.androidapp.viewModels.SharedViewModel
 
 @AndroidEntryPoint
@@ -28,5 +28,41 @@ class MainActivity : AppCompatActivity() {
                     .commit()
         })
 
+
+    }
+
+    private fun showApplicationDialog(
+        textMessage: String,
+        title: String,
+        positiveBtn: String,
+        onPositive:()->Unit,
+        negativeButton: String?,
+        onNegative: (() -> Unit)?,
+        neutralButton: String?,
+        onNeutral: (() -> Unit)?
+    ){
+
+
+        val alertDialog = AlertDialog.Builder(this)
+        alertDialog.setCancelable(false)
+        alertDialog.setTitle(title)
+        alertDialog.setMessage(textMessage)
+        alertDialog.setPositiveButton(positiveBtn) { dialog: DialogInterface, which: Int ->
+            onPositive()
+        }
+        if(negativeButton!=null && onNegative!=null){
+            alertDialog.setNegativeButton(negativeButton) { dialog: DialogInterface?, which: Int ->
+                onNegative()
+            }
+        }
+
+        if(neutralButton!=null && onNeutral!=null){
+            alertDialog.setNeutralButton(neutralButton) { dialog: DialogInterface?, which: Int ->
+                onNeutral()
+            }
+        }
+
+
+        alertDialog.show()
     }
 }

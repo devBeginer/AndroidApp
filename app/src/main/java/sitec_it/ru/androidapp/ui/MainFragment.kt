@@ -143,6 +143,14 @@ class MainFragment : Fragment() {
             return@setOnEditorActionListener false
         }
 
+        editTextLogin.setOnEditorActionListener { textView, id, keyEvent ->
+            if (id == EditorInfo.IME_ACTION_DONE) {
+                viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
+        }
+
         btnSettings.setOnClickListener {
             activity?.supportFragmentManager?.beginTransaction()
                 ?.replace(R.id.nav_host_fragment, SettingsContainerFragment())

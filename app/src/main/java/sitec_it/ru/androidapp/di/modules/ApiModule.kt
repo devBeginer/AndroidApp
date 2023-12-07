@@ -11,7 +11,13 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ApiModule {
+    @SSlFactoryApiService
     @Provides
     @Singleton
-    fun provideApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
+    fun provideSSLFactoryApiService(@SSlFactoryRetrofit retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
+
+    @NormalApiService
+    @Provides
+    @Singleton
+    fun provideNormalApiService(@NormalRetrofit retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
 }

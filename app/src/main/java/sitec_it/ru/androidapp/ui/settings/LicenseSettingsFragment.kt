@@ -2,13 +2,16 @@ package sitec_it.ru.androidapp.ui.settings
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
 import sitec_it.ru.androidapp.data.models.ProfileLicense
+import sitec_it.ru.androidapp.ui.MainFragment
 import sitec_it.ru.androidapp.viewModels.LicenseSettingsViewModel
 
 @AndroidEntryPoint
@@ -56,6 +59,12 @@ class LicenseSettingsFragment: Fragment(R.layout.fragment_license_settings) {
             currentProfileLicense?.let { profile ->
                 profile.password = editable.toString()
                 viewModel.updateProfile(profile) }
+        }
+
+        val back = view.findViewById<ImageView>(R.id.iv_license_settings_back)
+        back.setOnClickListener {
+            activity?.supportFragmentManager?.beginTransaction()
+                ?.replace(R.id.nav_host_fragment, MainFragment())?.commit()
         }
 
 

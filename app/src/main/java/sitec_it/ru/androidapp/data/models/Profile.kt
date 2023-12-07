@@ -11,6 +11,7 @@ data class Profile(
     var base: String,
     var server: String,
     var ssl: Boolean,
+    var notCheckCertificate: Boolean = false,
     var port: String,
     var login: String,
     var password: String

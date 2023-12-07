@@ -10,6 +10,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.Switch
 import android.widget.Toast
@@ -21,9 +22,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
 import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.data.models.ProfileSpinnerItem
+import sitec_it.ru.androidapp.ui.MainFragment
 import sitec_it.ru.androidapp.viewModels.BaseSettingsViewModel
 import java.util.ArrayList
-import kotlin.system.exitProcess
 
 @AndroidEntryPoint
 class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
@@ -40,6 +41,7 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
         val login: EditText = view.findViewById(R.id.et_base_settings_login)
         val password: EditText = view.findViewById(R.id.et_base_settings_password)
         val ssl: Switch = view.findViewById(R.id.switch_base_settings_UseHTTPS)
+        val notCheckCertificate: Switch = view.findViewById(R.id.switch_base_settings_DisableCheckSSL)
         val spinnerProfile: Spinner = view.findViewById(R.id.spinner_base_name)
         val btnNewProfile: Button = view.findViewById(R.id.btn_base_settings_new_profile)
         val btnDeleteProfile: Button = view.findViewById(R.id.btn_base_settings_delete_profile)
@@ -54,6 +56,7 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
                 login.setText(profile.login)
                 password.setText(profile.password)
                 ssl.isChecked = profile.ssl
+                notCheckCertificate.isChecked = profile.notCheckCertificate
 
             }
         }
@@ -61,11 +64,13 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
         var profileList = arrayListOf<ProfileSpinnerItem>()
         var arrayAdapter = ArrayAdapter<ProfileSpinnerItem>(
             requireContext(),
-            android.R.layout.simple_spinner_item,
+            //android.R.layout.simple_spinner_item,
+            R.layout.custom_spinner_item,
             profileList
         )
 
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        arrayAdapter.setDropDownViewResource(R.layout.custom_spinner_drop_down_item)
+        //arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         spinnerProfile.adapter = arrayAdapter
         viewModel.profileList.observe(viewLifecycleOwner) { list ->
@@ -113,6 +118,13 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
         ssl.setOnCheckedChangeListener { compoundButton, isChecked ->
             currentProfile?.let { profile ->
                 currentProfile?.ssl = isChecked
+                viewModel.updateProfile(profile)
+            }
+        }
+
+        notCheckCertificate.setOnCheckedChangeListener { compoundButton, isChecked ->
+            currentProfile?.let { profile ->
+                currentProfile?.notCheckCertificate = isChecked
                 viewModel.updateProfile(profile)
             }
         }
@@ -193,6 +205,13 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
 
             }
             alertDialog.show()
+        }
+
+
+        val back = view.findViewById<ImageView>(R.id.iv_base_settings_back)
+        back.setOnClickListener {
+            activity?.supportFragmentManager?.beginTransaction()
+                ?.replace(R.id.nav_host_fragment, MainFragment())?.commit()
         }
 
 

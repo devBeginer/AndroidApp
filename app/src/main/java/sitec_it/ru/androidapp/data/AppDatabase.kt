@@ -11,7 +11,7 @@ import sitec_it.ru.androidapp.data.models.User
 
 @Database(
     entities = [Profile::class, ProfileLicense::class, User::class],
-    version = 3, exportSchema = false
+    version = 4, exportSchema = false
 )
 abstract class AppDatabase: RoomDatabase(){
     abstract fun profileDao(): ProfileDao
