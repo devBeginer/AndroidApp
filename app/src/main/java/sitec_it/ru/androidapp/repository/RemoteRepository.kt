@@ -1,6 +1,7 @@
 package sitec_it.ru.androidapp.repository
 
 import okhttp3.Credentials
+import sitec_it.ru.androidapp.data.models.NodeRequest
 import sitec_it.ru.androidapp.di.modules.NormalApiService
 import sitec_it.ru.androidapp.di.modules.SSlFactoryApiService
 import sitec_it.ru.androidapp.network.ApiService
@@ -22,5 +23,13 @@ class RemoteRepository @Inject constructor(@NormalApiService private val apiServ
                 .getTest(Credentials.basic(username, password, Charset.forName("UTF-8")))
                },
         errorMessage = "Error Fetching User"
+    )
+
+    suspend fun postNodeToApi( username: String,  password: String, url: String, nodeRequest: NodeRequest, disableCheckCertificate: Boolean) = networkHelper.safeApiCall(
+        call = {
+            (if(disableCheckCertificate) apiServiceSSLFactory else apiService)
+                .postNode(Credentials.basic(username, password, Charset.forName("UTF-8")), url, nodeRequest)
+               },
+        errorMessage = "Error register node"
     )
 }

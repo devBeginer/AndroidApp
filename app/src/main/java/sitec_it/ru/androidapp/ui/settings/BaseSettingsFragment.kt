@@ -13,26 +13,35 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.Switch
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
+import sitec_it.ru.androidapp.Utils.observeFutureEvents
+import sitec_it.ru.androidapp.data.models.NodeResponse
 import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.data.models.ProfileSpinnerItem
 import sitec_it.ru.androidapp.ui.MainFragment
 import sitec_it.ru.androidapp.viewModels.BaseSettingsViewModel
+import sitec_it.ru.androidapp.viewModels.SharedViewModel
 import java.util.ArrayList
 
 @AndroidEntryPoint
 class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
     private val viewModel: BaseSettingsViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by viewModels({requireActivity()})
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        sharedViewModel.updateProgressBar(true)
         viewModel.initView()
 
         val server: EditText = view.findViewById(R.id.et_base_settings_server)
@@ -45,9 +54,37 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
         val spinnerProfile: Spinner = view.findViewById(R.id.spinner_base_name)
         val btnNewProfile: Button = view.findViewById(R.id.btn_base_settings_new_profile)
         val btnDeleteProfile: Button = view.findViewById(R.id.btn_base_settings_delete_profile)
+        val btnCreateNode: Button = view.findViewById(R.id.btn_base_settings_create_node)
         var currentProfile: Profile? = null
 
-        viewModel.user.observe(viewLifecycleOwner) { profile ->
+        viewModel.nodeResponse.observeFutureEvents(viewLifecycleOwner) { response ->
+            val text = if (response != null) {
+                /*val snackbar: Snackbar = Snackbar.make(
+                    requireView(),
+                    response.toString(), Snackbar.LENGTH_LONG
+                )
+                val view = snackbar.view
+                val txtv =
+                    view.findViewById<View>(com.google.android.material.R.id.snackbar_text) as TextView
+                txtv.maxLines = 5
+                snackbar.show()*/
+                response.toString()
+            }else{
+                "Ошибка"
+            }
+            val snackbar: Snackbar = Snackbar.make(
+                requireView(),
+                text, Snackbar.LENGTH_LONG
+            )
+            val view = snackbar.view
+            val txtv =
+                view.findViewById<View>(com.google.android.material.R.id.snackbar_text) as TextView
+            txtv.maxLines = 5
+            snackbar.show()
+            sharedViewModel.updateProgressBar(false)
+        }
+
+        viewModel.profile.observe(viewLifecycleOwner) { profile ->
             if (profile != null) {
                 currentProfile = profile
                 server.setText(profile.server)
@@ -59,6 +96,8 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
                 notCheckCertificate.isChecked = profile.notCheckCertificate
 
             }
+            sharedViewModel.updateProgressBar(false)
+
         }
 
         var profileList = arrayListOf<ProfileSpinnerItem>()
@@ -82,50 +121,52 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
                 val current = list.find { it.id == (currentProfile?.id ?: 1) }
                 spinnerProfile.setSelection(list.indexOf(current))
             }
+
+
         }
 
         server.doAfterTextChanged { editable ->
             currentProfile?.let { profile ->
                 profile.server = editable.toString()
-                viewModel.updateProfile(profile)
+                viewModel.updateProfile(profile, true)
             }
         }
         port.doAfterTextChanged { editable ->
             currentProfile?.let { profile ->
                 profile.port = editable.toString()
-                viewModel.updateProfile(profile)
+                viewModel.updateProfile(profile, true)
             }
         }
         base.doAfterTextChanged { editable ->
             currentProfile?.let { profile ->
                 profile.base = editable.toString()
-                viewModel.updateProfile(profile)
+                viewModel.updateProfile(profile, true)
             }
         }
         login.doAfterTextChanged { editable ->
             currentProfile?.let { profile ->
                 profile.login = editable.toString()
-                viewModel.updateProfile(profile)
+                viewModel.updateProfile(profile, false)
             }
         }
         password.doAfterTextChanged { editable ->
             currentProfile?.let { profile ->
                 profile.password = editable.toString()
-                viewModel.updateProfile(profile)
+                viewModel.updateProfile(profile, false)
             }
         }
 
         ssl.setOnCheckedChangeListener { compoundButton, isChecked ->
             currentProfile?.let { profile ->
                 currentProfile?.ssl = isChecked
-                viewModel.updateProfile(profile)
+                viewModel.updateProfile(profile, true)
             }
         }
 
         notCheckCertificate.setOnCheckedChangeListener { compoundButton, isChecked ->
             currentProfile?.let { profile ->
                 currentProfile?.notCheckCertificate = isChecked
-                viewModel.updateProfile(profile)
+                viewModel.updateProfile(profile, false)
             }
         }
 
@@ -138,6 +179,8 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
             ) {
                 if (parent != null) {
                     viewModel.initView((parent.selectedItem as ProfileSpinnerItem).id)
+                    sharedViewModel.updateProgressBar(true)
+
                 }
             }
 
@@ -168,6 +211,8 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
             dialog.setOnShowListener {
                 dialog.getButton(AlertDialog.BUTTON_POSITIVE)
                     .setOnClickListener {
+                        sharedViewModel.updateProgressBar(true)
+
                         viewModel.createProfile(nameField.text.toString(), {
                             Toast.makeText(
                                 requireContext(),
@@ -176,12 +221,16 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
                             ).show()
 
                             dialog.dismiss()
+                            sharedViewModel.updateProgressBar(false)
+
                         }, {
                             Toast.makeText(
                                 requireContext(),
                                 "Профиль с таким названием уже существует",
                                 Toast.LENGTH_SHORT
                             ).show()
+                            sharedViewModel.updateProgressBar(false)
+
                         })
                     }
             }
@@ -199,6 +248,8 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
                 currentProfile?.let { profile ->
                     viewModel.deleteProfile(profile)
 
+                    sharedViewModel.updateProgressBar(false)
+
                 }
             }
             alertDialog.setNegativeButton("Отмены") { dialog: DialogInterface?, which: Int ->
@@ -212,8 +263,14 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
         back.setOnClickListener {
             activity?.supportFragmentManager?.beginTransaction()
                 ?.replace(R.id.nav_host_fragment, MainFragment())?.commit()
+
         }
 
+        btnCreateNode.setOnClickListener {
+            viewModel.postNode()
+            sharedViewModel.updateProgressBar(true)
+
+        }
 
     }
 

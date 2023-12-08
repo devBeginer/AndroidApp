@@ -14,5 +14,6 @@ data class Profile(
     var notCheckCertificate: Boolean = false,
     var port: String,
     var login: String,
-    var password: String
+    var password: String,
+    var url: String
 )

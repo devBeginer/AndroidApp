@@ -23,7 +23,8 @@ class StartViewModel @Inject constructor(private val repository: Repository): Vi
                         ssl = false,
                         port = "8080",
                         login = "test",
-                        password = "test"
+                        password = "test",
+                        url="http://192.168.1.0:8080/TMP_Test/"
                     )
                 )
 

@@ -2,15 +2,21 @@ package sitec_it.ru.androidapp.repository
 
 import android.content.SharedPreferences
 import sitec_it.ru.androidapp.SharedPreferencesUtils.editPref
+import sitec_it.ru.androidapp.data.dao.NodeDao
 import sitec_it.ru.androidapp.data.dao.ProfileDao
 import sitec_it.ru.androidapp.data.dao.ProfileLicenseDao
 import sitec_it.ru.androidapp.data.dao.UserDao
+import sitec_it.ru.androidapp.data.models.Node
 import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
 import sitec_it.ru.androidapp.data.models.User
 import javax.inject.Inject
 
-class LocalRepository @Inject constructor(private val profileDao: ProfileDao, private val profileLicenseDao: ProfileLicenseDao, private val userDao: UserDao, private val sharedPreferences: SharedPreferences) {
+class LocalRepository @Inject constructor(private val profileDao: ProfileDao,
+                                          private val profileLicenseDao: ProfileLicenseDao,
+                                          private val userDao: UserDao,
+                                          private val nodeDao: NodeDao,
+                                          private val sharedPreferences: SharedPreferences) {
     companion object{
         const val PROFILE_ID = "profile_id"
         const val USER_LOGIN = "user_login"
@@ -27,6 +33,12 @@ class LocalRepository @Inject constructor(private val profileDao: ProfileDao, pr
     suspend fun getProfileCount(): Int {
         return profileDao.getAllProfile().count()
     }
+
+
+    suspend fun updateNode(node: Node) = nodeDao.updateNode(node)
+    suspend fun insertNode(node: Node) = nodeDao.insertNode(node)
+    suspend fun deleteNode(node: Node) = nodeDao.deleteNode(node)
+
 
 
     suspend fun updateUser(user: User) = userDao.updateUser(user)

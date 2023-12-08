@@ -1,82 +1,100 @@
 package sitec_it.ru.androidapp.viewModels
 
+import android.os.Build
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import sitec_it.ru.androidapp.data.models.Node
+import sitec_it.ru.androidapp.data.models.NodeRequest
+import sitec_it.ru.androidapp.data.models.NodeResponse
 import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
 import sitec_it.ru.androidapp.data.models.ProfileSpinnerItem
 import sitec_it.ru.androidapp.repository.Repository
 import javax.inject.Inject
 
+
 @HiltViewModel
-class BaseSettingsViewModel @Inject constructor(private val repository: Repository): ViewModel()  {
+class BaseSettingsViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
+
     private val profileMutableLiveData: MutableLiveData<Profile?> = MutableLiveData()
-    val user: LiveData<Profile?>
+    val profile: LiveData<Profile?>
         get() = profileMutableLiveData
 
 
-    private val profileListMutableLiveData: MutableLiveData<List<ProfileSpinnerItem>> = MutableLiveData()
+    private val profileListMutableLiveData: MutableLiveData<List<ProfileSpinnerItem>> =
+        MutableLiveData()
     val profileList: LiveData<List<ProfileSpinnerItem>>
         get() = profileListMutableLiveData
 
 
+    private val nodeResponseMutableLiveData: MutableLiveData<NodeResponse?> = MutableLiveData(null)
+    val nodeResponse: LiveData<NodeResponse?>
+        get() = nodeResponseMutableLiveData
+    var url: String = ""
 
-
-
-
-    fun initView(){
+    fun initView() {
         viewModelScope.launch(Dispatchers.IO) {
             val foundProfile = repository.getProfileById(repository.getProfileFromSP())
             val foundProfileList = repository.getProfileList()
-            if(foundProfile!=null){
+            if (foundProfile != null) {
                 repository.saveProfileToSP(foundProfile.id)
                 profileMutableLiveData.postValue(foundProfile)
-            }else{
+            } else {
                 profileMutableLiveData.postValue(null)
             }
-            if(foundProfileList!=null){
-                profileListMutableLiveData.postValue(foundProfileList.map { profile -> ProfileSpinnerItem(
-                    id = profile.id,
-                    name = profile.name,
-                    base = profile.base,
-                    server  = profile.server,
-                    ssl = profile.ssl,
-                    port = profile.port,
-                    login = profile.login,
-                    password = profile.password
-                )
+            if (foundProfileList != null) {
+                profileListMutableLiveData.postValue(foundProfileList.map { profile ->
+                    ProfileSpinnerItem(
+                        id = profile.id,
+                        name = profile.name,
+                        base = profile.base,
+                        server = profile.server,
+                        ssl = profile.ssl,
+                        port = profile.port,
+                        login = profile.login,
+                        password = profile.password
+                    )
                 })
             }
 
+
         }
     }
 
-    fun initView(id: Long){
+    fun initView(id: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             val foundProfile = repository.getProfileById(id)
-            if(foundProfile!=null){
+            if (foundProfile != null) {
                 repository.saveProfileToSP(foundProfile.id)
                 profileMutableLiveData.postValue(foundProfile)
-            }else{
+            } else {
                 profileMutableLiveData.postValue(null)
             }
         }
     }
 
-    fun updateProfile(profile: Profile){
-        viewModelScope.launch(Dispatchers.IO) { repository.updateProfile(profile) }
+    fun updateProfile(profile: Profile, rebuildUrl: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            profile.url = buildProfileUrl(profile)
+            repository.updateProfile(profile)
+
+            //sharedViewModel.buildUrl(profile.id)
+            //buildUrl(profile.id)
+        }
 
     }
 
-    fun createProfile(name: String, onInsert: ()->Unit, onExist: ()->Unit){
+    fun createProfile(name: String, onInsert: () -> Unit, onExist: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            if(repository.getProfile(name)==null){
+            if (repository.getProfile(name) == null) {
                 val id: Long = repository.insertProfile(
                     Profile(
                         name = name,
@@ -85,7 +103,8 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
                         ssl = false,
                         port = "8080",
                         login = "test",
-                        password = "test"
+                        password = "test",
+                        url = "http://192.168.1.0:8080/TMP_Test/"
                     )
                 )
 
@@ -104,29 +123,80 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
                     )
                 }
                 initView()
-                withContext(Dispatchers.Main){
+                withContext(Dispatchers.Main) {
                     onInsert()
                 }
 
-            }else{
-                withContext(Dispatchers.Main){
+            } else {
+                withContext(Dispatchers.Main) {
                     onExist()
                 }
             }
         }
     }
 
-    fun deleteProfile(profile: Profile){
+    fun deleteProfile(profile: Profile) {
         viewModelScope.launch(Dispatchers.IO) {
-            if(repository.getProfileById(profile.id)!=null){
+            if (repository.getProfileById(profile.id) != null) {
 
                 repository.deleteProfile(profile)
 
                 initView()
 
-            }else{
+            } else {
 
             }
+        }
+    }
+
+    fun postNode() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentProfile = profile.value
+
+            if(currentProfile!=null){
+                val response = repository.postNodeToApi(
+                    //"Админ",
+                    currentProfile.login,
+                    //"",
+                    currentProfile.password,
+                    //"http://localhost/WMSLite/hs/MobileClient/registerNode",
+                    //url + "registerNode",
+                    currentProfile.url + "registerNode",
+                    NodeRequest(deviceName())
+                )
+                if (response != null) {
+                    repository.insertNode(Node(
+                        nodeId = response.nodeId,
+                        prefix = response.prefix
+                    ))
+                    nodeResponseMutableLiveData.postValue(response)
+                } else {
+                    nodeResponseMutableLiveData.postValue(null)
+                }
+            }
+        }
+    }
+
+    private fun deviceName(): String {
+        val model = Build.MODEL
+        val brand = Build.BRAND
+        return if (model.toLowerCase().contains(brand.toLowerCase())) {
+            model
+        } else {
+            "$brand+$model"
+        }
+    }
+
+    private fun buildProfileUrl(profile: Profile): String {
+        //val profile = repository.getProfileById(id)
+
+        return if (profile.ssl)
+            "https://${profile.server}/${profile.base}/hs/MobileClient/"
+        else {
+            if (profile.port.isEmpty())
+                "http://${profile.server}/${profile.base}/hs/MobileClient/"
+            else
+                "http://${profile.server}/${profile.base}/hs/MobileClient/"
         }
     }
 }

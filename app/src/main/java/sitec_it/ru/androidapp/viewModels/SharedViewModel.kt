@@ -17,9 +17,34 @@ class SharedViewModel @Inject constructor(private val repository: Repository): V
     val profileList: LiveData<Int>
         get() = profileCountMutableLiveData
 
+    private val pbVisibilityMutableLiveData: MutableLiveData<Boolean> = MutableLiveData()
+    val pbVisibility: LiveData<Boolean>
+        get() = pbVisibilityMutableLiveData
+
+    var url: String = ""
     fun initData(){
         viewModelScope.launch(Dispatchers.IO) {
             profileCountMutableLiveData.postValue(repository.getProfileCount())
+        }
+    }
+
+    fun updateProgressBar(visibility: Boolean){
+        pbVisibilityMutableLiveData.postValue(visibility)
+    }
+
+    suspend fun buildUrl(id: Long){
+        val profile = repository.getProfileById(id)
+        if(profile!=null){
+            url = if (profile.ssl)
+                "https://${profile.server}/${profile.base}/hs/MobileClient/"
+            else {
+                if (profile.port.isEmpty())
+                    "http://${profile.server}/${profile.base}/hs/MobileClient/"
+                else
+                    "http://${profile.server}/${profile.base}/hs/MobileClient/"
+            }
+
+            repository
         }
     }
 }

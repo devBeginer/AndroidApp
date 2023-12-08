@@ -2,6 +2,9 @@ package sitec_it.ru.androidapp.ui
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.View
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -14,9 +17,19 @@ import sitec_it.ru.androidapp.viewModels.SharedViewModel
 class MainActivity : AppCompatActivity() {
     private val viewModel: SharedViewModel by viewModels()
 
+    //lateinit var progressBar: ProgressBar
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        var progressBar: ProgressBar = findViewById(R.id.pb_main)
+
+        viewModel.pbVisibility.observe(this, Observer { visibility->
+            if(visibility)
+                progressBar.visibility = View.VISIBLE
+            else
+                progressBar.visibility = View.GONE
+        })
+
 
         viewModel.initData()
         viewModel.profileList.observe(this, Observer { count->
@@ -27,6 +40,8 @@ class MainActivity : AppCompatActivity() {
                 supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, StartFragment())
                     .commit()
         })
+
+
 
 
     }
@@ -65,4 +80,5 @@ class MainActivity : AppCompatActivity() {
 
         alertDialog.show()
     }
+
 }

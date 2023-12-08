@@ -1,6 +1,9 @@
 package sitec_it.ru.androidapp.repository
 
 import dagger.hilt.android.scopes.ViewModelScoped
+import sitec_it.ru.androidapp.data.models.Node
+import sitec_it.ru.androidapp.data.models.NodeRequest
+import sitec_it.ru.androidapp.data.models.NodeResponse
 import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
 import sitec_it.ru.androidapp.data.models.User
@@ -17,6 +20,14 @@ class Repository @Inject constructor(private val localRepository: LocalRepositor
     suspend fun getProfileById(id: Long) = localRepository.getProfileById(id)
     suspend fun getProfileList() = localRepository.getProfileList()
     suspend fun getProfileCount() = localRepository.getProfileCount()
+
+
+    suspend fun updateNode(node: Node) = localRepository.updateNode(node)
+    suspend fun insertNode(node: Node) = localRepository.insertNode(node)
+    suspend fun deleteNode(node: Node) = localRepository.deleteNode(node)
+
+
+
 
 
     suspend fun updateUser(user: User) = localRepository.updateUser(user)
@@ -43,6 +54,15 @@ class Repository @Inject constructor(private val localRepository: LocalRepositor
     suspend fun getTestFromApi( username: String,  password: String): String?{
         return if(networkHelper.isNetworkConnected()){
             remoteRepository.getTestFromApi(username, password, isDisableCheckCertificate())
+        }else {
+            null
+        }
+    }
+
+
+    suspend fun postNodeToApi( username: String,  password: String, url: String, nodeRequest: NodeRequest): NodeResponse?{
+        return if(networkHelper.isNetworkConnected()){
+            remoteRepository.postNodeToApi(username, password, url, nodeRequest, isDisableCheckCertificate())
         }else {
             null
         }
