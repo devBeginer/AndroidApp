@@ -16,11 +16,11 @@ class RemoteRepository @Inject constructor(@NormalApiService private val apiServ
         errorMessage = "Error Fetching User"
     )*/
 
-    suspend fun getTestFromApi( username: String,  password: String, disableCheckCertificate: Boolean) = networkHelper.safeApiCall(
+    suspend fun getTestFromApi( username: String,  password: String, url: String, disableCheckCertificate: Boolean) = networkHelper.safeApiCall(
         //call = { apiService.getTest(username, password) },
         call = {
             (if(disableCheckCertificate) apiServiceSSLFactory else apiService)
-                .getTest(Credentials.basic(username, password, Charset.forName("UTF-8")))
+                .getTest(Credentials.basic(username, password, Charset.forName("UTF-8")), url)
                },
         errorMessage = "Error Fetching User"
     )

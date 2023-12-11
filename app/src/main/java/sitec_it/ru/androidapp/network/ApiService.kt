@@ -15,8 +15,8 @@ import sitec_it.ru.androidapp.data.models.NodeResponse
 interface ApiService {
 
     @Headers("Content-Type: application/json;charset=UTF-8")
-    @GET("hs/service/test")
-    suspend fun getTest(@Header("Authorization")  credentials: String): Response<String>
+    @GET
+    suspend fun getTest(@Header("Authorization")  credentials: String, @Url url: String): Response<String>
 
     @Headers("Content-Type: application/json;charset=UTF-8")
     @POST

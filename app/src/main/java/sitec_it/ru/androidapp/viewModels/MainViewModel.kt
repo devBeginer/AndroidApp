@@ -46,7 +46,7 @@ class MainViewModel @Inject constructor(private val repository: Repository): Vie
             if(foundUser!=null && foundUser.password.equals(password)){*/
             val foundUser = repository.getUser(login)
             if(foundUser!=null){
-                val foundApiResult = repository.getTestFromApi("Админ", "")
+                val foundApiResult = repository.getTestFromApi("hs/service/test")
                 if(foundApiResult!=null){
                     apiResultMutableLiveData.postValue(foundApiResult)
                 }else{

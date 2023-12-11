@@ -161,7 +161,7 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
                     currentProfile.password,
                     //"http://localhost/WMSLite/hs/MobileClient/registerNode",
                     //url + "registerNode",
-                    currentProfile.url + "registerNode",
+                    currentProfile.url + "hs/MobileClient/registerNode",
                     NodeRequest(deviceName())
                 )
                 if (response != null) {
@@ -191,12 +191,12 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
         //val profile = repository.getProfileById(id)
 
         return if (profile.ssl)
-            "https://${profile.server}/${profile.base}/hs/MobileClient/"
+            "https://${profile.server}/${profile.base}/"
         else {
             if (profile.port.isEmpty())
-                "http://${profile.server}/${profile.base}/hs/MobileClient/"
+                "http://${profile.server}/${profile.base}/"
             else
-                "http://${profile.server}/${profile.base}/hs/MobileClient/"
+                "http://${profile.server}/${profile.base}/"
         }
     }
 }

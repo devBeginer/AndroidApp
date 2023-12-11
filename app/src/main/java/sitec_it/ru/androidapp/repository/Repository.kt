@@ -51,9 +51,10 @@ class Repository @Inject constructor(private val localRepository: LocalRepositor
 
 
 
-    suspend fun getTestFromApi( username: String,  password: String): String?{
-        return if(networkHelper.isNetworkConnected()){
-            remoteRepository.getTestFromApi(username, password, isDisableCheckCertificate())
+    suspend fun getTestFromApi(urlPostfix: String): String?{
+        val currentProfile = localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
+        return if(networkHelper.isNetworkConnected() && currentProfile!=null){
+            remoteRepository.getTestFromApi(currentProfile.login, currentProfile.password, currentProfile.url+urlPostfix, isDisableCheckCertificate())
         }else {
             null
         }

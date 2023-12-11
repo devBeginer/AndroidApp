@@ -20,11 +20,13 @@ import sitec_it.ru.androidapp.Utils.observeFutureEvents
 import sitec_it.ru.androidapp.data.models.User
 import sitec_it.ru.androidapp.ui.settings.SettingsContainerFragment
 import sitec_it.ru.androidapp.viewModels.MainViewModel
+import sitec_it.ru.androidapp.viewModels.SharedViewModel
 
 @AndroidEntryPoint
 class MainFragment : Fragment() {
 
     private val viewModel: MainViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by viewModels({requireActivity()})
 
     override fun onCreateView(
         inflater: LayoutInflater,
