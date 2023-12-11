@@ -16,20 +16,20 @@ class RemoteRepository @Inject constructor(@NormalApiService private val apiServ
         errorMessage = "Error Fetching User"
     )*/
 
-    suspend fun getTestFromApi( username: String,  password: String, url: String, disableCheckCertificate: Boolean) = networkHelper.safeApiCall(
+    suspend fun getTestFromApi( username: String,  password: String, url: String, errorMessage: String, disableCheckCertificate: Boolean) = networkHelper.safeApiCall(
         //call = { apiService.getTest(username, password) },
         call = {
             (if(disableCheckCertificate) apiServiceSSLFactory else apiService)
                 .getTest(Credentials.basic(username, password, Charset.forName("UTF-8")), url)
                },
-        errorMessage = "Error Fetching User"
+        errorMessage = errorMessage/*"Error Fetching User"*/
     )
 
-    suspend fun postNodeToApi( username: String,  password: String, url: String, nodeRequest: NodeRequest, disableCheckCertificate: Boolean) = networkHelper.safeApiCall(
+    suspend fun postNodeToApi( username: String,  password: String, url: String, nodeRequest: NodeRequest, errorMessage: String, disableCheckCertificate: Boolean) = networkHelper.safeApiCall(
         call = {
             (if(disableCheckCertificate) apiServiceSSLFactory else apiService)
                 .postNode(Credentials.basic(username, password, Charset.forName("UTF-8")), url, nodeRequest)
                },
-        errorMessage = "Error register node"
+        errorMessage = errorMessage/*"Error register node"*/
     )
 }

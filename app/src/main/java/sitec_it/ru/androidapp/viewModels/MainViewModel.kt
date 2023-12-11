@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
 import sitec_it.ru.androidapp.data.models.User
+import sitec_it.ru.androidapp.network.Result
 import sitec_it.ru.androidapp.repository.Repository
 import javax.inject.Inject
 
@@ -31,6 +32,11 @@ class MainViewModel @Inject constructor(private val repository: Repository): Vie
         get() = apiResultMutableLiveData
 
 
+    private val apiErrorMutableLiveData: MutableLiveData<String?> = MutableLiveData(null)
+    val apiError: LiveData<String?>
+        get() = apiErrorMutableLiveData
+
+
     private val loginMutableLiveData: MutableLiveData<String?> = MutableLiveData(null)
     val login: LiveData<String?>
         get() = loginMutableLiveData
@@ -47,11 +53,15 @@ class MainViewModel @Inject constructor(private val repository: Repository): Vie
             val foundUser = repository.getUser(login)
             if(foundUser!=null){
                 val foundApiResult = repository.getTestFromApi("hs/service/test")
-                if(foundApiResult!=null){
+                when(foundApiResult){
+                    is Result.Success->apiResultMutableLiveData.postValue(foundApiResult.data)
+                    is Result.Error->apiErrorMutableLiveData.postValue(foundApiResult.exception.message)
+                }
+                /*if(foundApiResult!=null){
                     apiResultMutableLiveData.postValue(foundApiResult)
                 }else{
                     apiResultMutableLiveData.postValue(null)
-                }
+                }*/
                 repository.saveUserToSP(foundUser.login)
                 userMutableLiveData.postValue(foundUser)
             }else{

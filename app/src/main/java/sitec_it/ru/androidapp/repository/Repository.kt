@@ -8,7 +8,10 @@ import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
 import sitec_it.ru.androidapp.data.models.User
 import sitec_it.ru.androidapp.network.NetworkHelper
+import java.io.IOException
 import javax.inject.Inject
+
+import sitec_it.ru.androidapp.network.Result
 
 @ViewModelScoped
 class Repository @Inject constructor(private val localRepository: LocalRepository, private val remoteRepository: RemoteRepository, private val networkHelper: NetworkHelper) {
@@ -51,21 +54,21 @@ class Repository @Inject constructor(private val localRepository: LocalRepositor
 
 
 
-    suspend fun getTestFromApi(urlPostfix: String): String?{
+    suspend fun getTestFromApi(urlPostfix: String): Result<String>{
         val currentProfile = localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
         return if(networkHelper.isNetworkConnected() && currentProfile!=null){
-            remoteRepository.getTestFromApi(currentProfile.login, currentProfile.password, currentProfile.url+urlPostfix, isDisableCheckCertificate())
+            remoteRepository.getTestFromApi(currentProfile.login, currentProfile.password, currentProfile.url+urlPostfix, "Error Fetching User", isDisableCheckCertificate())
         }else {
-            null
+            Result.Error(IOException("Error Fetching User, ERROR - Connection"))
         }
     }
 
 
-    suspend fun postNodeToApi( username: String,  password: String, url: String, nodeRequest: NodeRequest): NodeResponse?{
+    suspend fun postNodeToApi( username: String,  password: String, url: String, nodeRequest: NodeRequest): Result<NodeResponse?>{
         return if(networkHelper.isNetworkConnected()){
-            remoteRepository.postNodeToApi(username, password, url, nodeRequest, isDisableCheckCertificate())
+            remoteRepository.postNodeToApi(username, password, url, nodeRequest, "Error register node", isDisableCheckCertificate())
         }else {
-            null
+            Result.Error(IOException("Error register node, ERROR - Connection"))
         }
     }
 

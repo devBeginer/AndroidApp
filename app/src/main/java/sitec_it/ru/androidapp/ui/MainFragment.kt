@@ -95,6 +95,30 @@ class MainFragment : Fragment() {
                 }
             }
         })
+        viewModel.apiError.observe(viewLifecycleOwner, object : Observer<String?> {
+            var isFirst = true
+
+            override fun onChanged(value: String?) {
+                if (isFirst) {
+                    isFirst = false
+                } else {
+                    if (value != null) {
+                        val snackbar: Snackbar = Snackbar.make(
+                            requireView(),
+                            value, Snackbar.LENGTH_LONG
+                        )
+                        val view = snackbar.view
+                        val txtv =
+                            view.findViewById<View>(com.google.android.material.R.id.snackbar_text) as TextView
+                        txtv.maxLines = 5
+                        snackbar.show()
+                    } else {
+                        Toast.makeText(context, "Ошибка api запроса", Toast.LENGTH_LONG)
+                            .show()
+                    }
+                }
+            }
+        })
         viewModel.user.observeFutureEvents(viewLifecycleOwner, Observer<User?> {user->
 
             if (user != null) {

@@ -17,6 +17,7 @@ import sitec_it.ru.androidapp.data.models.NodeResponse
 import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
 import sitec_it.ru.androidapp.data.models.ProfileSpinnerItem
+import sitec_it.ru.androidapp.network.Result
 import sitec_it.ru.androidapp.repository.Repository
 import javax.inject.Inject
 
@@ -38,6 +39,9 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
     private val nodeResponseMutableLiveData: MutableLiveData<NodeResponse?> = MutableLiveData(null)
     val nodeResponse: LiveData<NodeResponse?>
         get() = nodeResponseMutableLiveData
+    private val apiErrorMutableLiveData: MutableLiveData<String> = MutableLiveData(null)
+    val apiError: LiveData<String>
+        get() = apiErrorMutableLiveData
     var url: String = ""
 
     fun initView() {
@@ -164,15 +168,24 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
                     currentProfile.url + "hs/MobileClient/registerNode",
                     NodeRequest(deviceName())
                 )
-                if (response != null) {
-                    repository.insertNode(Node(
-                        nodeId = response.nodeId,
-                        prefix = response.prefix
-                    ))
-                    nodeResponseMutableLiveData.postValue(response)
+                when (response){
+                    is Result.Success->{
+                        val data = response.data
+                        if(data!=null){
+                            repository.insertNode(Node(
+                                nodeId = data.nodeId,
+                                prefix = data.prefix
+                            ))
+                            nodeResponseMutableLiveData.postValue(data)
+                        }
+                    }
+                    is Result.Error->apiErrorMutableLiveData.postValue(response.exception.message)
+                }
+                /*if (response != null) {
+
                 } else {
                     nodeResponseMutableLiveData.postValue(null)
-                }
+                }*/
             }
         }
     }

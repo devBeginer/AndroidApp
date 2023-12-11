@@ -84,6 +84,20 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
             sharedViewModel.updateProgressBar(false)
         }
 
+        viewModel.apiError.observeFutureEvents(viewLifecycleOwner) { response ->
+            val text = response.toString()
+            val snackbar: Snackbar = Snackbar.make(
+                requireView(),
+                text, Snackbar.LENGTH_LONG
+            )
+            val view = snackbar.view
+            val txtv =
+                view.findViewById<View>(com.google.android.material.R.id.snackbar_text) as TextView
+            txtv.maxLines = 5
+            snackbar.show()
+            sharedViewModel.updateProgressBar(false)
+        }
+
         viewModel.profile.observe(viewLifecycleOwner) { profile ->
             if (profile != null) {
                 currentProfile = profile
