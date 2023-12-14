@@ -77,7 +77,7 @@ class NetworkHelper (private val context: Context) {
         call: suspend () -> Response<T>,
         errorMessage: String
     ): Result<T> {
-        val result: Result<T> = if(!isNetworkConnected()){
+        /*val result: Result<T> = if(!isNetworkConnected()){
             Result.Error(IOException("$errorMessage, ERROR - Connection error"))
         }else{
             try {
@@ -111,15 +111,37 @@ class NetworkHelper (private val context: Context) {
                 Result.Error(IOException("$errorMessage, ERROR - Connection"))
             }
 
+        }*/
+        val result: Result<T> = if(!isNetworkConnected()){
+            Result.Error(0, errorMessage, "ERROR - Connection error")
+        }else{
+            try {
+                val response = call.invoke()
+
+                when(response.code()){
+                    200 -> {
+                        response.errorBody()
+                        response.body()?.let { body -> Result.Success(body) } ?: Result.Error(response.code(), errorMessage, "ERROR - Empty result")
+                    }
+                    201 -> {
+                        response.body()?.let { body -> Result.Success(body) } ?: Result.Error(response.code(), errorMessage, "ERROR - Empty result")
+                    }
+                    202 -> {
+                        response.body()?.let { body -> Result.Success(body) } ?: Result.Error(response.code(), errorMessage, "ERROR - Empty result")
+                    }
+                    else -> response.errorBody()
+                        ?.let { error-> Result.Error(response.code(),  errorMessage, "", Exception(error.string()))}
+                        ?: Result.Error(response.code(),  errorMessage, "")
+
+                }
+            }catch (e: Exception){
+                Result.Error(0, errorMessage,"ERROR - Connection error",  e)
+            }
+
         }
 
-        /*var data: T? = when (result) {
-            is Result.Success -> result.data
-            is Result.Error -> {
-                Log.d("safeApiCall", "${result.exception}")
-                null
-            }
-        }*/
+        if (result is Result.Error) Log.d("safeApiCall", "${result.toString()}")
+
 
         return result
     }

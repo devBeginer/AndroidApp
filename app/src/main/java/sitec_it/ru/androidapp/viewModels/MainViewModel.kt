@@ -7,8 +7,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import sitec_it.ru.androidapp.data.models.Profile
-import sitec_it.ru.androidapp.data.models.ProfileLicense
 import sitec_it.ru.androidapp.data.models.User
 import sitec_it.ru.androidapp.network.Result
 import sitec_it.ru.androidapp.repository.Repository
@@ -20,6 +18,11 @@ class MainViewModel @Inject constructor(private val repository: Repository): Vie
     /*private val userMutableLiveData: MutableLiveData<String?> = MutableLiveData(null)
     val user: LiveData<String?>
         get() = userMutableLiveData*/
+
+
+    private val userListMutableLiveData: MutableLiveData<List<User>> = MutableLiveData(null)
+    val userList: LiveData<List<User>>
+        get() = userListMutableLiveData
 
 
     private val userMutableLiveData: MutableLiveData<User?> = MutableLiveData(null)
@@ -55,7 +58,7 @@ class MainViewModel @Inject constructor(private val repository: Repository): Vie
                 val foundApiResult = repository.getTestFromApi("hs/service/test")
                 when(foundApiResult){
                     is Result.Success->apiResultMutableLiveData.postValue(foundApiResult.data)
-                    is Result.Error->apiErrorMutableLiveData.postValue(foundApiResult.exception.message)
+                    is Result.Error->apiErrorMutableLiveData.postValue(foundApiResult.toString())
                 }
                 /*if(foundApiResult!=null){
                     apiResultMutableLiveData.postValue(foundApiResult)
@@ -72,11 +75,26 @@ class MainViewModel @Inject constructor(private val repository: Repository): Vie
         }
     }
 
+    fun loadUsers(){
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = repository.getUsersList("hs/MobileClient/users")
+            when(response){
+                is Result.Success-> {
+                    val responseList = response.data?.let { it.users } ?: mutableListOf()
+                    val usersList = responseList.map { userResponse -> User(userResponse.code, userResponse.login, userResponse.name, userResponse.password) }
+                    usersList.forEach {user-> repository.insertUser(user) }
+                    userListMutableLiveData.postValue(usersList)
+                }
+                is Result.Error->apiErrorMutableLiveData.postValue(response.toString())
+            }
+        }
+    }
+
     fun prepopulateUser(){
         viewModelScope.launch(Dispatchers.IO) {
-            repository.insertUser(User(login = "login1"))
-            repository.insertUser(User(login = "login2"))
-            repository.insertUser(User(login = "login3"))
+            //repository.insertUser(User(login = "login1"))
+            //repository.insertUser(User(login = "login2"))
+            //repository.insertUser(User(login = "login3"))
         }
     }
     fun initLoginField(){

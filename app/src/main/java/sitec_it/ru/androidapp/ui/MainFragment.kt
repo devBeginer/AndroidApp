@@ -5,8 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -17,10 +19,13 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
 import sitec_it.ru.androidapp.Utils.observeFutureEvents
+import sitec_it.ru.androidapp.data.models.ProfileSpinnerItem
 import sitec_it.ru.androidapp.data.models.User
+import sitec_it.ru.androidapp.data.models.UserSpinner
 import sitec_it.ru.androidapp.ui.settings.SettingsContainerFragment
 import sitec_it.ru.androidapp.viewModels.MainViewModel
 import sitec_it.ru.androidapp.viewModels.SharedViewModel
+import java.util.ArrayList
 
 @AndroidEntryPoint
 class MainFragment : Fragment() {
@@ -44,13 +49,35 @@ class MainFragment : Fragment() {
         val editTextPassword = view.findViewById<EditText>(R.id.et_password)
         val btnSettings = view.findViewById<Button>(R.id.btn_sign_in_settings)
         val toolbar = view.findViewById<MaterialToolbar>(R.id.toolbar_main)
-        viewModel.prepopulateUser()
+        val spinner = view.findViewById<Spinner>(R.id.spinner_main_users)
+        //viewModel.prepopulateUser()
+        sharedViewModel.updateProgressBar(true)
+        viewModel.loadUsers()
         viewModel.login.observeFutureEvents(viewLifecycleOwner, Observer {login->
             editTextLogin.setText(login)
         })
 
         viewModel.initLoginField()
 
+        var userList = arrayListOf<UserSpinner>()
+        var arrayAdapter = ArrayAdapter<UserSpinner>(
+            requireContext(),
+            R.layout.custom_spinner_item,
+            userList
+        )
+        arrayAdapter.setDropDownViewResource(R.layout.custom_spinner_drop_down_item)
+
+        spinner.adapter = arrayAdapter
+        viewModel.userList.observe(viewLifecycleOwner, Observer {list->
+            if (list != null) {
+                arrayAdapter.clear()
+                val tmpList = list.map { user-> UserSpinner(user.code, user.login, user.name, user.password) }
+                userList = ArrayList(tmpList)
+                arrayAdapter.addAll(userList)
+                arrayAdapter.notifyDataSetChanged()
+            }
+            sharedViewModel.updateProgressBar(false)
+        })
 
         /*viewModel.user.observe(viewLifecycleOwner, Observer {
             if(it!=null){

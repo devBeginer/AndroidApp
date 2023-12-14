@@ -15,5 +15,6 @@ data class Profile(
     var port: String,
     var login: String,
     var password: String,
-    var url: String
+    var url: String,
+    var databaseID: String = ""
 )

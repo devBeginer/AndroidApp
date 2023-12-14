@@ -17,6 +17,7 @@ import sitec_it.ru.androidapp.data.models.NodeResponse
 import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
 import sitec_it.ru.androidapp.data.models.ProfileSpinnerItem
+import sitec_it.ru.androidapp.data.models.User
 import sitec_it.ru.androidapp.network.Result
 import sitec_it.ru.androidapp.repository.Repository
 import javax.inject.Inject
@@ -79,6 +80,12 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
             if (foundProfile != null) {
                 repository.saveProfileToSP(foundProfile.id)
                 profileMutableLiveData.postValue(foundProfile)
+                if(foundProfile.databaseID!=""){
+                    val users = repository.getAllUsers()
+                    users.forEach { user->
+                        repository.updateUser(User(user.code, user.login, user.name, user.password, foundProfile.databaseID))
+                    }
+                }
             } else {
                 profileMutableLiveData.postValue(null)
             }
@@ -176,10 +183,42 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
                                 nodeId = data.nodeId,
                                 prefix = data.prefix
                             ))
+
+                            repository.updateProfile(
+                                Profile(
+                                    id = currentProfile.id,
+                                    name = currentProfile.name,
+                                    base = currentProfile.base,
+                                    server = currentProfile.server,
+                                    ssl = currentProfile.ssl,
+                                    notCheckCertificate = currentProfile.notCheckCertificate,
+                                    port = currentProfile.port,
+                                    login = currentProfile.login,
+                                    password = currentProfile.password,
+                                    url = currentProfile.url,
+                                    databaseID = data.nodeId
+                                    )
+                            )
+                            val profileLicense = repository.getProfileLicense(currentProfile.id)
+                            if(profileLicense!=null) {
+                                repository.updateProfileLicense(
+                                    ProfileLicense(
+                                        profileLicense.id,
+                                        profileLicense.profile,
+                                        profileLicense.server,
+                                        profileLicense.port,
+                                        profileLicense.login,
+                                        profileLicense.password,
+                                        data.nodeId
+                                    )
+                                )
+                            }
+                            val users = repository.getAllUsers()
+                            users.forEach { user->repository.updateUser(User(user.code, user.login, user.name, user.password, data.nodeId)) }
                             nodeResponseMutableLiveData.postValue(data)
                         }
                     }
-                    is Result.Error->apiErrorMutableLiveData.postValue(response.exception.message)
+                    is Result.Error->apiErrorMutableLiveData.postValue(response.toString())
                 }
                 /*if (response != null) {
 

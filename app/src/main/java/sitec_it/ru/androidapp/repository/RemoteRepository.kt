@@ -2,6 +2,7 @@ package sitec_it.ru.androidapp.repository
 
 import okhttp3.Credentials
 import sitec_it.ru.androidapp.data.models.NodeRequest
+import sitec_it.ru.androidapp.data.models.UserResponse
 import sitec_it.ru.androidapp.di.modules.NormalApiService
 import sitec_it.ru.androidapp.di.modules.SSlFactoryApiService
 import sitec_it.ru.androidapp.network.ApiService
@@ -29,6 +30,14 @@ class RemoteRepository @Inject constructor(@NormalApiService private val apiServ
         call = {
             (if(disableCheckCertificate) apiServiceSSLFactory else apiService)
                 .postNode(Credentials.basic(username, password, Charset.forName("UTF-8")), url, nodeRequest)
+               },
+        errorMessage = errorMessage/*"Error register node"*/
+    )
+
+    suspend fun loadUsers( username: String,  password: String, url: String, errorMessage: String, disableCheckCertificate: Boolean): sitec_it.ru.androidapp.network.Result<UserResponse?> = networkHelper.safeApiCall(
+        call = {
+            (if(disableCheckCertificate) apiServiceSSLFactory else apiService)
+                .loadUsers(Credentials.basic(username, password, Charset.forName("UTF-8")), url)
                },
         errorMessage = errorMessage/*"Error register node"*/
     )

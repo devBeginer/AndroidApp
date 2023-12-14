@@ -1,16 +1,14 @@
 package sitec_it.ru.androidapp.data.models
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-@Entity
-data class User(
-    @PrimaryKey
+data class UserX(
+    @SerializedName("Code")
     val code: String,
+    @SerializedName("Login")
     val login: String,
+    @SerializedName("Name")
     val name: String,
-    val password: String,
-    val databaseID: String = ""
-
+    @SerializedName("Password")
+    val password: String
 )

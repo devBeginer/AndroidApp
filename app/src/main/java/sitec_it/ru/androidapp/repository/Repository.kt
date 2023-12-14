@@ -7,6 +7,7 @@ import sitec_it.ru.androidapp.data.models.NodeResponse
 import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
 import sitec_it.ru.androidapp.data.models.User
+import sitec_it.ru.androidapp.data.models.UserResponse
 import sitec_it.ru.androidapp.network.NetworkHelper
 import java.io.IOException
 import javax.inject.Inject
@@ -32,11 +33,11 @@ class Repository @Inject constructor(private val localRepository: LocalRepositor
 
 
 
-
     suspend fun updateUser(user: User) = localRepository.updateUser(user)
     suspend fun insertUser(user: User): Long = localRepository.insertUser(user)
     suspend fun deleteUser(user: User) = localRepository.deleteUser(user)
     suspend fun getUser(login: String) = localRepository.getUser(login)
+    suspend fun getAllUsers() = localRepository.getAllUsers()
 
     suspend fun updateProfileLicense(profileLicense: ProfileLicense) = localRepository.updateProfileLicense(profileLicense)
     suspend fun insertProfileLicense(profileLicense: ProfileLicense) = localRepository.insertProfileLicense(profileLicense)
@@ -57,9 +58,9 @@ class Repository @Inject constructor(private val localRepository: LocalRepositor
     suspend fun getTestFromApi(urlPostfix: String): Result<String>{
         val currentProfile = localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
         return if(networkHelper.isNetworkConnected() && currentProfile!=null){
-            remoteRepository.getTestFromApi(currentProfile.login, currentProfile.password, currentProfile.url+urlPostfix, "Error Fetching User", isDisableCheckCertificate())
+            remoteRepository.getTestFromApi(currentProfile.login, currentProfile.password, currentProfile.url+urlPostfix, "Error test api", isDisableCheckCertificate())
         }else {
-            Result.Error(IOException("Error Fetching User, ERROR - Connection"))
+            Result.Error(0, "Error test api", "ERROR - Connection", IOException("Error Fetching User, ERROR - Connection"))
         }
     }
 
@@ -68,10 +69,19 @@ class Repository @Inject constructor(private val localRepository: LocalRepositor
         return if(networkHelper.isNetworkConnected()){
             remoteRepository.postNodeToApi(username, password, url, nodeRequest, "Error register node", isDisableCheckCertificate())
         }else {
-            Result.Error(IOException("Error register node, ERROR - Connection"))
+            Result.Error(0, "Error register node", "ERROR - Connection", IOException("Error register node, ERROR - Connection"))
         }
     }
 
+    suspend fun getUsersList(urlPostfix: String): Result<UserResponse?>{
+        val currentProfile = localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
+        /*return*/ if(networkHelper.isNetworkConnected() && currentProfile!=null){
+            return remoteRepository.loadUsers(currentProfile.login, currentProfile.password, currentProfile.url+urlPostfix, "Error Fetching Users", isDisableCheckCertificate())
+            //remoteRepository.loadUsers(currentProfile.login, currentProfile.password, currentProfile.url+urlPostfix, "Error Fetching Users", isDisableCheckCertificate())
+        }else{
+            return Result.Error(0, "Error Fetching Users", "ERROR - Connection", IOException("Error Fetching Users, ERROR - Connection"))
+        }
+    }
 
     private suspend fun isDisableCheckCertificate(): Boolean{
         return localRepository.getProfileById(getProfileFromSP())

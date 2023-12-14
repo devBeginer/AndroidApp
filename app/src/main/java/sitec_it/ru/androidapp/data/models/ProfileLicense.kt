@@ -17,5 +17,6 @@ data class ProfileLicense(
     var server: String,
     var port: String,
     var login: String,
-    var password: String
+    var password: String,
+    var databaseID: String = ""
 )

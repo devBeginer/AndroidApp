@@ -11,6 +11,8 @@ import retrofit2.http.POST
 import retrofit2.http.Url
 import sitec_it.ru.androidapp.data.models.NodeRequest
 import sitec_it.ru.androidapp.data.models.NodeResponse
+import sitec_it.ru.androidapp.data.models.User
+import sitec_it.ru.androidapp.data.models.UserResponse
 
 interface ApiService {
 
@@ -21,6 +23,11 @@ interface ApiService {
     @Headers("Content-Type: application/json;charset=UTF-8")
     @POST
     suspend fun postNode(@Header("Authorization")  credentials: String, @Url url: String, @Body request: NodeRequest): Response<NodeResponse?>
+
+
+    @Headers("Content-Type: application/json;charset=UTF-8")
+    @GET
+    suspend fun loadUsers(@Header("Authorization")  credentials: String, @Url url: String): Response<UserResponse?>
 
 
     //suspend fun getTest(@Field("username")  username:String, @Field("password")  password:String): Response<String>

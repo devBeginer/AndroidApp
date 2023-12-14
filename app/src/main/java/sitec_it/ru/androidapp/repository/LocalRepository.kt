@@ -45,6 +45,7 @@ class LocalRepository @Inject constructor(private val profileDao: ProfileDao,
     suspend fun insertUser(user: User): Long = userDao.insertUser(user)
     suspend fun deleteUser(user: User) = userDao.deleteUser(user)
     suspend fun getUser(login: String) = userDao.getUserByLogin(login)
+    suspend fun getAllUsers() = userDao.getAllUsers()
 
 
 
