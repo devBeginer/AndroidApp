@@ -33,11 +33,8 @@ class LoginFragment : Fragment() {
     private val viewModel: LoginViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by viewModels({ requireActivity() })
     private var userList = arrayListOf<UserSpinner>()
-    private lateinit var arrayAdapter: ArrayAdapter<UserSpinner> /*= ArrayAdapter<UserSpinner>(
-        requireContext(),
-        R.layout.custom_spinner_item,
-        userList
-    )*/
+    private lateinit var arrayAdapter: ArrayAdapter<UserSpinner>
+    lateinit var tvVersion:TextView
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -53,8 +50,9 @@ class LoginFragment : Fragment() {
         //val editTextLogin = view.findViewById<EditText>(R.id.et_login)
         val editTextPassword = view.findViewById<EditText>(R.id.et_password)
         val btnSettings = view.findViewById<Button>(R.id.btn_sign_in_settings)
-        val spinner = view.findViewById<Spinner>(R.id.spinner_main_users)
+        val tvSignName = view.findViewById<AutoCompleteTextView>(R.id.tv_SignName)
         val tvProfile = view.findViewById<TextView>(R.id.tv_sign_in)
+        tvVersion = view.findViewById(R.id.tv_version)
         initView()
 
         /*viewModel.login.observeFutureEvents(viewLifecycleOwner, Observer { code ->
@@ -66,27 +64,27 @@ class LoginFragment : Fragment() {
 
 
         //spinner.adapter = arrayAdapter
-        spinner.adapter = NothingSelectedSpinnerAdapter(arrayAdapter, requireContext(), R.layout.spinner_row_nothing_selected)
-        viewModel.userList.observe(viewLifecycleOwner, Observer { list ->
-            if (list != null) {
-                arrayAdapter.clear()
-                val tmpList = list.map { user ->
-                    UserSpinner(
-                        user.code,
-                        user.login,
-                        user.name,
-                        user.password
-                    )
+        val array = NothingSelectedSpinnerAdapter(arrayAdapter, requireContext(), R.layout.spinner_row_nothing_selected)
+        viewModel.userList.observe(viewLifecycleOwner, Observer {
+            it?.let{ list ->
+                val listNamesUsers = mutableListOf<String>()
+                list.forEach { item ->
+                    listNamesUsers.add(item.name)
                 }
-                userList = ArrayList(tmpList)
-                arrayAdapter.addAll(userList)
-                arrayAdapter.notifyDataSetChanged()
-                val userCode = viewModel.initLoginField()
-                val index = userList.indexOfFirst { userSpinner -> userSpinner.code == userCode }
-                if(index!=-1)
-                    spinner.setSelection(index+1) //+1 потому что первый элемент это заголовок (Логин)
+                val arrayAdapter =
+                    ArrayAdapter(requireContext(), R.layout.dropdown_item, listNamesUsers.sortedWith(String.CASE_INSENSITIVE_ORDER))
+                tvSignName.setAdapter(arrayAdapter)
+                if (listNamesUsers.size > 0) {
+                    tvSignName.setText(listNamesUsers[0], false)
+                    tvSignName.setSelection(tvSignName.text.count())
+                }
+                tvSignName.setOnItemClickListener { adapterView, view, i, l ->
+                    val user = adapterView.adapter.getItem(i).toString()
+                    val codeUser = list.find { it.name.equals(user) }?.code
+                    viewModel.saveUserToSp(codeUser)
+                }
+                sharedViewModel.updateProgressBar(false)
             }
-            sharedViewModel.updateProgressBar(false)
         })
 
 
@@ -146,6 +144,9 @@ class LoginFragment : Fragment() {
                     ?.replace(R.id.nav_host_fragment, MenuFragment())
                     ?.commit()
             } else {
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.nav_host_fragment, MenuFragment())
+                    .commit()
                 Toast.makeText(context, "Неверный логин", Toast.LENGTH_LONG)
                     .show()
             }
@@ -179,21 +180,21 @@ class LoginFragment : Fragment() {
 
         buttonLogin.setOnClickListener {
             //viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
-            viewModel.login((spinner.selectedItem as UserSpinner).login, editTextPassword.text.toString())
+            viewModel.login(tvSignName.text.toString(), editTextPassword.text.toString())
             /*if(editTextLogin.text.isNotEmpty() && editTextPassword.text.isNotEmpty()){
                 viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
             }else{
                 Toast.makeText(context, "Не все поля заполнены", Toast.LENGTH_LONG).show()
             }*/
         }
-        editTextPassword.setOnEditorActionListener { textView, id, keyEvent ->
+     /*   editTextPassword.setOnEditorActionListener { textView, id, keyEvent ->
             if (id == EditorInfo.IME_ACTION_DONE) {
                 //viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
                 viewModel.login((spinner.selectedItem as UserSpinner).login, editTextPassword.text.toString())
                 return@setOnEditorActionListener true
             }
             return@setOnEditorActionListener false
-        }
+        }*/
 
         /*editTextLogin.setOnEditorActionListener { textView, id, keyEvent ->
             if (id == EditorInfo.IME_ACTION_DONE) {
@@ -224,6 +225,11 @@ class LoginFragment : Fragment() {
     }
 
     private fun initView() {
+        tvVersion.apply {
+            text = "v ${BuildConfig.VERSION_NAME}"
+            setTextColor(Color.BLACK)
+            textSize = 15F
+        }
         arrayAdapter = ArrayAdapter<UserSpinner>(
             requireContext(),
             //R.layout.custom_spinner_item,

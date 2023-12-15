@@ -14,7 +14,7 @@ import sitec_it.ru.androidapp.repository.Repository
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val repository: Repository): ViewModel() {
+class LoginViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
     /*private val userMutableLiveData: MutableLiveData<String?> = MutableLiveData(null)
     val user: LiveData<String?>
@@ -55,16 +55,16 @@ class LoginViewModel @Inject constructor(private val repository: Repository): Vi
         userMutableLiveData.postValue(null)
     }*/
 
-    fun login(login: String, password: String){
+    fun login(login: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
             /*val foundUser = repository.userDao.getUserByLogin(login)
             if(foundUser!=null && foundUser.password.equals(password)){*/
             val foundUser = repository.getUser(login)
-            if(foundUser!=null){
+            if (foundUser != null) {
                 val foundApiResult = repository.getTestFromApi("hs/service/test")
-                when(foundApiResult){
-                    is Result.Success->apiResultMutableLiveData.postValue(foundApiResult.data)
-                    is Result.Error->apiErrorMutableLiveData.postValue(foundApiResult.toString())
+                when (foundApiResult) {
+                    is Result.Success -> apiResultMutableLiveData.postValue(foundApiResult.data)
+                    is Result.Error -> apiErrorMutableLiveData.postValue(foundApiResult.toString())
                 }
                 /*if(foundApiResult!=null){
                     apiResultMutableLiveData.postValue(foundApiResult)
@@ -73,7 +73,7 @@ class LoginViewModel @Inject constructor(private val repository: Repository): Vi
                 }*/
                 repository.saveUserToSP(foundUser.code)
                 userMutableLiveData.postValue(foundUser)
-            }else{
+            } else {
                 userMutableLiveData.postValue(null)
             }
 
@@ -81,7 +81,7 @@ class LoginViewModel @Inject constructor(private val repository: Repository): Vi
         }
     }
 
-    fun initProfileName(){
+    fun initProfileName() {
         viewModelScope.launch(Dispatchers.IO) {
             val foundProfile = repository.getProfileById(repository.getProfileFromSP())
 
@@ -90,34 +90,50 @@ class LoginViewModel @Inject constructor(private val repository: Repository): Vi
         }
     }
 
-    fun loadUsers(){
+    fun loadUsers() {
         viewModelScope.launch(Dispatchers.IO) {
             val response = repository.getUsersList("hs/MobileClient/users")
-            when(response){
-                is Result.Success-> {
+            when (response) {
+                is Result.Success -> {
                     val responseList = response.data?.let { it.users } ?: mutableListOf()
-                    val usersList = responseList.map { userResponse -> User(userResponse.code, userResponse.login, userResponse.name, userResponse.password) }
-                    usersList.forEach {user-> repository.insertUser(user) }
+                    val usersList = responseList.map { userResponse ->
+                        User(
+                            userResponse.code,
+                            userResponse.login,
+                            userResponse.name,
+                            userResponse.password
+                        )
+                    }
+                    usersList.forEach { user -> repository.insertUser(user) }
                     userListMutableLiveData.postValue(usersList)
                 }
-                is Result.Error->apiErrorMutableLiveData.postValue(response.toString())
+
+                is Result.Error -> apiErrorMutableLiveData.postValue(response.toString())
             }
         }
     }
 
-    fun prepopulateUser(){
+    fun prepopulateUser() {
         viewModelScope.launch(Dispatchers.IO) {
             //repository.insertUser(User(login = "login1"))
             //repository.insertUser(User(login = "login2"))
             //repository.insertUser(User(login = "login3"))
         }
     }
-    fun initLoginField(): String{
-        val code = repository.getUserFromSP()
-        /*if (code!=""){
-            loginMutableLiveData.postValue(code)
-        }*/
-        return code
+
+    fun initLoginField() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val code = repository.getUserFromSP()
+            if (code != "") {
+                loginMutableLiveData.postValue(code)
+            }
+        }
+    }
+
+    fun saveUserToSp(codeUser: String?) {
+        if (codeUser != null) {
+            repository.saveUserToSP(codeUser)
+        }
     }
 
 }

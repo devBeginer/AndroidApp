@@ -74,4 +74,6 @@ class LocalRepository @Inject constructor(private val profileDao: ProfileDao,
     fun saveCurrentUserCodeToSP(login: String){
         return sharedPreferences.editPref(USER_CODE, login)
     }
+
+    suspend fun getUserByCode(code: String): User? = userDao.getUserByCode(code)
 }
