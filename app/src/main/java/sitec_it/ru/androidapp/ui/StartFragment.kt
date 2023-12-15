@@ -41,9 +41,16 @@ class StartFragment: Fragment() {
 
         viewModel.initDefaultProfile()
         val btnManual: Button = view.findViewById(R.id.btn_start_set_manually)
+        val btnScan: Button = view.findViewById(R.id.btn_start_scan_qr)
         btnManual.setOnClickListener {
             activity?.supportFragmentManager?.beginTransaction()
                 ?.replace(R.id.nav_host_fragment, SettingsContainerFragment())
+                ?.commit()
+        }
+        btnScan.setOnClickListener {
+            activity?.supportFragmentManager?.beginTransaction()
+                ?.replace(R.id.nav_host_fragment, BarcodeScannerFragment())
+                ?.addToBackStack(null)
                 ?.commit()
         }
         if(!permissionsGranted()){

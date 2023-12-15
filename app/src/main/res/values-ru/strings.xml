@@ -7,4 +7,5 @@
     <string name="sign_in_btn">Войти</string>
     <string name="crash_toast_text">Ошибка! Отправляем отчёт</string>
     <string name="login_spinner_header">Логин</string>
+    <string name="btn_base_settings_scan_qr">Сканировать QR</string>
 </resources>

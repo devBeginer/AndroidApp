@@ -6,4 +6,5 @@
     <string name="sign_in_btn">Sign in</string>
     <string name="crash_toast_text">Error! Sending report</string>
     <string name="login_spinner_header">Login</string>
+    <string name="btn_base_settings_scan_qr">Scan QR</string>
 </resources>

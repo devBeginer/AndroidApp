@@ -25,6 +25,7 @@ import sitec_it.ru.androidapp.R
 import sitec_it.ru.androidapp.Utils.observeFutureEvents
 import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.data.models.ProfileSpinnerItem
+import sitec_it.ru.androidapp.ui.BarcodeScannerFragment
 import sitec_it.ru.androidapp.ui.LoginFragment
 import sitec_it.ru.androidapp.viewModels.BaseSettingsViewModel
 import sitec_it.ru.androidapp.viewModels.SharedViewModel
@@ -53,6 +54,7 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
         val btnNewProfile: Button = view.findViewById(R.id.btn_base_settings_new_profile)
         val btnDeleteProfile: Button = view.findViewById(R.id.btn_base_settings_delete_profile)
         val btnCreateNode: Button = view.findViewById(R.id.btn_base_settings_create_node)
+        val btnScanQR: Button = view.findViewById(R.id.btn_base_settings_scan)
         var currentProfile: Profile? = null
 
         viewModel.nodeResponse.observeFutureEvents(viewLifecycleOwner) { response ->
@@ -281,6 +283,15 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
         btnCreateNode.setOnClickListener {
             viewModel.postNode()
             sharedViewModel.updateProgressBar(true)
+
+        }
+
+
+        btnScanQR.setOnClickListener {
+            activity?.supportFragmentManager?.beginTransaction()
+                ?.replace(R.id.nav_host_fragment, BarcodeScannerFragment())
+                ?.addToBackStack(null)
+                ?.commit()
 
         }
 

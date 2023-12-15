@@ -21,6 +21,8 @@ class SharedViewModel @Inject constructor(private val repository: Repository): V
     val pbVisibility: LiveData<Boolean>
         get() = pbVisibilityMutableLiveData
 
+    var scanResult: String = ""
+
     var url: String = ""
     fun initData(){
         viewModelScope.launch(Dispatchers.IO) {
@@ -46,5 +48,9 @@ class SharedViewModel @Inject constructor(private val repository: Repository): V
 
             repository
         }
+    }
+
+    fun postScanResult(result: String){
+        scanResult = result
     }
 }

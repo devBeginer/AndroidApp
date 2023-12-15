@@ -1,57 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/iv_base_settings_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/baseline_arrow_back_24"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"/>
+            <ImageView
+                android:id="@+id/iv_base_settings_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_arrow_back_24"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"/>
 
-    <TextView
-        android:id="@+id/tv_base_settings_header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ПОДКЛЮЧЕНИ"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="16dp"/>
-
-
-    <Spinner
-        android:id="@+id/spinner_base_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+            <TextView
+                android:id="@+id/tv_base_settings_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ПОДКЛЮЧЕНИ"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="16dp"/>
 
 
+            <Spinner
+                android:id="@+id/spinner_base_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
 
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_base_settings_header"
-        android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="24dp"/>
-    <!--<androidx.appcompat.widget.AppCompatSpinner
-        android:id="@+id/spinner_base_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
 
-        android:spinnerMode="dropdown"
-        android:textAlignment="center"
 
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_base_settings_header"
-        android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="24dp"/>
-    --><!--<androidx.appcompat.widget.AppCompatSpinner
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_base_settings_header"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginTop="24dp"/>
+            <!--<androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/spinner_base_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+
+                android:spinnerMode="dropdown"
+                android:textAlignment="center"
+
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_base_settings_header"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginTop="24dp"/>
+            --><!--<androidx.appcompat.widget.AppCompatSpinner
         android:id="@+id/settingsSpinnerSettingsIDNew"
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -61,202 +68,215 @@
         android:spinnerMode="dropdown"
         android:textAlignment="center" />-->
 
-    <TextView
-        android:id="@+id/tv_base_settings_server"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintHorizontal_weight="3"
-        android:text="Сервер"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/et_base_settings_server"
-        app:layout_constraintBottom_toBottomOf="@id/et_base_settings_server"
-        app:layout_constraintEnd_toStartOf="@id/et_base_settings_server"
-        android:layout_marginStart="12dp"/>
+            <TextView
+                android:id="@+id/tv_base_settings_server"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintHorizontal_weight="3"
+                android:text="Сервер"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/et_base_settings_server"
+                app:layout_constraintBottom_toBottomOf="@id/et_base_settings_server"
+                app:layout_constraintEnd_toStartOf="@id/et_base_settings_server"
+                android:layout_marginStart="12dp"/>
 
-    <EditText
-        android:id="@+id/et_base_settings_server"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintHorizontal_weight="7"
-        android:autofillHints=""
-        android:ems="10"
-        android:inputType="textNoSuggestions"
-        app:layout_constraintStart_toEndOf="@id/tv_base_settings_server"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/spinner_base_name"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="12dp"/>
+            <EditText
+                android:id="@+id/et_base_settings_server"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintHorizontal_weight="7"
+                android:autofillHints=""
+                android:ems="10"
+                android:inputType="textNoSuggestions"
+                app:layout_constraintStart_toEndOf="@id/tv_base_settings_server"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/spinner_base_name"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="12dp"/>
 
-    <TextView
-        android:id="@+id/tv_base_settings_port"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintHorizontal_weight="3"
-        android:text="Порт"
-        app:layout_constraintEnd_toStartOf="@id/et_base_settings_port"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/et_base_settings_port"
-        app:layout_constraintBottom_toBottomOf="@id/et_base_settings_port"
+            <TextView
+                android:id="@+id/tv_base_settings_port"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintHorizontal_weight="3"
+                android:text="Порт"
+                app:layout_constraintEnd_toStartOf="@id/et_base_settings_port"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/et_base_settings_port"
+                app:layout_constraintBottom_toBottomOf="@id/et_base_settings_port"
 
-        android:layout_marginStart="12dp"/>
+                android:layout_marginStart="12dp"/>
 
-    <EditText
-        android:id="@+id/et_base_settings_port"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintHorizontal_weight="7"
-        android:autofillHints=""
-        android:ems="10"
-        android:inputType="number"
+            <EditText
+                android:id="@+id/et_base_settings_port"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintHorizontal_weight="7"
+                android:autofillHints=""
+                android:ems="10"
+                android:inputType="number"
 
-        app:layout_constraintStart_toEndOf="@id/tv_base_settings_port"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_base_settings_server"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="12dp"/>
+                app:layout_constraintStart_toEndOf="@id/tv_base_settings_port"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/et_base_settings_server"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="12dp"/>
 
-    <Switch
-        android:id="@+id/switch_base_settings_UseHTTPS"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintHorizontal_weight="3"
-        android:gravity="end"
-        android:text="SSL"
-        android:textAlignment="viewEnd"
+            <Switch
+                android:id="@+id/switch_base_settings_UseHTTPS"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintHorizontal_weight="3"
+                android:gravity="end"
+                android:text="SSL"
+                android:textAlignment="viewEnd"
 
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_base_settings_port"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="12dp"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/et_base_settings_port"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="12dp"/>
 
-    <Switch
-        android:id="@+id/switch_base_settings_DisableCheckSSL"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintHorizontal_weight="3"
-        android:gravity="end"
-        android:text="Не проверять сертификат"
-        android:textAlignment="viewEnd"
+            <Switch
+                android:id="@+id/switch_base_settings_DisableCheckSSL"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintHorizontal_weight="3"
+                android:gravity="end"
+                android:text="Не проверять сертификат"
+                android:textAlignment="viewEnd"
 
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_base_settings_port"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="12dp"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/et_base_settings_port"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="12dp"/>
 
-    <TextView
-        android:id="@+id/tv_base_settings_base"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintHorizontal_weight="3"
-        android:text="База"
+            <TextView
+                android:id="@+id/tv_base_settings_base"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintHorizontal_weight="3"
+                android:text="База"
 
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/et_base_settings_base"
-        app:layout_constraintBottom_toBottomOf="@id/et_base_settings_base"
-        app:layout_constraintEnd_toStartOf="@id/et_base_settings_base"
-        android:layout_marginStart="12dp"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/et_base_settings_base"
+                app:layout_constraintBottom_toBottomOf="@id/et_base_settings_base"
+                app:layout_constraintEnd_toStartOf="@id/et_base_settings_base"
+                android:layout_marginStart="12dp"/>
 
-    <EditText
-        android:id="@+id/et_base_settings_base"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintHorizontal_weight="7"
-        android:autofillHints=""
-        android:ems="10"
-        android:inputType="textNoSuggestions"
+            <EditText
+                android:id="@+id/et_base_settings_base"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintHorizontal_weight="7"
+                android:autofillHints=""
+                android:ems="10"
+                android:inputType="textNoSuggestions"
 
-        app:layout_constraintStart_toEndOf="@id/tv_base_settings_base"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/switch_base_settings_UseHTTPS"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="12dp" />
+                app:layout_constraintStart_toEndOf="@id/tv_base_settings_base"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/switch_base_settings_UseHTTPS"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="12dp" />
 
-    <TextView
-        android:id="@+id/tv_base_settings_login"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintHorizontal_weight="3"
-        android:text="Логин"
+            <TextView
+                android:id="@+id/tv_base_settings_login"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintHorizontal_weight="3"
+                android:text="Логин"
 
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/et_base_settings_login"
-        app:layout_constraintBottom_toBottomOf="@id/et_base_settings_login"
-        app:layout_constraintEnd_toStartOf="@id/et_base_settings_login"
-        android:layout_marginStart="12dp"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/et_base_settings_login"
+                app:layout_constraintBottom_toBottomOf="@id/et_base_settings_login"
+                app:layout_constraintEnd_toStartOf="@id/et_base_settings_login"
+                android:layout_marginStart="12dp"/>
 
-    <EditText
-        android:id="@+id/et_base_settings_login"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintHorizontal_weight="7"
-        android:autofillHints=""
-        android:inputType="textNoSuggestions"
+            <EditText
+                android:id="@+id/et_base_settings_login"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintHorizontal_weight="7"
+                android:autofillHints=""
+                android:inputType="textNoSuggestions"
 
-        app:layout_constraintStart_toEndOf="@id/tv_base_settings_login"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_base_settings_base"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="12dp"/>
+                app:layout_constraintStart_toEndOf="@id/tv_base_settings_login"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/et_base_settings_base"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="12dp"/>
 
 
-    <TextView
-        android:id="@+id/tv_base_settings_password"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintHorizontal_weight="3"
-        android:text="Пароль"
+            <TextView
+                android:id="@+id/tv_base_settings_password"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintHorizontal_weight="3"
+                android:text="Пароль"
 
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/et_base_settings_password"
-        app:layout_constraintBottom_toBottomOf="@id/et_base_settings_password"
-        app:layout_constraintEnd_toStartOf="@id/et_base_settings_password"
-        android:layout_marginStart="12dp"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/et_base_settings_password"
+                app:layout_constraintBottom_toBottomOf="@id/et_base_settings_password"
+                app:layout_constraintEnd_toStartOf="@id/et_base_settings_password"
+                android:layout_marginStart="12dp"/>
 
-    <EditText
-        android:id="@+id/et_base_settings_password"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintHorizontal_weight="7"
-        android:autofillHints=""
-        android:inputType="textPassword"
+            <EditText
+                android:id="@+id/et_base_settings_password"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintHorizontal_weight="7"
+                android:autofillHints=""
+                android:inputType="textPassword"
 
-        app:layout_constraintStart_toEndOf="@id/tv_base_settings_password"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_base_settings_login"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="12dp"/>
+                app:layout_constraintStart_toEndOf="@id/tv_base_settings_password"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/et_base_settings_login"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="12dp"/>
 
-    <Button
-        android:id="@+id/btn_base_settings_new_profile"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Создать новый"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_base_settings_password"
-        android:layout_marginTop="24dp"
-        android:layout_marginHorizontal="24dp"/>
+            <Button
+                android:id="@+id/btn_base_settings_new_profile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Создать новый"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/et_base_settings_password"
+                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="24dp"/>
 
-    <Button
-        android:id="@+id/btn_base_settings_delete_profile"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Удалить профиль"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_base_settings_new_profile"
-        android:layout_marginTop="24dp"
-        android:layout_marginHorizontal="24dp"/>
+            <Button
+                android:id="@+id/btn_base_settings_delete_profile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Удалить профиль"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_base_settings_new_profile"
+                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="24dp"/>
 
-    <Button
-        android:id="@+id/btn_base_settings_create_node"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Создать узел подключения"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_base_settings_delete_profile"
-        android:layout_marginTop="24dp"
-        android:layout_marginHorizontal="24dp"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/btn_base_settings_scan"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_base_settings_scan_qr"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_base_settings_delete_profile"
+                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="24dp"/>
+
+            <Button
+                android:id="@+id/btn_base_settings_create_node"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Создать узел подключения"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_base_settings_scan"
+                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="24dp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</LinearLayout>
