@@ -101,7 +101,7 @@ class NothingSelectedSpinnerAdapter(
 
     override fun getCount(): Int {
         val count = adapter.count
-        return if (count == 0) 0 else count + EXTRA
+        return count + EXTRA
     }
 
     override fun getItem(position: Int): Any? {

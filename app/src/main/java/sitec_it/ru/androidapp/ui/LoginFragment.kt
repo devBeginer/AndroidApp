@@ -84,7 +84,7 @@ class LoginFragment : Fragment() {
                 val userCode = viewModel.initLoginField()
                 val index = userList.indexOfFirst { userSpinner -> userSpinner.code == userCode }
                 if(index!=-1)
-                    spinner.setSelection(index)
+                    spinner.setSelection(index+1) //+1 потому что первый элемент это заголовок (Логин)
             }
             sharedViewModel.updateProgressBar(false)
         })
