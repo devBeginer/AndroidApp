@@ -87,4 +87,8 @@ class Repository @Inject constructor(private val localRepository: LocalRepositor
         return localRepository.getProfileById(getProfileFromSP())
             ?.let { profile -> profile.notCheckCertificate && profile.ssl } ?: false
     }
+
+    suspend fun getUserByCode(code: String): User? {
+        return localRepository.getUserByCode(code)
+    }
 }

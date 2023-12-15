@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AndroidApp</string>
+    <string name="app_name">WMSLite(test)</string>
     <string name="sign_in_title">Current profile: </string>
     <string name="sign_in_login">Login</string>
     <string name="sign_in_password">Password</string>
