@@ -50,8 +50,8 @@ class Repository @Inject constructor(private val localRepository: LocalRepositor
 
 
 
-    fun getUserFromSP() = localRepository.getCurrentUserLoginFromSP()
-    fun saveUserToSP(login: String) = localRepository.saveCurrentUserLoginToSP(login)
+    fun getUserFromSP() = localRepository.getCurrentUserCodeFromSP()
+    fun saveUserToSP(code: String) = localRepository.saveCurrentUserCodeToSP(code)
 
 
 

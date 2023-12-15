@@ -7,13 +7,14 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.data.models.User
 import sitec_it.ru.androidapp.network.Result
 import sitec_it.ru.androidapp.repository.Repository
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val repository: Repository): ViewModel() {
+class LoginViewModel @Inject constructor(private val repository: Repository): ViewModel() {
 
     /*private val userMutableLiveData: MutableLiveData<String?> = MutableLiveData(null)
     val user: LiveData<String?>
@@ -28,6 +29,11 @@ class MainViewModel @Inject constructor(private val repository: Repository): Vie
     private val userMutableLiveData: MutableLiveData<User?> = MutableLiveData(null)
     val user: LiveData<User?>
         get() = userMutableLiveData
+
+
+    private val profileMutableLiveData: MutableLiveData<Profile> = MutableLiveData(null)
+    val profile: LiveData<Profile>
+        get() = profileMutableLiveData
 
 
     private val apiResultMutableLiveData: MutableLiveData<String?> = MutableLiveData(null)
@@ -65,12 +71,21 @@ class MainViewModel @Inject constructor(private val repository: Repository): Vie
                 }else{
                     apiResultMutableLiveData.postValue(null)
                 }*/
-                repository.saveUserToSP(foundUser.login)
+                repository.saveUserToSP(foundUser.code)
                 userMutableLiveData.postValue(foundUser)
             }else{
                 userMutableLiveData.postValue(null)
             }
 
+
+        }
+    }
+
+    fun initProfileName(){
+        viewModelScope.launch(Dispatchers.IO) {
+            val foundProfile = repository.getProfileById(repository.getProfileFromSP())
+
+            foundProfile?.let { profile: Profile -> profileMutableLiveData.postValue(profile) }
 
         }
     }
@@ -99,9 +114,9 @@ class MainViewModel @Inject constructor(private val repository: Repository): Vie
     }
     fun initLoginField(){
         viewModelScope.launch(Dispatchers.IO) {
-            val login = repository.getUserFromSP()
-            if (login!=""){
-                loginMutableLiveData.postValue(login)
+            val code = repository.getUserFromSP()
+            if (code!=""){
+                loginMutableLiveData.postValue(code)
             }
         }
     }

@@ -4,7 +4,6 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -34,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.initData()
         viewModel.profileList.observe(this, Observer { count->
             if(count>0)
-                supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, MainFragment())
+                supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, LoginFragment())
                     .commit()
             else
                 supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, StartFragment())

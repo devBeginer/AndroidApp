@@ -20,14 +20,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
 import sitec_it.ru.androidapp.Utils.observeFutureEvents
-import sitec_it.ru.androidapp.data.models.NodeResponse
 import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.data.models.ProfileSpinnerItem
-import sitec_it.ru.androidapp.ui.MainFragment
+import sitec_it.ru.androidapp.ui.LoginFragment
 import sitec_it.ru.androidapp.viewModels.BaseSettingsViewModel
 import sitec_it.ru.androidapp.viewModels.SharedViewModel
 import java.util.ArrayList
@@ -276,7 +274,7 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
         val back = view.findViewById<ImageView>(R.id.iv_base_settings_back)
         back.setOnClickListener {
             activity?.supportFragmentManager?.beginTransaction()
-                ?.replace(R.id.nav_host_fragment, MainFragment())?.commit()
+                ?.replace(R.id.nav_host_fragment, LoginFragment())?.commit()
 
         }
 

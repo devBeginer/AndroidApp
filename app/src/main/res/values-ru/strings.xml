@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AndroidApp</string>
-    <string name="sign_in_title">База временная</string>
+    <string name="sign_in_title">Текущий профиль: </string>
     <string name="sign_in_login">Логин</string>
     <string name="sign_in_password">Пароль</string>
     <string name="sign_in_btn">Войти</string>

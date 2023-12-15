@@ -4,7 +4,24 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
-    <com.google.android.material.appbar.AppBarLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="32dp"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:text="Авториация"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:text="WMSLite v1.0.0"/>
+    </LinearLayout>
+    <!--<com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_main"
         style="Widget.MaterialComponents.Toolbar"
         android:layout_width="match_parent"
@@ -24,7 +41,7 @@
             app:titleMarginStart="32dp"
             app:titleTextAppearance="?attr/textAppearanceHeadline6">
         </com.google.android.material.appbar.MaterialToolbar>
-    </com.google.android.material.appbar.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>-->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -50,10 +67,12 @@
                 android:id="@+id/spinner_main_users"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@+id/tv_sign_in"
+                app:layout_constraintTop_toBottomOf="@id/tv_sign_in"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_marginTop="42dp"
+                android:layout_marginStart="36dp"
+                android:layout_marginEnd="36dp" />
 
             <TextView
                 android:id="@+id/tv_sign_in"
@@ -69,7 +88,7 @@
 
                 android:layout_marginTop="48dp"/>
 
-            <com.google.android.material.textfield.TextInputLayout
+            <!--<com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_login"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -86,7 +105,7 @@
                     android:hint="@string/sign_in_login"
                     android:imeOptions="actionDone"
                     android:singleLine="true"/>
-            </com.google.android.material.textfield.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>-->
 
 
             <com.google.android.material.textfield.TextInputLayout
@@ -94,7 +113,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:passwordToggleEnabled="true"
-                app:layout_constraintTop_toBottomOf="@id/til_login"
+                app:layout_constraintTop_toBottomOf="@id/spinner_main_users"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginTop="24dp"

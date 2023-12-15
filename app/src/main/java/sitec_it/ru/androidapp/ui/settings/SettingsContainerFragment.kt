@@ -7,7 +7,7 @@ import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import sitec_it.ru.androidapp.R
-import sitec_it.ru.androidapp.ui.MainFragment
+import sitec_it.ru.androidapp.ui.LoginFragment
 
 class SettingsContainerFragment: Fragment(R.layout.fragment_settings_container) {
 
@@ -16,7 +16,7 @@ class SettingsContainerFragment: Fragment(R.layout.fragment_settings_container) 
         // This callback is only called when MyFragment is at least started
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
             activity?.supportFragmentManager?.beginTransaction()
-                ?.replace(R.id.nav_host_fragment, MainFragment())?.commit()
+                ?.replace(R.id.nav_host_fragment, LoginFragment())?.commit()
         }
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

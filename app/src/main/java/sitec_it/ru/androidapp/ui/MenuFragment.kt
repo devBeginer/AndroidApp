@@ -17,7 +17,7 @@ class MenuFragment:Fragment() {
         super.onCreate(savedInstanceState)
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
             activity?.supportFragmentManager?.beginTransaction()
-                ?.replace(R.id.nav_host_fragment, MainFragment())?.commit()
+                ?.replace(R.id.nav_host_fragment, LoginFragment())?.commit()
         }
     }
     override fun onCreateView(
@@ -36,7 +36,7 @@ class MenuFragment:Fragment() {
         toolbar.setNavigationIcon(R.drawable.baseline_logout_24)
         toolbar.setNavigationOnClickListener {
             activity?.supportFragmentManager?.beginTransaction()
-                ?.replace(R.id.nav_host_fragment, MainFragment())
+                ?.replace(R.id.nav_host_fragment, LoginFragment())
                 ?.commit()
         }
     }

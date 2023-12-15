@@ -19,7 +19,7 @@ class LocalRepository @Inject constructor(private val profileDao: ProfileDao,
                                           private val sharedPreferences: SharedPreferences) {
     companion object{
         const val PROFILE_ID = "profile_id"
-        const val USER_LOGIN = "user_login"
+        const val USER_CODE = "user_code"
     }
 
 
@@ -67,11 +67,11 @@ class LocalRepository @Inject constructor(private val profileDao: ProfileDao,
 
 
 
-    fun getCurrentUserLoginFromSP(): String{
-        return sharedPreferences.getString(USER_LOGIN, "") ?: ""
+    fun getCurrentUserCodeFromSP(): String{
+        return sharedPreferences.getString(USER_CODE, "") ?: ""
     }
 
-    fun saveCurrentUserLoginToSP(login: String){
-        return sharedPreferences.editPref(USER_LOGIN, login)
+    fun saveCurrentUserCodeToSP(login: String){
+        return sharedPreferences.editPref(USER_CODE, login)
     }
 }

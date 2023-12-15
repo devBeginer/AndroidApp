@@ -14,64 +14,70 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
 import sitec_it.ru.androidapp.Utils.observeFutureEvents
-import sitec_it.ru.androidapp.data.models.ProfileSpinnerItem
+import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.data.models.User
 import sitec_it.ru.androidapp.data.models.UserSpinner
 import sitec_it.ru.androidapp.ui.settings.SettingsContainerFragment
-import sitec_it.ru.androidapp.viewModels.MainViewModel
+import sitec_it.ru.androidapp.viewModels.LoginViewModel
 import sitec_it.ru.androidapp.viewModels.SharedViewModel
 import java.util.ArrayList
 
 @AndroidEntryPoint
-class MainFragment : Fragment() {
+class LoginFragment : Fragment() {
 
-    private val viewModel: MainViewModel by viewModels()
-    private val sharedViewModel: SharedViewModel by viewModels({requireActivity()})
-
+    private val viewModel: LoginViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by viewModels({ requireActivity() })
+    private var userList = arrayListOf<UserSpinner>()
+    private lateinit var arrayAdapter: ArrayAdapter<UserSpinner> /*= ArrayAdapter<UserSpinner>(
+        requireContext(),
+        R.layout.custom_spinner_item,
+        userList
+    )*/
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_main, container, false)
+        return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val buttonLogin = view.findViewById<Button>(R.id.btn_sign_in)
-        val editTextLogin = view.findViewById<EditText>(R.id.et_login)
+        //val editTextLogin = view.findViewById<EditText>(R.id.et_login)
         val editTextPassword = view.findViewById<EditText>(R.id.et_password)
         val btnSettings = view.findViewById<Button>(R.id.btn_sign_in_settings)
-        val toolbar = view.findViewById<MaterialToolbar>(R.id.toolbar_main)
         val spinner = view.findViewById<Spinner>(R.id.spinner_main_users)
-        //viewModel.prepopulateUser()
-        sharedViewModel.updateProgressBar(true)
-        viewModel.loadUsers()
-        viewModel.login.observeFutureEvents(viewLifecycleOwner, Observer {login->
-            editTextLogin.setText(login)
+        val tvProfile = view.findViewById<TextView>(R.id.tv_sign_in)
+        initView()
+
+        viewModel.login.observeFutureEvents(viewLifecycleOwner, Observer { code ->
+            //editTextLogin.setText(code)
+            /*val previousUser = userList.filter { user-> user.code == code}
+            if(previousUser.size == 1) spinner.setSelection(userList.indexOf(previousUser[0]))*/
+            val index = userList.indexOfFirst { userSpinner -> userSpinner.code == code }
+            if(index!=-1) spinner.setSelection(index)
         })
 
-        viewModel.initLoginField()
 
-        var userList = arrayListOf<UserSpinner>()
-        var arrayAdapter = ArrayAdapter<UserSpinner>(
-            requireContext(),
-            R.layout.custom_spinner_item,
-            userList
-        )
-        arrayAdapter.setDropDownViewResource(R.layout.custom_spinner_drop_down_item)
 
         spinner.adapter = arrayAdapter
-        viewModel.userList.observe(viewLifecycleOwner, Observer {list->
+        viewModel.userList.observe(viewLifecycleOwner, Observer { list ->
             if (list != null) {
                 arrayAdapter.clear()
-                val tmpList = list.map { user-> UserSpinner(user.code, user.login, user.name, user.password) }
+                val tmpList = list.map { user ->
+                    UserSpinner(
+                        user.code,
+                        user.login,
+                        user.name,
+                        user.password
+                    )
+                }
                 userList = ArrayList(tmpList)
                 arrayAdapter.addAll(userList)
                 arrayAdapter.notifyDataSetChanged()
@@ -79,25 +85,7 @@ class MainFragment : Fragment() {
             sharedViewModel.updateProgressBar(false)
         })
 
-        /*viewModel.user.observe(viewLifecycleOwner, Observer {
-            if(it!=null){
-                val snackbar: Snackbar = Snackbar.make(
-                    requireView(),
-                    it, Snackbar.LENGTH_LONG
-                )
-                val view = snackbar.view
-                val txtv = view.findViewById<View>(com.google.android.material.R.id.snackbar_text) as TextView
-                txtv.maxLines = 5
-                snackbar.show()
-                //Toast.makeText(context, "$it", Toast.LENGTH_LONG).show()
-                //Toast.makeText(context, "Пользователь: ${it.name}", Toast.LENGTH_LONG).show()
-                activity?.supportFragmentManager?.beginTransaction()
-                    ?.replace(R.id.nav_host_fragment, MenuFragment())
-                    ?.commit()
-            }else{
-                Toast.makeText(context, "Неверный логин или пароль", Toast.LENGTH_LONG).show()
-            }
-        })*/
+
         viewModel.apiResult.observe(viewLifecycleOwner, object : Observer<String?> {
             var isFirst = true
 
@@ -146,7 +134,7 @@ class MainFragment : Fragment() {
                 }
             }
         })
-        viewModel.user.observeFutureEvents(viewLifecycleOwner, Observer<User?> {user->
+        viewModel.user.observeFutureEvents(viewLifecycleOwner, Observer<User?> { user ->
 
             if (user != null) {
 
@@ -158,6 +146,11 @@ class MainFragment : Fragment() {
                     .show()
             }
 
+
+        })
+        viewModel.profile.observeFutureEvents(viewLifecycleOwner, Observer<Profile> { profile ->
+
+            tvProfile.text = "${tvProfile.text}\n ${profile.name}"
 
         })
         /*viewModel.user.observeFutureEvents(viewLifecycleOwner, Observer {
@@ -181,7 +174,8 @@ class MainFragment : Fragment() {
         })*/
 
         buttonLogin.setOnClickListener {
-            viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
+            //viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
+            viewModel.login((spinner.selectedItem as UserSpinner).login, editTextPassword.text.toString())
             /*if(editTextLogin.text.isNotEmpty() && editTextPassword.text.isNotEmpty()){
                 viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
             }else{
@@ -190,19 +184,20 @@ class MainFragment : Fragment() {
         }
         editTextPassword.setOnEditorActionListener { textView, id, keyEvent ->
             if (id == EditorInfo.IME_ACTION_DONE) {
-                viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
+                //viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
+                viewModel.login((spinner.selectedItem as UserSpinner).login, editTextPassword.text.toString())
                 return@setOnEditorActionListener true
             }
             return@setOnEditorActionListener false
         }
 
-        editTextLogin.setOnEditorActionListener { textView, id, keyEvent ->
+        /*editTextLogin.setOnEditorActionListener { textView, id, keyEvent ->
             if (id == EditorInfo.IME_ACTION_DONE) {
                 viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
                 return@setOnEditorActionListener true
             }
             return@setOnEditorActionListener false
-        }
+        }*/
 
         btnSettings.setOnClickListener {
             activity?.supportFragmentManager?.beginTransaction()
@@ -222,5 +217,18 @@ class MainFragment : Fragment() {
             return@setOnMenuItemClickListener false
         }*/
 
+    }
+
+    private fun initView() {
+        arrayAdapter = ArrayAdapter<UserSpinner>(
+            requireContext(),
+            R.layout.custom_spinner_item,
+            userList
+        )
+        sharedViewModel.updateProgressBar(true)
+        viewModel.loadUsers()
+        viewModel.initLoginField()
+        viewModel.initProfileName()
+        arrayAdapter.setDropDownViewResource(R.layout.custom_spinner_drop_down_item)
     }
 }
