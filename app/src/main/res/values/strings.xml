@@ -5,4 +5,5 @@
     <string name="sign_in_password">Password</string>
     <string name="sign_in_btn">Sign in</string>
     <string name="crash_toast_text">Error! Sending report</string>
+    <string name="login_spinner_header">Login</string>
 </resources>

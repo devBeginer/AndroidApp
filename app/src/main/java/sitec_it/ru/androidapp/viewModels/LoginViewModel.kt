@@ -112,13 +112,12 @@ class LoginViewModel @Inject constructor(private val repository: Repository): Vi
             //repository.insertUser(User(login = "login3"))
         }
     }
-    fun initLoginField(){
-        viewModelScope.launch(Dispatchers.IO) {
-            val code = repository.getUserFromSP()
-            if (code!=""){
-                loginMutableLiveData.postValue(code)
-            }
-        }
+    fun initLoginField(): String{
+        val code = repository.getUserFromSP()
+        /*if (code!=""){
+            loginMutableLiveData.postValue(code)
+        }*/
+        return code
     }
 
 }

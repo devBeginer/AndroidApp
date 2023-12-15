@@ -21,6 +21,7 @@ import sitec_it.ru.androidapp.Utils.observeFutureEvents
 import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.data.models.User
 import sitec_it.ru.androidapp.data.models.UserSpinner
+import sitec_it.ru.androidapp.ui.settings.NothingSelectedSpinnerAdapter
 import sitec_it.ru.androidapp.ui.settings.SettingsContainerFragment
 import sitec_it.ru.androidapp.viewModels.LoginViewModel
 import sitec_it.ru.androidapp.viewModels.SharedViewModel
@@ -56,17 +57,16 @@ class LoginFragment : Fragment() {
         val tvProfile = view.findViewById<TextView>(R.id.tv_sign_in)
         initView()
 
-        viewModel.login.observeFutureEvents(viewLifecycleOwner, Observer { code ->
-            //editTextLogin.setText(code)
-            /*val previousUser = userList.filter { user-> user.code == code}
-            if(previousUser.size == 1) spinner.setSelection(userList.indexOf(previousUser[0]))*/
+        /*viewModel.login.observeFutureEvents(viewLifecycleOwner, Observer { code ->
+
             val index = userList.indexOfFirst { userSpinner -> userSpinner.code == code }
             if(index!=-1) spinner.setSelection(index)
-        })
+        })*/
 
 
 
-        spinner.adapter = arrayAdapter
+        //spinner.adapter = arrayAdapter
+        spinner.adapter = NothingSelectedSpinnerAdapter(arrayAdapter, requireContext(), R.layout.spinner_row_nothing_selected)
         viewModel.userList.observe(viewLifecycleOwner, Observer { list ->
             if (list != null) {
                 arrayAdapter.clear()
@@ -81,6 +81,10 @@ class LoginFragment : Fragment() {
                 userList = ArrayList(tmpList)
                 arrayAdapter.addAll(userList)
                 arrayAdapter.notifyDataSetChanged()
+                val userCode = viewModel.initLoginField()
+                val index = userList.indexOfFirst { userSpinner -> userSpinner.code == userCode }
+                if(index!=-1)
+                    spinner.setSelection(index)
             }
             sharedViewModel.updateProgressBar(false)
         })
@@ -222,13 +226,15 @@ class LoginFragment : Fragment() {
     private fun initView() {
         arrayAdapter = ArrayAdapter<UserSpinner>(
             requireContext(),
-            R.layout.custom_spinner_item,
+            //R.layout.custom_spinner_item,
+            android.R.layout.simple_spinner_item,
             userList
         )
+        arrayAdapter.setDropDownViewResource(R.layout.custom_spinner_drop_down_item)
+
         sharedViewModel.updateProgressBar(true)
         viewModel.loadUsers()
-        viewModel.initLoginField()
+        //viewModel.initLoginField()
         viewModel.initProfileName()
-        arrayAdapter.setDropDownViewResource(R.layout.custom_spinner_drop_down_item)
     }
 }
