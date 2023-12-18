@@ -1,11 +1,13 @@
 package sitec_it.ru.androidapp.ui
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
@@ -25,7 +27,8 @@ import sitec_it.ru.androidapp.ui.settings.NothingSelectedSpinnerAdapter
 import sitec_it.ru.androidapp.ui.settings.SettingsContainerFragment
 import sitec_it.ru.androidapp.viewModels.LoginViewModel
 import sitec_it.ru.androidapp.viewModels.SharedViewModel
-import java.util.ArrayList
+
+import sitec_it.ru.androidapp.BuildConfig
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {

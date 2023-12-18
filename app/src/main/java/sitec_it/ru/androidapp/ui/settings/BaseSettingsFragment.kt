@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -113,6 +114,13 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
             sharedViewModel.updateProgressBar(false)
 
         }
+
+        sharedViewModel.scanResult.observeFutureEvents(viewLifecycleOwner, Observer { scanResult->
+            if(scanResult!=null){
+                Toast.makeText(activity, scanResult, Toast.LENGTH_LONG).show()
+                sharedViewModel.postScanResult(null)
+            }
+        })
 
         var profileList = arrayListOf<ProfileSpinnerItem>()
         var arrayAdapter = ArrayAdapter<ProfileSpinnerItem>(

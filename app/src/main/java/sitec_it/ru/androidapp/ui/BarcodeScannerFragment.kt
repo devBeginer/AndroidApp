@@ -27,9 +27,9 @@ class BarcodeScannerFragment : Fragment() {
         val activity = requireActivity()
         codeScanner = CodeScanner(activity, scannerView)
         codeScanner.decodeCallback = DecodeCallback { result ->
-            activity.runOnUiThread {
+            /*activity.runOnUiThread {
                 Toast.makeText(activity, result.text, Toast.LENGTH_LONG).show()
-            }
+            }*/
             sharedViewModel.postScanResult(result.text)
             activity.supportFragmentManager.popBackStack()
         }

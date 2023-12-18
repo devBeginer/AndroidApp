@@ -9,14 +9,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
+import sitec_it.ru.androidapp.Utils.observeFutureEvents
 import sitec_it.ru.androidapp.ui.settings.SettingsContainerFragment
+import sitec_it.ru.androidapp.viewModels.SharedViewModel
 import sitec_it.ru.androidapp.viewModels.StartViewModel
 import kotlin.system.exitProcess
 
@@ -27,6 +31,7 @@ class StartFragment: Fragment() {
     }
 
     private val viewModel: StartViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by viewModels({requireActivity()})
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -57,6 +62,12 @@ class StartFragment: Fragment() {
             permissionsRequest()
         }
 
+        sharedViewModel.scanResult.observeFutureEvents(viewLifecycleOwner, Observer { scanResult->
+            if(scanResult!=null){
+                Toast.makeText(activity, scanResult, Toast.LENGTH_LONG).show()
+                sharedViewModel.postScanResult(null)
+            }
+        })
     }
 
     fun permissionsGranted(): Boolean {
