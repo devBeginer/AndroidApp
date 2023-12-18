@@ -199,6 +199,7 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
                                     databaseID = data.nodeId
                                     )
                             )
+                            repository.saveCurrentDatabaseId(data.nodeId)
                             val profileLicense = repository.getProfileLicense(currentProfile.id)
                             if(profileLicense!=null) {
                                 repository.updateProfileLicense(

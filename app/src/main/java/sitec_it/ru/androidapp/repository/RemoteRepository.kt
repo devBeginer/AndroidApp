@@ -3,6 +3,8 @@ package sitec_it.ru.androidapp.repository
 import okhttp3.Credentials
 import sitec_it.ru.androidapp.data.models.NodeRequest
 import sitec_it.ru.androidapp.data.models.UserResponse
+import sitec_it.ru.androidapp.data.models.changes.Changes
+import sitec_it.ru.androidapp.data.models.message.MessageList
 import sitec_it.ru.androidapp.di.modules.NormalApiService
 import sitec_it.ru.androidapp.di.modules.SSlFactoryApiService
 import sitec_it.ru.androidapp.network.ApiService
@@ -69,13 +71,19 @@ class RemoteRepository @Inject constructor(
         errorMessage = errorMessage/*"Error register node"*/
     )
 
-    fun getChanges(
+    suspend fun getChanges(
         login: String,
         password: String,
         url: String,
-        error: String,
-        disableCheckCertificate: Boolean
-    ) {
-
-    }
+        errorMessage: String,
+        disableCheckCertificate: Boolean,
+        dataBody: MessageList
+    ):sitec_it.ru.androidapp.network.Result<Changes?> = networkHelper.safeApiCall(
+        call = {
+            (if (disableCheckCertificate) apiServiceSSLFactory else apiService)
+                .getChanges(Credentials.basic(login, password, Charset.forName("UTF-8")), url,
+                    dataBody)
+        },
+        errorMessage = errorMessage
+    )
 }

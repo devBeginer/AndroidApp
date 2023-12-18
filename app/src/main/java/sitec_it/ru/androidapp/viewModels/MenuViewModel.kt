@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import sitec_it.ru.androidapp.data.models.changes.Changes
+import sitec_it.ru.androidapp.network.Result
 import sitec_it.ru.androidapp.repository.Repository
 import javax.inject.Inject
 
@@ -14,6 +16,7 @@ import javax.inject.Inject
 class MenuViewModel @Inject constructor(val repository: Repository) : ViewModel() {
 
     val nameForLabel = MutableLiveData<String?>()
+    val changesObserve = MutableLiveData<Changes>()
 
     fun setTvHello() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -28,6 +31,17 @@ class MenuViewModel @Inject constructor(val repository: Repository) : ViewModel(
     fun getChanges() {
         viewModelScope.launch(Dispatchers.IO) {
             val response =   repository.getChanges()
+            when(response){
+                is Result.Success -> {
+                    response.data?.let { dataBody ->
+                        Log.d("changes",dataBody.toString())
+                        changesObserve.postValue(dataBody)
+                    }
+                }
+                is Result.Error -> {
+                    Log.d("changes",response.description)
+                }
+            }
         }
     }
 

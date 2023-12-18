@@ -8,6 +8,8 @@ import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
 import sitec_it.ru.androidapp.data.models.User
 import sitec_it.ru.androidapp.data.models.UserResponse
+import sitec_it.ru.androidapp.data.models.changes.Changes
+import sitec_it.ru.androidapp.data.models.message.MessageList
 import sitec_it.ru.androidapp.network.NetworkHelper
 import java.io.IOException
 import javax.inject.Inject
@@ -136,16 +138,21 @@ class Repository @Inject constructor(
         return localRepository.getUserByCode(code)
     }
 
-    suspend fun getChanges() {
+    suspend fun getChanges():Result<Changes?> {
         val currentProfile =
             localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
+        var dataBody = localRepository.getLastMessage()
+        if (dataBody == null){
+            dataBody = MessageList(localRepository.getCurrentDatabaseId().toString(),"0")
+        }
         if (networkHelper.isNetworkConnected() && currentProfile != null) {
             return remoteRepository.getChanges(
                 currentProfile.login,
                 currentProfile.password,
                 currentProfile.url + "hs/MobileClient/changes",
                 "Error Fetching Users",
-                isDisableCheckCertificate()
+                isDisableCheckCertificate(),
+                dataBody
             )
 
         } else {
@@ -156,5 +163,9 @@ class Repository @Inject constructor(
                 IOException("Error Fetching Users, ERROR - Connection")
             )
         }
+    }
+
+    fun saveCurrentDatabaseId(nodeId: String) {
+        localRepository.saveCurrentDatabaseId(nodeId)
     }
 }

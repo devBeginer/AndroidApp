@@ -11,6 +11,7 @@ import sitec_it.ru.androidapp.data.models.Node
 import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
 import sitec_it.ru.androidapp.data.models.User
+import sitec_it.ru.androidapp.data.models.message.MessageList
 import javax.inject.Inject
 
 class LocalRepository @Inject constructor(
@@ -24,6 +25,7 @@ class LocalRepository @Inject constructor(
     companion object {
         const val PROFILE_ID = "profile_id"
         const val USER_CODE = "user_code"
+        const val CurrentDatabaseId = "CurrentDatabaseId"
     }
 
 
@@ -79,4 +81,15 @@ class LocalRepository @Inject constructor(
     }
 
     suspend fun getUserByCode(code: String): User? = userDao.getUserByCode(code)
+    fun getLastMessage(): MessageList {
+
+        return messageListDao.getRecordById(getCurrentDatabaseId())
+    }
+
+    fun saveCurrentDatabaseId(nodeId: String) {
+        sharedPreferences.editPref(CurrentDatabaseId,nodeId)
+    }
+    fun getCurrentDatabaseId(): String? {
+        return sharedPreferences.getString(CurrentDatabaseId,"")
+    }
 }
