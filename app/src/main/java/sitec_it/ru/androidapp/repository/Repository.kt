@@ -15,7 +15,11 @@ import javax.inject.Inject
 import sitec_it.ru.androidapp.network.Result
 
 @ViewModelScoped
-class Repository @Inject constructor(private val localRepository: LocalRepository, private val remoteRepository: RemoteRepository, private val networkHelper: NetworkHelper) {
+class Repository @Inject constructor(
+    private val localRepository: LocalRepository,
+    private val remoteRepository: RemoteRepository,
+    private val networkHelper: NetworkHelper
+) {
 
     suspend fun updateProfile(profile: Profile) = localRepository.updateProfile(profile)
     suspend fun insertProfile(profile: Profile): Long = localRepository.insertProfile(profile)
@@ -31,64 +35,126 @@ class Repository @Inject constructor(private val localRepository: LocalRepositor
     suspend fun deleteNode(node: Node) = localRepository.deleteNode(node)
 
 
-
-
     suspend fun updateUser(user: User) = localRepository.updateUser(user)
     suspend fun insertUser(user: User): Long = localRepository.insertUser(user)
     suspend fun deleteUser(user: User) = localRepository.deleteUser(user)
     suspend fun getUser(login: String) = localRepository.getUser(login)
     suspend fun getAllUsers() = localRepository.getAllUsers()
 
-    suspend fun updateProfileLicense(profileLicense: ProfileLicense) = localRepository.updateProfileLicense(profileLicense)
-    suspend fun insertProfileLicense(profileLicense: ProfileLicense) = localRepository.insertProfileLicense(profileLicense)
-    suspend fun getProfileLicense(id: Long) = localRepository.getProfileLicenseByProfile(id)
+    suspend fun updateProfileLicense(profileLicense: ProfileLicense) =
+        localRepository.updateProfileLicense(profileLicense)
 
+    suspend fun insertProfileLicense(profileLicense: ProfileLicense) =
+        localRepository.insertProfileLicense(profileLicense)
+
+    suspend fun getProfileLicense(id: Long) = localRepository.getProfileLicenseByProfile(id)
 
 
     fun getProfileFromSP() = localRepository.getCurrentProfileIdFromSP()
     fun saveProfileToSP(id: Long) = localRepository.saveCurrentProfileIdToSP(id)
 
 
-
     fun getUserFromSP() = localRepository.getCurrentUserCodeFromSP()
     fun saveUserToSP(code: String) = localRepository.saveCurrentUserCodeToSP(code)
 
 
-
-    suspend fun getTestFromApi(urlPostfix: String): Result<String>{
-        val currentProfile = localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
-        return if(networkHelper.isNetworkConnected() && currentProfile!=null){
-            remoteRepository.getTestFromApi(currentProfile.login, currentProfile.password, currentProfile.url+urlPostfix, "Error test api", isDisableCheckCertificate())
-        }else {
-            Result.Error(0, "Error test api", "ERROR - Connection", IOException("Error Fetching User, ERROR - Connection"))
+    suspend fun getTestFromApi(urlPostfix: String): Result<String> {
+        val currentProfile =
+            localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
+        return if (networkHelper.isNetworkConnected() && currentProfile != null) {
+            remoteRepository.getTestFromApi(
+                currentProfile.login,
+                currentProfile.password,
+                currentProfile.url + urlPostfix,
+                "Error test api",
+                isDisableCheckCertificate()
+            )
+        } else {
+            Result.Error(
+                0,
+                "Error test api",
+                "ERROR - Connection",
+                IOException("Error Fetching User, ERROR - Connection")
+            )
         }
     }
 
 
-    suspend fun postNodeToApi( username: String,  password: String, url: String, nodeRequest: NodeRequest): Result<NodeResponse?>{
-        return if(networkHelper.isNetworkConnected()){
-            remoteRepository.postNodeToApi(username, password, url, nodeRequest, "Error register node", isDisableCheckCertificate())
-        }else {
-            Result.Error(0, "Error register node", "ERROR - Connection", IOException("Error register node, ERROR - Connection"))
+    suspend fun postNodeToApi(
+        username: String,
+        password: String,
+        url: String,
+        nodeRequest: NodeRequest
+    ): Result<NodeResponse?> {
+        return if (networkHelper.isNetworkConnected()) {
+            remoteRepository.postNodeToApi(
+                username,
+                password,
+                url,
+                nodeRequest,
+                "Error register node",
+                isDisableCheckCertificate()
+            )
+        } else {
+            Result.Error(
+                0,
+                "Error register node",
+                "ERROR - Connection",
+                IOException("Error register node, ERROR - Connection")
+            )
         }
     }
 
-    suspend fun getUsersList(urlPostfix: String): Result<UserResponse?>{
-        val currentProfile = localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
-        /*return*/ if(networkHelper.isNetworkConnected() && currentProfile!=null){
-            return remoteRepository.loadUsers(currentProfile.login, currentProfile.password, currentProfile.url+urlPostfix, "Error Fetching Users", isDisableCheckCertificate())
-            //remoteRepository.loadUsers(currentProfile.login, currentProfile.password, currentProfile.url+urlPostfix, "Error Fetching Users", isDisableCheckCertificate())
-        }else{
-            return Result.Error(0, "Error Fetching Users", "ERROR - Connection", IOException("Error Fetching Users, ERROR - Connection"))
+    suspend fun getUsersList(urlPostfix: String): Result<UserResponse?> {
+        val currentProfile =
+            localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
+        if (networkHelper.isNetworkConnected() && currentProfile != null) {
+            return remoteRepository.loadUsers(
+                currentProfile.login,
+                currentProfile.password,
+                currentProfile.url + urlPostfix,
+                "Error Fetching Users",
+                isDisableCheckCertificate()
+            )
+
+        } else {
+            return Result.Error(
+                0,
+                "Error Fetching Users",
+                "ERROR - Connection",
+                IOException("Error Fetching Users, ERROR - Connection")
+            )
         }
     }
 
-    private suspend fun isDisableCheckCertificate(): Boolean{
+    private suspend fun isDisableCheckCertificate(): Boolean {
         return localRepository.getProfileById(getProfileFromSP())
             ?.let { profile -> profile.notCheckCertificate && profile.ssl } ?: false
     }
 
     suspend fun getUserByCode(code: String): User? {
         return localRepository.getUserByCode(code)
+    }
+
+    suspend fun getChanges() {
+        val currentProfile =
+            localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
+        if (networkHelper.isNetworkConnected() && currentProfile != null) {
+            return remoteRepository.getChanges(
+                currentProfile.login,
+                currentProfile.password,
+                currentProfile.url + "hs/MobileClient/changes",
+                "Error Fetching Users",
+                isDisableCheckCertificate()
+            )
+
+        } else {
+            return Result.Error(
+                0,
+                "Error Fetching Users",
+                "ERROR - Connection",
+                IOException("Error Fetching Users, ERROR - Connection")
+            )
+        }
     }
 }

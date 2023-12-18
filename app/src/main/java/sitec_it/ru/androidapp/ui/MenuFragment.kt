@@ -60,4 +60,9 @@ class MenuFragment:Fragment() {
     private  fun initData() {
         viewModel.setTvHello()
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getChanges()
+    }
 }

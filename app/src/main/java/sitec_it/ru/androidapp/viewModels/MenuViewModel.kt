@@ -25,4 +25,10 @@ class MenuViewModel @Inject constructor(val repository: Repository) : ViewModel(
         }
     }
 
+    fun getChanges() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val response =   repository.getChanges()
+        }
+    }
+
 }

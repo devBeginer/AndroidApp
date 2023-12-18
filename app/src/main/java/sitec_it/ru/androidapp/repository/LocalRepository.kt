@@ -2,6 +2,7 @@ package sitec_it.ru.androidapp.repository
 
 import android.content.SharedPreferences
 import sitec_it.ru.androidapp.SharedPreferencesUtils.editPref
+import sitec_it.ru.androidapp.data.dao.MessageListDao
 import sitec_it.ru.androidapp.data.dao.NodeDao
 import sitec_it.ru.androidapp.data.dao.ProfileDao
 import sitec_it.ru.androidapp.data.dao.ProfileLicenseDao
@@ -12,16 +13,18 @@ import sitec_it.ru.androidapp.data.models.ProfileLicense
 import sitec_it.ru.androidapp.data.models.User
 import javax.inject.Inject
 
-class LocalRepository @Inject constructor(private val profileDao: ProfileDao,
-                                          private val profileLicenseDao: ProfileLicenseDao,
-                                          private val userDao: UserDao,
-                                          private val nodeDao: NodeDao,
-                                          private val sharedPreferences: SharedPreferences) {
-    companion object{
+class LocalRepository @Inject constructor(
+    private val profileDao: ProfileDao,
+    private val profileLicenseDao: ProfileLicenseDao,
+    private val userDao: UserDao,
+    private val nodeDao: NodeDao,
+    private val sharedPreferences: SharedPreferences,
+    private val messageListDao: MessageListDao
+) {
+    companion object {
         const val PROFILE_ID = "profile_id"
         const val USER_CODE = "user_code"
     }
-
 
 
     suspend fun updateProfile(profile: Profile) = profileDao.updateProfile(profile)
@@ -40,7 +43,6 @@ class LocalRepository @Inject constructor(private val profileDao: ProfileDao,
     suspend fun deleteNode(node: Node) = nodeDao.deleteNode(node)
 
 
-
     suspend fun updateUser(user: User) = userDao.updateUser(user)
     suspend fun insertUser(user: User): Long = userDao.insertUser(user)
     suspend fun deleteUser(user: User) = userDao.deleteUser(user)
@@ -48,30 +50,31 @@ class LocalRepository @Inject constructor(private val profileDao: ProfileDao,
     suspend fun getAllUsers() = userDao.getAllUsers()
 
 
+    suspend fun updateProfileLicense(profileLicense: ProfileLicense) =
+        profileLicenseDao.updateProfileLicense(profileLicense)
 
+    suspend fun insertProfileLicense(profileLicense: ProfileLicense) =
+        profileLicenseDao.insertProfileLicense(profileLicense)
 
-    suspend fun updateProfileLicense(profileLicense: ProfileLicense) = profileLicenseDao.updateProfileLicense(profileLicense)
-    suspend fun insertProfileLicense(profileLicense: ProfileLicense) = profileLicenseDao.insertProfileLicense(profileLicense)
     suspend fun getProfileLicense(id: Long) = profileLicenseDao.getProfileLicenseById(id)
-    suspend fun getProfileLicenseByProfile(id: Long) = profileLicenseDao.getProfileLicenseByProfile(id)
+    suspend fun getProfileLicenseByProfile(id: Long) =
+        profileLicenseDao.getProfileLicenseByProfile(id)
 
 
-
-    fun getCurrentProfileIdFromSP(): Long{
+    fun getCurrentProfileIdFromSP(): Long {
         return sharedPreferences.getLong(PROFILE_ID, 1)
     }
 
-    fun saveCurrentProfileIdToSP(id: Long){
+    fun saveCurrentProfileIdToSP(id: Long) {
         return sharedPreferences.editPref(PROFILE_ID, id)
     }
 
 
-
-    fun getCurrentUserCodeFromSP(): String{
+    fun getCurrentUserCodeFromSP(): String {
         return sharedPreferences.getString(USER_CODE, "") ?: ""
     }
 
-    fun saveCurrentUserCodeToSP(login: String){
+    fun saveCurrentUserCodeToSP(login: String) {
         return sharedPreferences.editPref(USER_CODE, login)
     }
 
