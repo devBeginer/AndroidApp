@@ -11,6 +11,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
 import androidx.lifecycle.Observer
+import androidx.transition.Fade
+import androidx.transition.Transition
+import androidx.transition.TransitionManager
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
@@ -28,21 +31,28 @@ class MainActivity : AppCompatActivity() {
         var progressBarGroup: Group = findViewById(R.id.pb_group)
         var pbCircular: CircularProgressIndicator = findViewById(R.id.pb_circular)
         var pbLinear: LinearLayout = findViewById(R.id.pb_main_linear)
-
+        //var fadeTransition: Transition = Fade()
+        //fadeTransition.addTarget(pbLinear)
 
         viewModel.pbVisibility.observe(this, Observer { visibility->
             if(visibility) {
                 //progressBar.visibility = View.VISIBLE
                 //progressBarGroup.visibility = View.VISIBLE
-                pbCircular.show()
+
+                val mFade: Fade = Fade(Fade.IN)
+                TransitionManager.beginDelayedTransition(pbLinear, mFade)
                 pbLinear.visibility = View.VISIBLE
-                //pbCircular.visibility = View.VISIBLE
+                //pbCircular.show()
+
             }
             else {
                 //progressBar.visibility = View.GONE
                 //progressBarGroup.visibility = View.GONE
-                pbCircular.hide()
-                pbCircular.setVisibilityAfterHide(View.GONE)
+
+                //pbCircular.hide()
+                //pbCircular.setVisibilityAfterHide(View.GONE)
+                val mFade: Fade = Fade(Fade.OUT)
+                TransitionManager.beginDelayedTransition(pbLinear, mFade)
                 pbLinear.visibility = View.GONE
             }
 
