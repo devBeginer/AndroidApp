@@ -9,6 +9,8 @@ import sitec_it.ru.androidapp.data.models.ProfileLicense
 import sitec_it.ru.androidapp.data.models.User
 import sitec_it.ru.androidapp.data.models.UserResponse
 import sitec_it.ru.androidapp.data.models.changes.Changes
+import sitec_it.ru.androidapp.data.models.changes.ChangesDB
+import sitec_it.ru.androidapp.data.models.changes.OrganizationDB
 import sitec_it.ru.androidapp.data.models.message.MessageList
 import sitec_it.ru.androidapp.network.NetworkHelper
 import java.io.IOException
@@ -59,15 +61,25 @@ class Repository @Inject constructor(
     fun getUserFromSP() = localRepository.getCurrentUserCodeFromSP()
     fun saveUserToSP(code: String) = localRepository.saveCurrentUserCodeToSP(code)
 
+    suspend fun updateChanges(changesDB: ChangesDB) = localRepository.updateChanges(changesDB)
+    suspend fun insertChanges(changesDB: ChangesDB) = localRepository.insertChanges(changesDB)
+    suspend fun deleteChanges(changesDB: ChangesDB) = localRepository.deleteChanges(changesDB)
+    suspend fun getChangesByDbId(uniqueDbId: String) = localRepository.getChangesByDbId(uniqueDbId)
 
-    suspend fun getTestFromApi(urlPostfix: String): Result<String> {
+    suspend fun updateOrganization(organizationDB: OrganizationDB) = localRepository.updateOrganization(organizationDB)
+    suspend fun insertOrganization(organizationDB: OrganizationDB) = localRepository.insertOrganization(organizationDB)
+    suspend fun deleteOrganization(organizationDB: OrganizationDB) = localRepository.deleteOrganization(organizationDB)
+    suspend fun getOrganizationByChange(change: Long) = localRepository.getOrganizationByChange(change)
+
+
+    suspend fun getTestFromApi(): Result<String> {
         val currentProfile =
             localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
         return if (networkHelper.isNetworkConnected() && currentProfile != null) {
             remoteRepository.getTestFromApi(
                 currentProfile.login,
                 currentProfile.password,
-                currentProfile.url + urlPostfix,
+                currentProfile.url.substring(0, currentProfile.url.length-13) + "service/test",
                 "Error test api",
                 isDisableCheckCertificate()
             )
@@ -85,14 +97,15 @@ class Repository @Inject constructor(
     suspend fun postNodeToApi(
         username: String,
         password: String,
-        url: String,
         nodeRequest: NodeRequest
     ): Result<NodeResponse?> {
-        return if (networkHelper.isNetworkConnected()) {
+        val currentProfile =
+            localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
+        return if (networkHelper.isNetworkConnected() && currentProfile != null) {
             remoteRepository.postNodeToApi(
                 username,
                 password,
-                url,
+                currentProfile.url + "registerNode",
                 nodeRequest,
                 "Error register node",
                 isDisableCheckCertificate()
@@ -107,14 +120,14 @@ class Repository @Inject constructor(
         }
     }
 
-    suspend fun getUsersList(urlPostfix: String): Result<UserResponse?> {
+    suspend fun getUsersList(): Result<UserResponse?> {
         val currentProfile =
             localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
         if (networkHelper.isNetworkConnected() && currentProfile != null) {
             return remoteRepository.loadUsers(
                 currentProfile.login,
                 currentProfile.password,
-                currentProfile.url + urlPostfix,
+                currentProfile.url + "users",
                 "Error Fetching Users",
                 isDisableCheckCertificate()
             )
@@ -141,16 +154,22 @@ class Repository @Inject constructor(
     suspend fun getChanges():Result<Changes?> {
         val currentProfile =
             localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
+        var prevChanges = localRepository.getCurrentDatabaseId()?.let { dbId -> localRepository.getChangesByDbId(dbId) }
         var dataBody = localRepository.getLastMessage()
         if (dataBody == null){
-            dataBody = MessageList(localRepository.getCurrentDatabaseId().toString(),"0")
+            dataBody = MessageList(localRepository.getCurrentDatabaseId().toString(),0)
+        }
+        dataBody = if (prevChanges != null){
+            MessageList(localRepository.getCurrentDatabaseId().toString(),prevChanges.messageNumber)
+        }else{
+            MessageList(localRepository.getCurrentDatabaseId().toString(),0)
         }
         if (networkHelper.isNetworkConnected() && currentProfile != null) {
             return remoteRepository.getChanges(
                 currentProfile.login,
                 currentProfile.password,
-                currentProfile.url + "hs/MobileClient/changes",
-                "Error Fetching Users",
+                currentProfile.url + "changes",
+                "Error get changes",
                 isDisableCheckCertificate(),
                 dataBody
             )
@@ -158,14 +177,17 @@ class Repository @Inject constructor(
         } else {
             return Result.Error(
                 0,
-                "Error Fetching Users",
+                "Error get changes",
                 "ERROR - Connection",
-                IOException("Error Fetching Users, ERROR - Connection")
+                IOException("Error get changes, ERROR - Connection")
             )
         }
     }
 
     fun saveCurrentDatabaseId(nodeId: String) {
         localRepository.saveCurrentDatabaseId(nodeId)
+    }
+    fun getCurrentDatabaseId() : String {
+        return localRepository.getCurrentDatabaseId() ?: ""
     }
 }

@@ -10,7 +10,7 @@ data class User(
     val code: String,
     val login: String,
     val name: String,
-    val password: String,
+    val password: String = "",
     val databaseID: String = ""
 
 )

@@ -11,5 +11,5 @@ data class MessageList(
     @SerializedName("DatabaseID")
     val DatabaseID:String,
     @SerializedName("LastReceived")
-    val LastReceived:String,
+    val LastReceived:Int,
 )

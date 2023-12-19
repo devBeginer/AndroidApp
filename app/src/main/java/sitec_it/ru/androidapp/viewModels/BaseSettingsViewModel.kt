@@ -51,6 +51,7 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
             val foundProfileList = repository.getProfileList()
             if (foundProfile != null) {
                 repository.saveProfileToSP(foundProfile.id)
+                repository.saveCurrentDatabaseId(foundProfile.databaseID)
                 profileMutableLiveData.postValue(foundProfile)
             } else {
                 profileMutableLiveData.postValue(null)
@@ -79,6 +80,7 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
             val foundProfile = repository.getProfileById(id)
             if (foundProfile != null) {
                 repository.saveProfileToSP(foundProfile.id)
+                repository.saveCurrentDatabaseId(foundProfile.databaseID)
                 profileMutableLiveData.postValue(foundProfile)
                 if(foundProfile.databaseID!=""){
                     val users = repository.getAllUsers()
@@ -172,7 +174,7 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
                     currentProfile.password,
                     //"http://localhost/WMSLite/hs/MobileClient/registerNode",
                     //url + "registerNode",
-                    currentProfile.url + "hs/MobileClient/registerNode",
+                    /*currentProfile.url + "registerNode",*/
                     NodeRequest(deviceName())
                 )
                 when (response){
@@ -244,12 +246,12 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
         //val profile = repository.getProfileById(id)
 
         return if (profile.ssl)
-            "https://${profile.server}/${profile.base}/"
+            "https://${profile.server}/${profile.base}/hs/MobileClient/"
         else {
             if (profile.port.isEmpty())
-                "http://${profile.server}/${profile.base}/"
+                "http://${profile.server}/${profile.base}/hs/MobileClient/"
             else
-                "http://${profile.server}/${profile.base}/"
+                "http://${profile.server}/${profile.base}/hs/MobileClient/"
         }
     }
 }

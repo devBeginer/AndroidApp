@@ -12,5 +12,5 @@ data class UserResponse(
     @SerializedName("Password")
     val password: String*/
     @SerializedName("Users")
-    val users: List<UserX>
+    val users: List<UserResponseItem>
 )

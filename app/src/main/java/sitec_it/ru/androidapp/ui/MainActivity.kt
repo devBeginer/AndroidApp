@@ -1,5 +1,6 @@
 package sitec_it.ru.androidapp.ui
 
+import android.app.ProgressDialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
@@ -7,6 +8,7 @@ import android.widget.ProgressBar
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.Group
 import androidx.lifecycle.Observer
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
@@ -21,12 +23,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         var progressBar: ProgressBar = findViewById(R.id.pb_main)
+        var progressBarGroup: Group = findViewById(R.id.pb_group)
+
 
         viewModel.pbVisibility.observe(this, Observer { visibility->
             if(visibility)
-                progressBar.visibility = View.VISIBLE
+                //progressBar.visibility = View.VISIBLE
+                progressBarGroup.visibility = View.VISIBLE
             else
-                progressBar.visibility = View.GONE
+                //progressBar.visibility = View.GONE
+                progressBarGroup.visibility = View.GONE
         })
 
 

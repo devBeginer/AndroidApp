@@ -2,8 +2,10 @@ package sitec_it.ru.androidapp.repository
 
 import android.content.SharedPreferences
 import sitec_it.ru.androidapp.SharedPreferencesUtils.editPref
+import sitec_it.ru.androidapp.data.dao.ChangesDao
 import sitec_it.ru.androidapp.data.dao.MessageListDao
 import sitec_it.ru.androidapp.data.dao.NodeDao
+import sitec_it.ru.androidapp.data.dao.OrganizationDao
 import sitec_it.ru.androidapp.data.dao.ProfileDao
 import sitec_it.ru.androidapp.data.dao.ProfileLicenseDao
 import sitec_it.ru.androidapp.data.dao.UserDao
@@ -11,6 +13,8 @@ import sitec_it.ru.androidapp.data.models.Node
 import sitec_it.ru.androidapp.data.models.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
 import sitec_it.ru.androidapp.data.models.User
+import sitec_it.ru.androidapp.data.models.changes.ChangesDB
+import sitec_it.ru.androidapp.data.models.changes.OrganizationDB
 import sitec_it.ru.androidapp.data.models.message.MessageList
 import javax.inject.Inject
 
@@ -20,7 +24,9 @@ class LocalRepository @Inject constructor(
     private val userDao: UserDao,
     private val nodeDao: NodeDao,
     private val sharedPreferences: SharedPreferences,
-    private val messageListDao: MessageListDao
+    private val messageListDao: MessageListDao,
+    private val changesDao: ChangesDao,
+    private val organizationDao: OrganizationDao,
 ) {
     companion object {
         const val PROFILE_ID = "profile_id"
@@ -92,4 +98,18 @@ class LocalRepository @Inject constructor(
     fun getCurrentDatabaseId(): String? {
         return sharedPreferences.getString(CurrentDatabaseId,"")
     }
+
+
+    suspend fun getChangesByDbId(uniqueDbId: String): ChangesDB? {
+        return changesDao.getChangesByDbId(uniqueDbId)
+    }
+    suspend fun updateChanges(changesDB: ChangesDB) = changesDao.updateChange(changesDB)
+    suspend fun insertChanges(changesDB: ChangesDB) = changesDao.insertChange(changesDB)
+    suspend fun deleteChanges(changesDB: ChangesDB) = changesDao.deleteChange(changesDB)
+    suspend fun getOrganizationByChange(change: Long): List<OrganizationDB> {
+        return organizationDao.getOrganizationByChange(change)
+    }
+    suspend fun updateOrganization(organizationDB: OrganizationDB) = organizationDao.updateOrganization(organizationDB)
+    suspend fun insertOrganization(organizationDB: OrganizationDB) = organizationDao.insertOrganization(organizationDB)
+    suspend fun deleteOrganization(organizationDB: OrganizationDB) = organizationDao.deleteOrganization(organizationDB)
 }

@@ -106,7 +106,7 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
                 password.setText(profile.password)
                 ssl.isChecked = profile.ssl
                 notCheckCertificate.isChecked = profile.notCheckCertificate
-
+                sharedViewModel.databaseId = profile.databaseID
             }
             sharedViewModel.updateProgressBar(false)
 

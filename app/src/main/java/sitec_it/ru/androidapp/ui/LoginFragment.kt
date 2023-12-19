@@ -82,6 +82,7 @@ class LoginFragment : Fragment() {
                     val user = adapterView.adapter.getItem(i).toString()
                     val codeUser = list.find { it.name.equals(user) }?.code
                     viewModel.saveUserToSp(codeUser)
+                    sharedViewModel.currentUserName = user
                 }
                 sharedViewModel.updateProgressBar(false)
             }
