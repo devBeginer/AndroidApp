@@ -1,4 +1,4 @@
-package sitec_it.ru.androidapp.data.models
+package sitec_it.ru.androidapp.data.models.node
 
 import com.google.gson.annotations.SerializedName
 

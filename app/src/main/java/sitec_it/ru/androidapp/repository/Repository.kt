@@ -1,13 +1,13 @@
 package sitec_it.ru.androidapp.repository
 
 import dagger.hilt.android.scopes.ViewModelScoped
-import sitec_it.ru.androidapp.data.models.Node
-import sitec_it.ru.androidapp.data.models.NodeRequest
-import sitec_it.ru.androidapp.data.models.NodeResponse
-import sitec_it.ru.androidapp.data.models.Profile
+import sitec_it.ru.androidapp.data.models.node.Node
+import sitec_it.ru.androidapp.data.models.node.NodeRequest
+import sitec_it.ru.androidapp.data.models.node.NodeResponse
+import sitec_it.ru.androidapp.data.models.profile.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
-import sitec_it.ru.androidapp.data.models.User
-import sitec_it.ru.androidapp.data.models.UserResponse
+import sitec_it.ru.androidapp.data.models.user.User
+import sitec_it.ru.androidapp.data.models.user.UserResponse
 import sitec_it.ru.androidapp.data.models.changes.Changes
 import sitec_it.ru.androidapp.data.models.changes.ChangesDB
 import sitec_it.ru.androidapp.data.models.changes.OrganizationDB

@@ -1,8 +1,8 @@
 package sitec_it.ru.androidapp.repository
 
 import okhttp3.Credentials
-import sitec_it.ru.androidapp.data.models.NodeRequest
-import sitec_it.ru.androidapp.data.models.UserResponse
+import sitec_it.ru.androidapp.data.models.node.NodeRequest
+import sitec_it.ru.androidapp.data.models.user.UserResponse
 import sitec_it.ru.androidapp.data.models.changes.Changes
 import sitec_it.ru.androidapp.data.models.message.MessageList
 import sitec_it.ru.androidapp.di.modules.NormalApiService

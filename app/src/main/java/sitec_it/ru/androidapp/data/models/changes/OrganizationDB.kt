@@ -3,7 +3,6 @@ package sitec_it.ru.androidapp.data.models.changes
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import sitec_it.ru.androidapp.data.models.Profile
 
 
 @Entity(

@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import sitec_it.ru.androidapp.data.models.Profile
+import sitec_it.ru.androidapp.data.models.profile.Profile
 
 @Dao
 interface ProfileDao {

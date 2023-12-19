@@ -2,17 +2,14 @@ package sitec_it.ru.androidapp.network
 
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Url
-import sitec_it.ru.androidapp.data.models.NodeRequest
-import sitec_it.ru.androidapp.data.models.NodeResponse
-import sitec_it.ru.androidapp.data.models.User
-import sitec_it.ru.androidapp.data.models.UserResponse
+import sitec_it.ru.androidapp.data.models.node.NodeRequest
+import sitec_it.ru.androidapp.data.models.node.NodeResponse
+import sitec_it.ru.androidapp.data.models.user.UserResponse
 import sitec_it.ru.androidapp.data.models.changes.Changes
 import sitec_it.ru.androidapp.data.models.message.MessageList
 

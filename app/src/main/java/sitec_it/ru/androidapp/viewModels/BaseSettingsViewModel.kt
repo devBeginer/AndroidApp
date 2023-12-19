@@ -5,19 +5,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import sitec_it.ru.androidapp.data.models.Node
-import sitec_it.ru.androidapp.data.models.NodeRequest
-import sitec_it.ru.androidapp.data.models.NodeResponse
-import sitec_it.ru.androidapp.data.models.Profile
+import sitec_it.ru.androidapp.data.models.node.Node
+import sitec_it.ru.androidapp.data.models.node.NodeRequest
+import sitec_it.ru.androidapp.data.models.node.NodeResponse
+import sitec_it.ru.androidapp.data.models.profile.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
-import sitec_it.ru.androidapp.data.models.ProfileSpinnerItem
-import sitec_it.ru.androidapp.data.models.User
+import sitec_it.ru.androidapp.data.models.profile.ProfileSpinnerItem
+import sitec_it.ru.androidapp.data.models.user.User
 import sitec_it.ru.androidapp.network.Result
 import sitec_it.ru.androidapp.repository.Repository
 import javax.inject.Inject
@@ -181,10 +179,12 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
                     is Result.Success->{
                         val data = response.data
                         if(data!=null){
-                            repository.insertNode(Node(
+                            repository.insertNode(
+                                Node(
                                 nodeId = data.nodeId,
                                 prefix = data.prefix
-                            ))
+                            )
+                            )
 
                             repository.updateProfile(
                                 Profile(

@@ -5,8 +5,8 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Update
-import sitec_it.ru.androidapp.data.models.Node
-import sitec_it.ru.androidapp.data.models.Profile
+import sitec_it.ru.androidapp.data.models.node.Node
+
 @Dao
 interface NodeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -9,10 +9,10 @@ import sitec_it.ru.androidapp.data.dao.OrganizationDao
 import sitec_it.ru.androidapp.data.dao.ProfileDao
 import sitec_it.ru.androidapp.data.dao.ProfileLicenseDao
 import sitec_it.ru.androidapp.data.dao.UserDao
-import sitec_it.ru.androidapp.data.models.Node
-import sitec_it.ru.androidapp.data.models.Profile
+import sitec_it.ru.androidapp.data.models.node.Node
+import sitec_it.ru.androidapp.data.models.profile.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
-import sitec_it.ru.androidapp.data.models.User
+import sitec_it.ru.androidapp.data.models.user.User
 import sitec_it.ru.androidapp.data.models.changes.ChangesDB
 import sitec_it.ru.androidapp.data.models.changes.OrganizationDB
 import sitec_it.ru.androidapp.data.models.message.MessageList
