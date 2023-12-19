@@ -7,11 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import sitec_it.ru.androidapp.data.models.changes.Changes
-import sitec_it.ru.androidapp.data.models.changes.ChangesDB
-import sitec_it.ru.androidapp.data.models.changes.OrganizationDB
 import sitec_it.ru.androidapp.network.Result
 import sitec_it.ru.androidapp.repository.Repository
 import javax.inject.Inject
@@ -41,7 +38,6 @@ class MenuViewModel @Inject constructor(val repository: Repository) : ViewModel(
     fun getChanges() {
         viewModelScope.launch(Dispatchers.IO) {
             val response =   repository.getChanges()
-            delay(5000)
             when(response){
                 is Result.Success -> {
                     response.data?.let { dataBody ->

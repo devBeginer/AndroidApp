@@ -37,6 +37,7 @@ import sitec_it.ru.androidapp.viewModels.LoginViewModel
 import sitec_it.ru.androidapp.viewModels.SharedViewModel
 
 import sitec_it.ru.androidapp.BuildConfig
+import sitec_it.ru.androidapp.other.runOnUiThread
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -268,7 +269,7 @@ class LoginFragment : Fragment() {
 
 
             codeScanner.decodeCallback = DecodeCallback { result ->
-                requireActivity().runOnUiThread {
+                /*requireActivity().*/runOnUiThread {
                     val snackbar: Snackbar = Snackbar.make(
                         btnView,
                         result.text, Snackbar.LENGTH_LONG
