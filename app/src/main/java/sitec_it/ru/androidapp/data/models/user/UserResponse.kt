@@ -1,4 +1,4 @@
-package sitec_it.ru.androidapp.data.models
+package sitec_it.ru.androidapp.data.models.user
 
 import com.google.gson.annotations.SerializedName
 
@@ -12,5 +12,5 @@ data class UserResponse(
     @SerializedName("Password")
     val password: String*/
     @SerializedName("Users")
-    val users: List<UserX>
+    val users: List<UserResponseItem>
 )

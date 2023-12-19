@@ -4,6 +4,8 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.PrimaryKey
+import sitec_it.ru.androidapp.data.models.profile.Profile
+
 @Entity(
     foreignKeys = [ForeignKey(
         entity = Profile::class,

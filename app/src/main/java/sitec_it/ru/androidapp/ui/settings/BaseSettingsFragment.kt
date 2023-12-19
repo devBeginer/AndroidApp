@@ -24,9 +24,9 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
 import sitec_it.ru.androidapp.Utils.observeFutureEvents
-import sitec_it.ru.androidapp.data.models.Profile
-import sitec_it.ru.androidapp.data.models.ProfileSpinnerItem
 import sitec_it.ru.androidapp.ui.BarcodeScannerFragment
+import sitec_it.ru.androidapp.data.models.profile.Profile
+import sitec_it.ru.androidapp.data.models.profile.ProfileSpinnerItem
 import sitec_it.ru.androidapp.ui.LoginFragment
 import sitec_it.ru.androidapp.viewModels.BaseSettingsViewModel
 import sitec_it.ru.androidapp.viewModels.SharedViewModel
@@ -109,7 +109,7 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
                 password.setText(profile.password)
                 ssl.isChecked = profile.ssl
                 notCheckCertificate.isChecked = profile.notCheckCertificate
-
+                sharedViewModel.databaseId = profile.databaseID
             }
             sharedViewModel.updateProgressBar(false)
 

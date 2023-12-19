@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import sitec_it.ru.androidapp.data.models.Profile
-import sitec_it.ru.androidapp.data.models.User
+import sitec_it.ru.androidapp.data.models.profile.Profile
+import sitec_it.ru.androidapp.data.models.user.User
 import sitec_it.ru.androidapp.network.Result
 import sitec_it.ru.androidapp.repository.Repository
 import javax.inject.Inject
@@ -61,7 +61,7 @@ class LoginViewModel @Inject constructor(private val repository: Repository) : V
             if(foundUser!=null && foundUser.password.equals(password)){*/
             val foundUser = repository.getUser(login)
             if (foundUser != null) {
-                val foundApiResult = repository.getTestFromApi("hs/service/test")
+                val foundApiResult = repository.getTestFromApi()
                 when (foundApiResult) {
                     is Result.Success -> apiResultMutableLiveData.postValue(foundApiResult.data)
                     is Result.Error -> apiErrorMutableLiveData.postValue(foundApiResult.toString())
@@ -92,7 +92,7 @@ class LoginViewModel @Inject constructor(private val repository: Repository) : V
 
     fun loadUsers() {
         viewModelScope.launch(Dispatchers.IO) {
-            val response = repository.getUsersList("hs/MobileClient/users")
+            val response = repository.getUsersList()
             when (response) {
                 is Result.Success -> {
                     val responseList = response.data?.let { it.users } ?: mutableListOf()
@@ -100,8 +100,8 @@ class LoginViewModel @Inject constructor(private val repository: Repository) : V
                         User(
                             userResponse.code,
                             userResponse.login,
-                            userResponse.name,
-                            userResponse.password
+                            userResponse.name/*,
+                            userResponse.password*/
                         )
                     }
                     usersList.forEach { user -> repository.insertUser(user) }

@@ -5,19 +5,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import sitec_it.ru.androidapp.data.models.Node
-import sitec_it.ru.androidapp.data.models.NodeRequest
-import sitec_it.ru.androidapp.data.models.NodeResponse
-import sitec_it.ru.androidapp.data.models.Profile
+import sitec_it.ru.androidapp.data.models.node.Node
+import sitec_it.ru.androidapp.data.models.node.NodeRequest
+import sitec_it.ru.androidapp.data.models.node.NodeResponse
+import sitec_it.ru.androidapp.data.models.profile.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
-import sitec_it.ru.androidapp.data.models.ProfileSpinnerItem
-import sitec_it.ru.androidapp.data.models.User
+import sitec_it.ru.androidapp.data.models.profile.ProfileSpinnerItem
+import sitec_it.ru.androidapp.data.models.user.User
 import sitec_it.ru.androidapp.network.Result
 import sitec_it.ru.androidapp.repository.Repository
 import javax.inject.Inject
@@ -51,6 +49,7 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
             val foundProfileList = repository.getProfileList()
             if (foundProfile != null) {
                 repository.saveProfileToSP(foundProfile.id)
+                repository.saveCurrentDatabaseId(foundProfile.databaseID)
                 profileMutableLiveData.postValue(foundProfile)
             } else {
                 profileMutableLiveData.postValue(null)
@@ -79,6 +78,7 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
             val foundProfile = repository.getProfileById(id)
             if (foundProfile != null) {
                 repository.saveProfileToSP(foundProfile.id)
+                repository.saveCurrentDatabaseId(foundProfile.databaseID)
                 profileMutableLiveData.postValue(foundProfile)
                 if(foundProfile.databaseID!=""){
                     val users = repository.getAllUsers()
@@ -172,17 +172,19 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
                     currentProfile.password,
                     //"http://localhost/WMSLite/hs/MobileClient/registerNode",
                     //url + "registerNode",
-                    currentProfile.url + "hs/MobileClient/registerNode",
+                    /*currentProfile.url + "registerNode",*/
                     NodeRequest(deviceName())
                 )
                 when (response){
                     is Result.Success->{
                         val data = response.data
                         if(data!=null){
-                            repository.insertNode(Node(
+                            repository.insertNode(
+                                Node(
                                 nodeId = data.nodeId,
                                 prefix = data.prefix
-                            ))
+                            )
+                            )
 
                             repository.updateProfile(
                                 Profile(
@@ -199,6 +201,7 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
                                     databaseID = data.nodeId
                                     )
                             )
+                            repository.saveCurrentDatabaseId(data.nodeId)
                             val profileLicense = repository.getProfileLicense(currentProfile.id)
                             if(profileLicense!=null) {
                                 repository.updateProfileLicense(
@@ -243,12 +246,12 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
         //val profile = repository.getProfileById(id)
 
         return if (profile.ssl)
-            "https://${profile.server}/${profile.base}/"
+            "https://${profile.server}/${profile.base}/hs/MobileClient/"
         else {
             if (profile.port.isEmpty())
-                "http://${profile.server}/${profile.base}/"
+                "http://${profile.server}/${profile.base}/hs/MobileClient/"
             else
-                "http://${profile.server}/${profile.base}/"
+                "http://${profile.server}/${profile.base}/hs/MobileClient/"
         }
     }
 }

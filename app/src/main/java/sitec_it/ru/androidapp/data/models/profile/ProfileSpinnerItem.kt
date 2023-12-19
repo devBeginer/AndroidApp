@@ -1,4 +1,4 @@
-package sitec_it.ru.androidapp.data.models
+package sitec_it.ru.androidapp.data.models.profile
 
 data class ProfileSpinnerItem(val id: Long = 0,
                               var name: String,

@@ -27,9 +27,8 @@
     <ScrollView
         android:id="@+id/mainScroll"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="300dp"
         android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_hello"
         tools:layout_editor_absoluteX="0dp">
 
@@ -137,7 +136,18 @@
 
             </com.google.android.material.card.MaterialCardView>
         </GridLayout>
+
+
     </ScrollView>
+
+    <TextView
+        android:id="@+id/test_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="123"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainScroll" />
 
     <TextView
         android:id="@+id/tv_hello"

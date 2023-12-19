@@ -20,9 +20,9 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
 import sitec_it.ru.androidapp.Utils.observeFutureEvents
-import sitec_it.ru.androidapp.data.models.Profile
-import sitec_it.ru.androidapp.data.models.User
-import sitec_it.ru.androidapp.data.models.UserSpinner
+import sitec_it.ru.androidapp.data.models.profile.Profile
+import sitec_it.ru.androidapp.data.models.user.User
+import sitec_it.ru.androidapp.data.models.user.UserSpinner
 import sitec_it.ru.androidapp.ui.settings.NothingSelectedSpinnerAdapter
 import sitec_it.ru.androidapp.ui.settings.SettingsContainerFragment
 import sitec_it.ru.androidapp.viewModels.LoginViewModel
@@ -85,6 +85,7 @@ class LoginFragment : Fragment() {
                     val user = adapterView.adapter.getItem(i).toString()
                     val codeUser = list.find { it.name.equals(user) }?.code
                     viewModel.saveUserToSp(codeUser)
+                    sharedViewModel.currentUserName = user
                 }
                 sharedViewModel.updateProgressBar(false)
             }

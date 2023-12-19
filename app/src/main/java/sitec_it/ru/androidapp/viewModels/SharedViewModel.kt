@@ -28,6 +28,8 @@ class SharedViewModel @Inject constructor(private val repository: Repository): V
     //var scanResult: String = ""
 
     var url: String = ""
+    var databaseId: String = ""
+    var currentUserName: String = ""
     fun initData(){
         viewModelScope.launch(Dispatchers.IO) {
             profileCountMutableLiveData.postValue(repository.getProfileCount())
@@ -38,21 +40,8 @@ class SharedViewModel @Inject constructor(private val repository: Repository): V
         pbVisibilityMutableLiveData.postValue(visibility)
     }
 
-    suspend fun buildUrl(id: Long){
-        val profile = repository.getProfileById(id)
-        if(profile!=null){
-            url = if (profile.ssl)
-                "https://${profile.server}/${profile.base}/hs/MobileClient/"
-            else {
-                if (profile.port.isEmpty())
-                    "http://${profile.server}/${profile.base}/hs/MobileClient/"
-                else
-                    "http://${profile.server}/${profile.base}/hs/MobileClient/"
-            }
 
-            repository
-        }
-    }
+
 
     fun postScanResult(result: String?){
         scanResultMutableLiveData.postValue(result)

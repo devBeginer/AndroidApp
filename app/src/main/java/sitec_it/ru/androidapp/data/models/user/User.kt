@@ -1,4 +1,4 @@
-package sitec_it.ru.androidapp.data.models
+package sitec_it.ru.androidapp.data.models.user
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -10,7 +10,7 @@ data class User(
     val code: String,
     val login: String,
     val name: String,
-    val password: String,
+    val password: String = "",
     val databaseID: String = ""
 
 )
