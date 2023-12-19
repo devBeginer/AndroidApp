@@ -10,12 +10,20 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.budiyev.android.codescanner.CodeScanner
+import com.budiyev.android.codescanner.CodeScannerView
+import com.budiyev.android.codescanner.DecodeCallback
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
@@ -38,6 +46,25 @@ class LoginFragment : Fragment() {
     private var userList = arrayListOf<UserSpinner>()
     private lateinit var arrayAdapter: ArrayAdapter<UserSpinner>
     lateinit var tvVersion:TextView
+    private var isScannerMode: Boolean = false
+    private lateinit var codeScanner: CodeScanner
+    private lateinit var flScanner: FrameLayout
+    private lateinit var  scrollView: ScrollView
+    private lateinit var  llToolbar: LinearLayout
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
+            if(isScannerMode){
+                flScanner.visibility = View.GONE
+                llToolbar.visibility = View.VISIBLE
+                scrollView.visibility = View.VISIBLE
+                isScannerMode = false
+                codeScanner.releaseResources()
+            }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -50,12 +77,18 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val buttonLogin = view.findViewById<Button>(R.id.btn_sign_in)
+        val buttonLoginQR = view.findViewById<Button>(R.id.btn_sign_in_qr)
         //val editTextLogin = view.findViewById<EditText>(R.id.et_login)
         val editTextPassword = view.findViewById<EditText>(R.id.et_password)
-        val btnSettings = view.findViewById<Button>(R.id.btn_sign_in_settings)
+        val btnSettings = view.findViewById<ImageView>(R.id.iv_sign_in_settings)
         val tvSignName = view.findViewById<AutoCompleteTextView>(R.id.tv_SignName)
         val tvProfile = view.findViewById<TextView>(R.id.tv_sign_in)
+        flScanner = view.findViewById<FrameLayout>(R.id.frameLayout_login_scan_qr)
+        scrollView = view.findViewById<ScrollView>(R.id.scrollView_login)
+        llToolbar = view.findViewById<LinearLayout>(R.id.linearLayout_login_toolbar)
         tvVersion = view.findViewById(R.id.tv_version)
+        val scannerView = view.findViewById<CodeScannerView>(R.id.scanner_view)
+        codeScanner = CodeScanner(requireActivity(), scannerView)
         initView()
 
         /*viewModel.login.observeFutureEvents(viewLifecycleOwner, Observer { code ->
@@ -191,14 +224,15 @@ class LoginFragment : Fragment() {
                 Toast.makeText(context, "Не все поля заполнены", Toast.LENGTH_LONG).show()
             }*/
         }
-     /*   editTextPassword.setOnEditorActionListener { textView, id, keyEvent ->
+        editTextPassword.setOnEditorActionListener { textView, id, keyEvent ->
             if (id == EditorInfo.IME_ACTION_DONE) {
                 //viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
-                viewModel.login((spinner.selectedItem as UserSpinner).login, editTextPassword.text.toString())
+                //viewModel.login((spinner.selectedItem as UserSpinner).login, editTextPassword.text.toString())
+                viewModel.login(tvSignName.text.toString(), editTextPassword.text.toString())
                 return@setOnEditorActionListener true
             }
             return@setOnEditorActionListener false
-        }*/
+        }
 
         /*editTextLogin.setOnEditorActionListener { textView, id, keyEvent ->
             if (id == EditorInfo.IME_ACTION_DONE) {
@@ -226,6 +260,44 @@ class LoginFragment : Fragment() {
             return@setOnMenuItemClickListener false
         }*/
 
+        buttonLoginQR.setOnClickListener {btnView->
+            isScannerMode = true
+            llToolbar.visibility = View.GONE
+            scrollView.visibility = View.GONE
+            flScanner.visibility = View.VISIBLE
+
+
+            codeScanner.decodeCallback = DecodeCallback { result ->
+                requireActivity().runOnUiThread {
+                    val snackbar: Snackbar = Snackbar.make(
+                        btnView,
+                        result.text, Snackbar.LENGTH_LONG
+                    )
+                    val view = snackbar.view
+                    val txtv = view.findViewById<View>(com.google.android.material.R.id.snackbar_text) as TextView
+                    txtv.maxLines = 5
+                    snackbar.show()
+                    flScanner.visibility = View.GONE
+                    llToolbar.visibility = View.VISIBLE
+                    scrollView.visibility = View.VISIBLE
+                }
+
+                isScannerMode = false
+                codeScanner.releaseResources()
+            }
+            codeScanner.startPreview()
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(isScannerMode) codeScanner.startPreview()
+    }
+
+    override fun onPause() {
+        if(isScannerMode) codeScanner.releaseResources()
+        super.onPause()
     }
 
     private fun initView() {

@@ -4,12 +4,14 @@ import android.app.ProgressDialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.Group
 import androidx.lifecycle.Observer
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
 import sitec_it.ru.androidapp.viewModels.SharedViewModel
@@ -22,17 +24,28 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        var progressBar: ProgressBar = findViewById(R.id.pb_main)
+        //var progressBar: ProgressBar = findViewById(R.id.pb_main)
         var progressBarGroup: Group = findViewById(R.id.pb_group)
+        var pbCircular: CircularProgressIndicator = findViewById(R.id.pb_circular)
+        var pbLinear: LinearLayout = findViewById(R.id.pb_main_linear)
 
 
         viewModel.pbVisibility.observe(this, Observer { visibility->
-            if(visibility)
+            if(visibility) {
                 //progressBar.visibility = View.VISIBLE
-                progressBarGroup.visibility = View.VISIBLE
-            else
+                //progressBarGroup.visibility = View.VISIBLE
+                pbCircular.show()
+                pbLinear.visibility = View.VISIBLE
+                //pbCircular.visibility = View.VISIBLE
+            }
+            else {
                 //progressBar.visibility = View.GONE
-                progressBarGroup.visibility = View.GONE
+                //progressBarGroup.visibility = View.GONE
+                pbCircular.hide()
+                pbCircular.setVisibilityAfterHide(View.GONE)
+                pbLinear.visibility = View.GONE
+            }
+
         })
 
 

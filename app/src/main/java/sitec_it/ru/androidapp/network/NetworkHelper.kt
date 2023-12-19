@@ -140,7 +140,7 @@ class NetworkHelper (private val context: Context) {
 
         }
 
-        if (result is Result.Error) Log.d("safeApiCall", "${result.toString()}")
+        if (result is Result.Error) Log.d("safeApiCall", "${result.errorStringFormat()}")
 
 
         return result

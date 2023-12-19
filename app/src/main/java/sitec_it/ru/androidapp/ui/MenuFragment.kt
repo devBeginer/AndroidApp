@@ -87,14 +87,14 @@ class MenuFragment : Fragment() {
         sharedViewModel.updateProgressBar(true)
         viewModel.getChanges()
         viewModel.changes.observe(viewLifecycleOwner, Observer {
-            tvTest.setText(it.toString())
+            tvTest.text = it.toString()
             sharedViewModel.updateProgressBar(false)
         })
         viewModel.error.observe(viewLifecycleOwner, Observer {value->
-            if (value != null && value == "ERROR - Connection") {
+            if (value != null) {
                 val snackbar: Snackbar = Snackbar.make(
                     requireView(),
-                    "Нет подключения к интернету.", Snackbar.LENGTH_LONG
+                    value, Snackbar.LENGTH_LONG
                 )
                 val view = snackbar.view
                 val txtv =

@@ -41,6 +41,7 @@ class MenuViewModel @Inject constructor(val repository: Repository) : ViewModel(
     fun getChanges() {
         viewModelScope.launch(Dispatchers.IO) {
             val response =   repository.getChanges()
+            delay(5000)
             when(response){
                 is Result.Success -> {
                     response.data?.let { dataBody ->
@@ -66,8 +67,8 @@ class MenuViewModel @Inject constructor(val repository: Repository) : ViewModel(
                     }
                 }
                 is Result.Error -> {
-                    Log.d("changes",response.description)
-                    changesError.postValue(response.description)
+                    Log.d("changes",response.errorStringFormat())
+                    changesError.postValue(response.errorStringFormat())
                 }
             }
         }

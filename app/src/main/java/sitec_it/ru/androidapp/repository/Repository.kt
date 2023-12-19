@@ -118,7 +118,7 @@ class Repository @Inject constructor(
                 0,
                 "Error test api",
                 "ERROR - Connection",
-                IOException("Error Fetching User, ERROR - Connection")
+                IOException("Error test api, ERROR - Connection")
             )
         }
     }

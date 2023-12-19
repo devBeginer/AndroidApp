@@ -1,5 +1,6 @@
 package sitec_it.ru.androidapp.viewModels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -64,7 +65,10 @@ class LoginViewModel @Inject constructor(private val repository: Repository) : V
                 val foundApiResult = repository.getTestFromApi()
                 when (foundApiResult) {
                     is Result.Success -> apiResultMutableLiveData.postValue(foundApiResult.data)
-                    is Result.Error -> apiErrorMutableLiveData.postValue(foundApiResult.toString())
+                    is Result.Error -> {
+                        Log.d("login",foundApiResult.errorStringFormat())
+                        apiErrorMutableLiveData.postValue(foundApiResult.errorStringFormat())
+                    }
                 }
                 /*if(foundApiResult!=null){
                     apiResultMutableLiveData.postValue(foundApiResult)
@@ -108,7 +112,11 @@ class LoginViewModel @Inject constructor(private val repository: Repository) : V
                     userListMutableLiveData.postValue(usersList)
                 }
 
-                is Result.Error -> apiErrorMutableLiveData.postValue(response.toString())
+                is Result.Error -> {
+                    Log.d("load user list",response.errorStringFormat())
+
+                    apiErrorMutableLiveData.postValue(response.errorStringFormat())
+                }
             }
         }
     }

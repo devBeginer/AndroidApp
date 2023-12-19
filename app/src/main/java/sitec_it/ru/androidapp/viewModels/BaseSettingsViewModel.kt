@@ -1,6 +1,7 @@
 package sitec_it.ru.androidapp.viewModels
 
 import android.os.Build
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -221,7 +222,10 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
                             nodeResponseMutableLiveData.postValue(data)
                         }
                     }
-                    is Result.Error->apiErrorMutableLiveData.postValue(response.toString())
+                    is Result.Error-> {
+                        Log.d("register node",response.errorStringFormat())
+                        apiErrorMutableLiveData.postValue(response.errorStringFormat())
+                    }
                 }
                 /*if (response != null) {
 
