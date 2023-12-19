@@ -1,5 +1,6 @@
 package sitec_it.ru.androidapp.repository
 
+import android.util.Log
 import dagger.hilt.android.scopes.ViewModelScoped
 import sitec_it.ru.androidapp.data.models.node.Node
 import sitec_it.ru.androidapp.data.models.node.NodeRequest
@@ -10,6 +11,7 @@ import sitec_it.ru.androidapp.data.models.user.User
 import sitec_it.ru.androidapp.data.models.user.UserResponse
 import sitec_it.ru.androidapp.data.models.changes.Changes
 import sitec_it.ru.androidapp.data.models.changes.ChangesDB
+import sitec_it.ru.androidapp.data.models.changes.Organization
 import sitec_it.ru.androidapp.data.models.changes.OrganizationDB
 import sitec_it.ru.androidapp.data.models.message.MessageList
 import sitec_it.ru.androidapp.network.NetworkHelper
@@ -61,15 +63,43 @@ class Repository @Inject constructor(
     fun getUserFromSP() = localRepository.getCurrentUserCodeFromSP()
     fun saveUserToSP(code: String) = localRepository.saveCurrentUserCodeToSP(code)
 
-    suspend fun updateChanges(changesDB: ChangesDB) = localRepository.updateChanges(changesDB)
-    suspend fun insertChanges(changesDB: ChangesDB) = localRepository.insertChanges(changesDB)
-    suspend fun deleteChanges(changesDB: ChangesDB) = localRepository.deleteChanges(changesDB)
-    suspend fun getChangesByDbId(uniqueDbId: String) = localRepository.getChangesByDbId(uniqueDbId)
+    suspend fun updateMessage(messageList: MessageList) = localRepository.updateMessage(messageList)
+    suspend fun insertMessage(messageList: MessageList) = localRepository.insertMessage(messageList)
+    suspend fun deleteMessage(messageList: MessageList) = localRepository.deleteMessage(messageList)
+    //suspend fun getChangesByDbId(uniqueDbId: String) = localRepository.getChangesByDbId(uniqueDbId)
 
     suspend fun updateOrganization(organizationDB: OrganizationDB) = localRepository.updateOrganization(organizationDB)
     suspend fun insertOrganization(organizationDB: OrganizationDB) = localRepository.insertOrganization(organizationDB)
     suspend fun deleteOrganization(organizationDB: OrganizationDB) = localRepository.deleteOrganization(organizationDB)
-    suspend fun getOrganizationByChange(change: Long) = localRepository.getOrganizationByChange(change)
+    suspend fun getOrganization(code: String, databaseId: String) = localRepository.getOrganization(code, databaseId)
+
+    suspend fun updateMessage(messageNumber: Int){
+        val lastMessage = localRepository.getLastMessage()
+        if (lastMessage!=null){
+            localRepository.updateMessage(MessageList(lastMessage.DatabaseID, messageNumber))
+        }else{
+            localRepository.insertMessage(MessageList(localRepository.getCurrentDatabaseId(), messageNumber))
+        }
+        Log.d("changes","Сообщение обновлено")
+    }
+    suspend fun saveOrganizations(organizations: List<Organization>){
+        /*val lastMessage = localRepository.getLastMessage()
+        if (lastMessage!=null){
+            localRepository.updateMessage(MessageList(lastMessage.DatabaseID, dataBody.MessageNumber))
+        }else{
+            localRepository.insertMessage(MessageList(localRepository.getCurrentDatabaseId(), dataBody.MessageNumber))
+        }*/
+
+        organizations.forEach { organization ->
+            val oldOrganization = localRepository.getOrganization(organization.Code, localRepository.getCurrentDatabaseId())
+            if (oldOrganization!=null){
+                localRepository.updateOrganization(OrganizationDB(organization.Code, organization.Name, localRepository.getCurrentDatabaseId()))
+            }else{
+                localRepository.insertOrganization(OrganizationDB(organization.Code, organization.Name, localRepository.getCurrentDatabaseId()))
+            }
+        }
+        Log.d("changes","Организации обновлены")
+    }
 
 
     suspend fun getTestFromApi(): Result<String> {
@@ -154,16 +184,14 @@ class Repository @Inject constructor(
     suspend fun getChanges():Result<Changes?> {
         val currentProfile =
             localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
-        var prevChanges = localRepository.getCurrentDatabaseId()?.let { dbId -> localRepository.getChangesByDbId(dbId) }
+        //var prevChanges = localRepository.getCurrentDatabaseId()?.let { dbId -> localRepository.getChangesByDbId(dbId) }
         var dataBody = localRepository.getLastMessage()
-        if (dataBody == null){
-            dataBody = MessageList(localRepository.getCurrentDatabaseId().toString(),0)
-        }
-        dataBody = if (prevChanges != null){
-            MessageList(localRepository.getCurrentDatabaseId().toString(),prevChanges.messageNumber)
-        }else{
+        dataBody = if (dataBody == null){
             MessageList(localRepository.getCurrentDatabaseId().toString(),0)
+        }else{
+            MessageList(localRepository.getCurrentDatabaseId().toString(),dataBody.LastReceived)
         }
+
         if (networkHelper.isNetworkConnected() && currentProfile != null) {
             return remoteRepository.getChanges(
                 currentProfile.login,

@@ -49,9 +49,6 @@ object DatabaseModule {
     @Singleton
     fun provideMessageListDao(db: AppDatabase): MessageListDao = db.messageListDao()
 
-    @Provides
-    @Singleton
-    fun provideChangesDao(db: AppDatabase): ChangesDao = db.changesDao()
 
     @Provides
     @Singleton

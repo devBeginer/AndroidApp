@@ -18,8 +18,8 @@ import sitec_it.ru.androidapp.data.models.changes.OrganizationDB
 import sitec_it.ru.androidapp.data.models.message.MessageList
 
 @Database(
-    entities = [Profile::class, ProfileLicense::class, User::class, Node::class,MessageList::class,ChangesDB::class,OrganizationDB::class],
-    version = 10, exportSchema = false
+    entities = [Profile::class, ProfileLicense::class, User::class, Node::class,MessageList::class, OrganizationDB::class],
+    version = 11, exportSchema = false
 )
 abstract class AppDatabase: RoomDatabase(){
     abstract fun profileDao(): ProfileDao
@@ -27,6 +27,5 @@ abstract class AppDatabase: RoomDatabase(){
     abstract fun userDao(): UserDao
     abstract fun nodeDao(): NodeDao
     abstract fun messageListDao(): MessageListDao
-    abstract fun changesDao(): ChangesDao
     abstract fun organizationDao(): OrganizationDao
 }

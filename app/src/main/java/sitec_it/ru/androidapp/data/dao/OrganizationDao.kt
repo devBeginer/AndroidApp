@@ -5,7 +5,6 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import sitec_it.ru.androidapp.data.models.changes.ChangesDB
 import sitec_it.ru.androidapp.data.models.changes.OrganizationDB
 
 @Dao
@@ -19,9 +18,9 @@ interface OrganizationDao {
     @Delete
     suspend fun deleteOrganization(organizationDB: OrganizationDB)
 
-    @Query("SELECT * FROM Organization WHERE id == :id")
-    suspend fun getOrganizationById(id: Long): OrganizationDB?
+    @Query("SELECT * FROM Organization WHERE databaseId == :databaseId")
+    suspend fun getOrganizationListByDbId(databaseId: String): List<OrganizationDB>
 
-    @Query("SELECT * FROM Organization WHERE change == :change")
-    suspend fun getOrganizationByChange(change: Long): List<OrganizationDB>
+    @Query("SELECT * FROM Organization WHERE code == :code AND databaseId == :databaseId")
+    suspend fun getOrganization(code: String, databaseId: String): OrganizationDB?
 }

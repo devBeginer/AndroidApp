@@ -2,7 +2,6 @@ package sitec_it.ru.androidapp.repository
 
 import android.content.SharedPreferences
 import sitec_it.ru.androidapp.SharedPreferencesUtils.editPref
-import sitec_it.ru.androidapp.data.dao.ChangesDao
 import sitec_it.ru.androidapp.data.dao.MessageListDao
 import sitec_it.ru.androidapp.data.dao.NodeDao
 import sitec_it.ru.androidapp.data.dao.OrganizationDao
@@ -13,7 +12,6 @@ import sitec_it.ru.androidapp.data.models.node.Node
 import sitec_it.ru.androidapp.data.models.profile.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
 import sitec_it.ru.androidapp.data.models.user.User
-import sitec_it.ru.androidapp.data.models.changes.ChangesDB
 import sitec_it.ru.androidapp.data.models.changes.OrganizationDB
 import sitec_it.ru.androidapp.data.models.message.MessageList
 import javax.inject.Inject
@@ -25,7 +23,6 @@ class LocalRepository @Inject constructor(
     private val nodeDao: NodeDao,
     private val sharedPreferences: SharedPreferences,
     private val messageListDao: MessageListDao,
-    private val changesDao: ChangesDao,
     private val organizationDao: OrganizationDao,
 ) {
     companion object {
@@ -87,7 +84,7 @@ class LocalRepository @Inject constructor(
     }
 
     suspend fun getUserByCode(code: String): User? = userDao.getUserByCode(code)
-    fun getLastMessage(): MessageList {
+    fun getLastMessage(): MessageList? {
 
         return messageListDao.getRecordById(getCurrentDatabaseId())
     }
@@ -95,19 +92,25 @@ class LocalRepository @Inject constructor(
     fun saveCurrentDatabaseId(nodeId: String) {
         sharedPreferences.editPref(CurrentDatabaseId,nodeId)
     }
-    fun getCurrentDatabaseId(): String? {
-        return sharedPreferences.getString(CurrentDatabaseId,"")
+    fun getCurrentDatabaseId(): String {
+        return sharedPreferences.getString(CurrentDatabaseId,"") ?: ""
     }
 
 
-    suspend fun getChangesByDbId(uniqueDbId: String): ChangesDB? {
+    /*suspend fun getChangesByDbId(uniqueDbId: String): ChangesDB? {
         return changesDao.getChangesByDbId(uniqueDbId)
-    }
-    suspend fun updateChanges(changesDB: ChangesDB) = changesDao.updateChange(changesDB)
+    }*/
+    suspend fun updateMessage(messageList: MessageList) = messageListDao.updateMessage(messageList)
+    suspend fun insertMessage(messageList: MessageList) = messageListDao.insertMessage(messageList)
+    suspend fun deleteMessage(messageList: MessageList) = messageListDao.deleteMessage(messageList)
+    /*suspend fun updateChanges(changesDB: ChangesDB) = changesDao.updateChange(changesDB)
     suspend fun insertChanges(changesDB: ChangesDB) = changesDao.insertChange(changesDB)
-    suspend fun deleteChanges(changesDB: ChangesDB) = changesDao.deleteChange(changesDB)
-    suspend fun getOrganizationByChange(change: Long): List<OrganizationDB> {
-        return organizationDao.getOrganizationByChange(change)
+    suspend fun deleteChanges(changesDB: ChangesDB) = changesDao.deleteChange(changesDB)*/
+    suspend fun getOrganization(code: String, databaseId: String): OrganizationDB? {
+        return organizationDao.getOrganization(code, databaseId)
+    }
+    suspend fun getOrganizationListByBdId(databaseId: String): List<OrganizationDB> {
+        return organizationDao.getOrganizationListByDbId(databaseId)
     }
     suspend fun updateOrganization(organizationDB: OrganizationDB) = organizationDao.updateOrganization(organizationDB)
     suspend fun insertOrganization(organizationDB: OrganizationDB) = organizationDao.insertOrganization(organizationDB)
