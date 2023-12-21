@@ -116,7 +116,7 @@ dependencies {
     implementation "ch.acra:acra-mail:$acraVersion"
     implementation "ch.acra:acra-toast:$acraVersion"
 
-    implementation 'com.github.yuriy-budiyev:code-scanner:2.3.0'
+    implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
 }
 
 // Allow references to generated code

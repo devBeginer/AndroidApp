@@ -12,8 +12,8 @@
         android:bottom="1dp"
         android:top="1dp" />
 
-    <corners android:radius="25dp" />
+    <corners android:radius="5dp" />
     <gradient android:angle="135"
-        android:startColor="#EBCBCB"
-        android:endColor="#74F8DA"/>
+        android:startColor="#FFFFFF"
+        android:endColor="#FAFCFC"/>
 </shape>

@@ -18,6 +18,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -26,6 +27,10 @@ import com.budiyev.android.codescanner.CodeScannerView
 import com.budiyev.android.codescanner.DecodeCallback
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import sitec_it.ru.androidapp.R
 import sitec_it.ru.androidapp.Utils.observeFutureEvents
 import sitec_it.ru.androidapp.data.models.profile.Profile
@@ -37,7 +42,6 @@ import sitec_it.ru.androidapp.viewModels.LoginViewModel
 import sitec_it.ru.androidapp.viewModels.SharedViewModel
 
 import sitec_it.ru.androidapp.BuildConfig
-import sitec_it.ru.androidapp.other.runOnUiThread
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -51,7 +55,7 @@ class LoginFragment : Fragment() {
     private lateinit var codeScanner: CodeScanner
     private lateinit var flScanner: FrameLayout
     private lateinit var  scrollView: ScrollView
-    private lateinit var  llToolbar: LinearLayout
+    private lateinit var  llToolbar: ConstraintLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,7 +90,7 @@ class LoginFragment : Fragment() {
         val tvProfile = view.findViewById<TextView>(R.id.tv_sign_in)
         flScanner = view.findViewById<FrameLayout>(R.id.frameLayout_login_scan_qr)
         scrollView = view.findViewById<ScrollView>(R.id.scrollView_login)
-        llToolbar = view.findViewById<LinearLayout>(R.id.linearLayout_login_toolbar)
+        llToolbar = view.findViewById<ConstraintLayout>(R.id.cl_login_toolbar)
         tvVersion = view.findViewById(R.id.tv_version)
         val scannerView = view.findViewById<CodeScannerView>(R.id.scanner_view)
         codeScanner = CodeScanner(requireActivity(), scannerView)
@@ -191,9 +195,9 @@ class LoginFragment : Fragment() {
 
 
         })
-        viewModel.profile.observeFutureEvents(viewLifecycleOwner, Observer<Profile> { profile ->
-
-            tvProfile.text = "${tvProfile.text}\n ${profile.name}"
+        viewModel.profile.observeFutureEvents(viewLifecycleOwner, Observer { profile ->
+                val text = "${tvProfile.text}\n ${profile.name}"
+            tvProfile.text = text
 
         })
         /*viewModel.user.observeFutureEvents(viewLifecycleOwner, Observer {
@@ -261,34 +265,34 @@ class LoginFragment : Fragment() {
             return@setOnMenuItemClickListener false
         }*/
 
-        buttonLoginQR.setOnClickListener {btnView->
-            isScannerMode = true
-            llToolbar.visibility = View.GONE
-            scrollView.visibility = View.GONE
-            flScanner.visibility = View.VISIBLE
+        buttonLoginQR.setOnClickListener {
+            showScannerView()
+        }
+
+    }
+
+    private fun showScannerView() {
+        isScannerMode = true
+        llToolbar.visibility = View.GONE
+        scrollView.visibility = View.GONE
+        flScanner.visibility = View.VISIBLE
 
 
-            codeScanner.decodeCallback = DecodeCallback { result ->
-                /*requireActivity().*/runOnUiThread {
-                    val snackbar: Snackbar = Snackbar.make(
-                        btnView,
-                        result.text, Snackbar.LENGTH_LONG
-                    )
-                    val view = snackbar.view
-                    val txtv = view.findViewById<View>(com.google.android.material.R.id.snackbar_text) as TextView
-                    txtv.maxLines = 5
-                    snackbar.show()
+        codeScanner.decodeCallback = DecodeCallback { result ->
+            CoroutineScope(Dispatchers.IO).launch {
+
+
+                withContext(Dispatchers.Main){
+                    Snackbar.make(requireView(),result.text.toString(),Snackbar.LENGTH_SHORT).show()
                     flScanner.visibility = View.GONE
                     llToolbar.visibility = View.VISIBLE
                     scrollView.visibility = View.VISIBLE
+                    isScannerMode = false
+                    codeScanner.releaseResources()
                 }
-
-                isScannerMode = false
-                codeScanner.releaseResources()
             }
-            codeScanner.startPreview()
         }
-
+        codeScanner.startPreview()
     }
 
     override fun onResume() {
