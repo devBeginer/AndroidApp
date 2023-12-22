@@ -223,6 +223,8 @@ class Repository @Inject constructor(
     suspend fun authenticationUser(dataBody:AuthenticationGetRequest): Result<ResponseBody> {
         val currentProfile =
             localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
+        val codeUser = localRepository.getCurrentUserCodeFromSP()
+        dataBody.login = localRepository.getUserByCode(codeUser)?.login.toString()
         if (networkHelper.isNetworkConnected() && currentProfile != null) {
             return remoteRepository.authenticationUser(
                 currentProfile.login,

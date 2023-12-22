@@ -1,6 +1,6 @@
 package sitec_it.ru.androidapp.data.models.authentication
 
 data class AuthenticationGetRequest(
-    val login: String,
+    var login: String,
     val password: String
 )
