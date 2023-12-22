@@ -5,9 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.common.hash.HashCode
+import com.google.common.hash.HashFunction
+import com.google.common.hash.Hashing
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import sitec_it.ru.androidapp.data.models.authentication.AuthenticationGetRequest
 import sitec_it.ru.androidapp.data.models.profile.Profile
 import sitec_it.ru.androidapp.data.models.user.User
 import sitec_it.ru.androidapp.network.Result
@@ -51,37 +55,31 @@ class LoginViewModel @Inject constructor(private val repository: Repository) : V
     val login: LiveData<String?>
         get() = loginMutableLiveData
 
-
-    /*fun initView(){
-        userMutableLiveData.postValue(null)
-    }*/
+    val authenticationUserObserver = MutableLiveData<String>()
 
     fun login(login: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            /*val foundUser = repository.userDao.getUserByLogin(login)
-            if(foundUser!=null && foundUser.password.equals(password)){*/
-            val foundUser = repository.getUser(login)
-            if (foundUser != null) {
-                val foundApiResult = repository.getTestFromApi()
-                when (foundApiResult) {
-                    is Result.Success -> apiResultMutableLiveData.postValue(foundApiResult.data)
-                    is Result.Error -> {
-                        Log.d("login",foundApiResult.errorStringFormat())
-                        apiErrorMutableLiveData.postValue(foundApiResult.errorStringFormat())
-                    }
+        val hashPass = getHashingSha256(password)
+            val dataBody = AuthenticationGetRequest(login,hashPass)
+            val response = repository.authenticationUser(dataBody)
+            when(response){
+                is Result.Success -> {
+                    Log.d("authentication","data ->>> ${response.data}")
+                    Log.d("authentication","авторизация прошла успешно ->> сохранение user")
+
+                    val foundUser = repository.getUser(login)
+                    foundUser?.let { repository.saveUserToSP(it.code) }
+                    Log.d("authentication"," ->> сохранение меню")
+                    // save local menu
+
+
+                    authenticationUserObserver.postValue("ok")
                 }
-                /*if(foundApiResult!=null){
-                    apiResultMutableLiveData.postValue(foundApiResult)
-                }else{
-                    apiResultMutableLiveData.postValue(null)
-                }*/
-                repository.saveUserToSP(foundUser.code)
-                userMutableLiveData.postValue(foundUser)
-            } else {
-                userMutableLiveData.postValue(null)
+                is Result.Error -> {
+                    Log.d("authentication",response.errorStringFormat())
+                    apiErrorMutableLiveData.postValue("errorAuth")
+                }
             }
-
-
         }
     }
 
@@ -144,4 +142,12 @@ class LoginViewModel @Inject constructor(private val repository: Repository) : V
         }
     }
 
+    private fun getHashingSha256(input: String): String {
+        val hashFunction: HashFunction = Hashing.sha256()
+        val hc: HashCode = hashFunction
+            .newHasher()
+            .putString(input.trim(), Charsets.UTF_8)
+            .hash()
+        return hc.toString()
+    }
 }

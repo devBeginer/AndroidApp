@@ -12,7 +12,7 @@ sealed class Result<out T> {
             0 -> additionalDescription
             200 -> additionalDescription
             201 -> additionalDescription
-            202 -> additionalDescription
+
             404 -> "ERROR - Not found"
             403 -> "ERROR - Forbidden"
             401 -> "ERROR - Unauthorized"

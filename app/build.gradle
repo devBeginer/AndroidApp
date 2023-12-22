@@ -117,6 +117,8 @@ dependencies {
     implementation "ch.acra:acra-toast:$acraVersion"
 
     implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
+    // guava hash
+    implementation("com.google.guava:guava:24.0-jre")
 }
 
 // Allow references to generated code

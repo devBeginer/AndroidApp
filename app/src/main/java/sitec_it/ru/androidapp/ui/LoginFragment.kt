@@ -50,17 +50,17 @@ class LoginFragment : Fragment() {
     private val sharedViewModel: SharedViewModel by viewModels({ requireActivity() })
     private var userList = arrayListOf<UserSpinner>()
     private lateinit var arrayAdapter: ArrayAdapter<UserSpinner>
-    lateinit var tvVersion:TextView
+    lateinit var tvVersion: TextView
     private var isScannerMode: Boolean = false
     private lateinit var codeScanner: CodeScanner
     private lateinit var flScanner: FrameLayout
-    private lateinit var  scrollView: ScrollView
-    private lateinit var  llToolbar: ConstraintLayout
+    private lateinit var scrollView: ScrollView
+    private lateinit var llToolbar: ConstraintLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
-            if(isScannerMode){
+            if (isScannerMode) {
                 flScanner.visibility = View.GONE
                 llToolbar.visibility = View.VISIBLE
                 scrollView.visibility = View.VISIBLE
@@ -103,17 +103,24 @@ class LoginFragment : Fragment() {
         })*/
 
 
-
         //spinner.adapter = arrayAdapter
-        val array = NothingSelectedSpinnerAdapter(arrayAdapter, requireContext(), R.layout.spinner_row_nothing_selected)
+        val array = NothingSelectedSpinnerAdapter(
+            arrayAdapter,
+            requireContext(),
+            R.layout.spinner_row_nothing_selected
+        )
         viewModel.userList.observe(viewLifecycleOwner, Observer {
-            it?.let{ list ->
+            it?.let { list ->
                 val listNamesUsers = mutableListOf<String>()
                 list.forEach { item ->
                     listNamesUsers.add(item.name)
                 }
                 val arrayAdapter =
-                    ArrayAdapter(requireContext(), R.layout.dropdown_item, listNamesUsers.sortedWith(String.CASE_INSENSITIVE_ORDER))
+                    ArrayAdapter(
+                        requireContext(),
+                        R.layout.dropdown_item,
+                        listNamesUsers.sortedWith(String.CASE_INSENSITIVE_ORDER)
+                    )
                 tvSignName.setAdapter(arrayAdapter)
                 if (listNamesUsers.size > 0) {
                     tvSignName.setText(listNamesUsers[0], false)
@@ -154,26 +161,15 @@ class LoginFragment : Fragment() {
                 }
             }
         })
-        viewModel.apiError.observe(viewLifecycleOwner, object : Observer<String?> {
-            var isFirst = true
-
-            override fun onChanged(value: String?) {
-                if (isFirst) {
-                    isFirst = false
-                } else {
-                    if (value != null) {
-                        val snackbar: Snackbar = Snackbar.make(
+        viewModel.apiError.observe(viewLifecycleOwner, Observer {
+            it?.let { error ->
+                when (error) {
+                    "errorAuth" -> {
+                        Snackbar.make(
                             requireView(),
-                            value, Snackbar.LENGTH_LONG
-                        )
-                        val view = snackbar.view
-                        val txtv =
-                            view.findViewById<View>(com.google.android.material.R.id.snackbar_text) as TextView
-                        txtv.maxLines = 5
-                        snackbar.show()
-                    } else {
-                        Toast.makeText(context, "Ошибка api запроса", Toast.LENGTH_LONG)
-                            .show()
+                            "Ошибка авторизации.Проверьте пароль и повторите еще раз.",
+                            Snackbar.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
@@ -196,7 +192,7 @@ class LoginFragment : Fragment() {
 
         })
         viewModel.profile.observeFutureEvents(viewLifecycleOwner, Observer { profile ->
-                val text = "${tvProfile.text}\n ${profile.name}"
+            val text = "${tvProfile.text}\n ${profile.name}"
             tvProfile.text = text
 
         })
@@ -221,18 +217,10 @@ class LoginFragment : Fragment() {
         })*/
 
         buttonLogin.setOnClickListener {
-            //viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
             viewModel.login(tvSignName.text.toString(), editTextPassword.text.toString())
-            /*if(editTextLogin.text.isNotEmpty() && editTextPassword.text.isNotEmpty()){
-                viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
-            }else{
-                Toast.makeText(context, "Не все поля заполнены", Toast.LENGTH_LONG).show()
-            }*/
         }
         editTextPassword.setOnEditorActionListener { textView, id, keyEvent ->
             if (id == EditorInfo.IME_ACTION_DONE) {
-                //viewModel.login(editTextLogin.text.toString(), editTextPassword.text.toString())
-                //viewModel.login((spinner.selectedItem as UserSpinner).login, editTextPassword.text.toString())
                 viewModel.login(tvSignName.text.toString(), editTextPassword.text.toString())
                 return@setOnEditorActionListener true
             }
@@ -282,8 +270,9 @@ class LoginFragment : Fragment() {
             CoroutineScope(Dispatchers.IO).launch {
 
 
-                withContext(Dispatchers.Main){
-                    Snackbar.make(requireView(),result.text.toString(),Snackbar.LENGTH_SHORT).show()
+                withContext(Dispatchers.Main) {
+                    Snackbar.make(requireView(), result.text.toString(), Snackbar.LENGTH_SHORT)
+                        .show()
                     flScanner.visibility = View.GONE
                     llToolbar.visibility = View.VISIBLE
                     scrollView.visibility = View.VISIBLE
@@ -297,11 +286,11 @@ class LoginFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if(isScannerMode) codeScanner.startPreview()
+        if (isScannerMode) codeScanner.startPreview()
     }
 
     override fun onPause() {
-        if(isScannerMode) codeScanner.releaseResources()
+        if (isScannerMode) codeScanner.releaseResources()
         super.onPause()
     }
 

@@ -2,11 +2,13 @@ package sitec_it.ru.androidapp.repository
 
 import android.util.Log
 import dagger.hilt.android.scopes.ViewModelScoped
+import okhttp3.ResponseBody
 import sitec_it.ru.androidapp.data.models.node.Node
 import sitec_it.ru.androidapp.data.models.node.NodeRequest
 import sitec_it.ru.androidapp.data.models.node.NodeResponse
 import sitec_it.ru.androidapp.data.models.profile.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
+import sitec_it.ru.androidapp.data.models.authentication.AuthenticationGetRequest
 import sitec_it.ru.androidapp.data.models.user.User
 import sitec_it.ru.androidapp.data.models.user.UserResponse
 import sitec_it.ru.androidapp.data.models.changes.Changes
@@ -216,5 +218,27 @@ class Repository @Inject constructor(
     }
     fun getCurrentDatabaseId() : String {
         return localRepository.getCurrentDatabaseId() ?: ""
+    }
+
+    suspend fun authenticationUser(dataBody:AuthenticationGetRequest): Result<ResponseBody> {
+        val currentProfile =
+            localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
+        if (networkHelper.isNetworkConnected() && currentProfile != null) {
+            return remoteRepository.authenticationUser(
+                currentProfile.login,
+                currentProfile.password,
+                currentProfile.url + "login",
+                "Error authentication",
+                isDisableCheckCertificate(),
+                dataBody
+                )
+        } else {
+            return Result.Error(
+                0,
+                "Error authentication users",
+                "ERROR - authentication, check connect",
+                IOException("Error Fetching Users, ERROR - Connection")
+            )
+        }
     }
 }

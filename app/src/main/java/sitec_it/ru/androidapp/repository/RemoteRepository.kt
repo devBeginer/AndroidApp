@@ -1,6 +1,9 @@
 package sitec_it.ru.androidapp.repository
 
+import android.util.Log
 import okhttp3.Credentials
+import okhttp3.ResponseBody
+import sitec_it.ru.androidapp.data.models.authentication.AuthenticationGetRequest
 import sitec_it.ru.androidapp.data.models.node.NodeRequest
 import sitec_it.ru.androidapp.data.models.user.UserResponse
 import sitec_it.ru.androidapp.data.models.changes.Changes
@@ -78,11 +81,31 @@ class RemoteRepository @Inject constructor(
         errorMessage: String,
         disableCheckCertificate: Boolean,
         dataBody: MessageList
-    ):sitec_it.ru.androidapp.network.Result<Changes?> = networkHelper.safeApiCall(
+    ): sitec_it.ru.androidapp.network.Result<Changes?> = networkHelper.safeApiCall(
         call = {
             (if (disableCheckCertificate) apiServiceSSLFactory else apiService)
-                .getChanges(Credentials.basic(login, password, Charset.forName("UTF-8")), url,
-                    dataBody)
+                .getChanges(
+                    Credentials.basic(login, password, Charset.forName("UTF-8")), url,
+                    dataBody
+                )
+        },
+        errorMessage = errorMessage
+    )
+
+    suspend fun authenticationUser(
+        login: String,
+        password: String,
+        url: String,
+        errorMessage: String,
+        disableCheckCertificate: Boolean,
+        dataBody: AuthenticationGetRequest
+    ): sitec_it.ru.androidapp.network.Result<ResponseBody> = networkHelper.safeApiCall(
+        call = {
+            (if (disableCheckCertificate) apiServiceSSLFactory else apiService)
+                .authenticationUser(
+                    Credentials.basic(login, password, Charset.forName("UTF-8")), url,
+                    dataBody
+                )
         },
         errorMessage = errorMessage
     )
