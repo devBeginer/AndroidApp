@@ -29,6 +29,7 @@ class SharedViewModel @Inject constructor(private val repository: Repository): V
     var url: String = ""
     var databaseId: String = ""
     var currentUserName: String = ""
+    var isFirstStart = true
     fun initData(){
         viewModelScope.launch(Dispatchers.IO) {
             profileCountMutableLiveData.postValue(repository.getProfileCount())
