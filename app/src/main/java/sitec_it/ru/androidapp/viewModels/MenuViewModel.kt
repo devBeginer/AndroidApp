@@ -39,6 +39,14 @@ class MenuViewModel @Inject constructor(val repository: Repository) : ViewModel(
         }
     }
 
+    fun loadForms(){
+        viewModelScope.launch(Dispatchers.IO) {
+
+
+
+        }
+    }
+
     fun getMainForm(){
         viewModelScope.launch(Dispatchers.IO) {
 
