@@ -6,11 +6,10 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.util.Log
 import retrofit2.Response
-import java.io.IOException
 
 class NetworkHelper(private val context: Context) {
 
-    fun isNetworkConnected(): Boolean {
+    fun checkOnline(): Boolean {
         var result = false
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -112,7 +111,7 @@ class NetworkHelper(private val context: Context) {
             }
 
         }*/
-        val result: Result<T> = if (!isNetworkConnected()) {
+        val result: Result<T> = if (!checkOnline()) {
             Result.Error(0, errorMessage, "ERROR - Connection error")
         } else {
             try {
@@ -156,7 +155,8 @@ class NetworkHelper(private val context: Context) {
 
                 }
             } catch (e: Exception) {
-                Result.Error(code = 0, errorMessage = errorMessage, additionalDescription = "ERROR - Connection error", exception = e)
+                Log.d("safeApiCall", e.toString())
+                Result.Error(code = 0, errorMessage = errorMessage, additionalDescription = "ERROR - Unresolved exception", exception = e)
             }
         }
 

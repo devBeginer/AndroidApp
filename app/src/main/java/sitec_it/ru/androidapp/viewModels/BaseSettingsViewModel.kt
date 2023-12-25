@@ -223,7 +223,7 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
                         }
                     }
                     is Result.Error-> {
-                        Log.d("register node",response.errorStringFormatLong())
+                        Log.d("registerNode",response.errorStringFormatLong())
                         apiErrorMutableLiveData.postValue(response.errorStringFormat())
                     }
                 }

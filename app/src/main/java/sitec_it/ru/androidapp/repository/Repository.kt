@@ -106,11 +106,14 @@ class Repository @Inject constructor(
     suspend fun getTestFromApi(): Result<String> {
         val currentProfile =
             localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
-        return if (networkHelper.isNetworkConnected() && currentProfile != null) {
+        val url = currentProfile?.let { currentProfile.url.substring(0, currentProfile.url.length-13) + "/service/test" } ?: ""
+        Log.d("apiCallUrl", url)
+        return if (networkHelper.checkOnline() && currentProfile != null) {
             remoteRepository.getTestFromApi(
                 currentProfile.login,
                 currentProfile.password,
-                currentProfile.url.substring(0, currentProfile.url.length-13) + "/service/test",
+                //currentProfile.url.substring(0, currentProfile.url.length-13) + "/service/test",
+                url,
                 "Error test api",
                 isDisableCheckCertificate()
             )
@@ -132,11 +135,14 @@ class Repository @Inject constructor(
     ): Result<NodeResponse?> {
         val currentProfile =
             localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
-        return if (networkHelper.isNetworkConnected() && currentProfile != null) {
+        val url = currentProfile?.let { currentProfile.url + "/registerNode" } ?: ""
+        Log.d("apiCallUrl", url)
+        return if (networkHelper.checkOnline() && currentProfile != null) {
             remoteRepository.postNodeToApi(
                 username,
                 password,
-                currentProfile.url + "/registerNode",
+                //currentProfile.url + "/registerNode",
+                url,
                 nodeRequest,
                 "Error register node",
                 isDisableCheckCertificate()
@@ -154,11 +160,14 @@ class Repository @Inject constructor(
     suspend fun getUsersList(): Result<UserResponse?> {
         val currentProfile =
             localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
-        if (networkHelper.isNetworkConnected() && currentProfile != null) {
+        val url = currentProfile?.let { currentProfile.url + "/users" } ?: ""
+        Log.d("apiCallUrl", url)
+        if (networkHelper.checkOnline() && currentProfile != null) {
             return remoteRepository.loadUsers(
                 currentProfile.login,
                 currentProfile.password,
-                currentProfile.url + "/users",
+                //currentProfile.url + "/users",
+                url,
                 "Error Fetching Users",
                 isDisableCheckCertificate()
             )
@@ -185,6 +194,8 @@ class Repository @Inject constructor(
     suspend fun getChanges():Result<Changes?> {
         val currentProfile =
             localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
+        val url = currentProfile?.let { currentProfile.url + "/changes" } ?: ""
+        Log.d("apiCallUrl", url)
         //var prevChanges = localRepository.getCurrentDatabaseId()?.let { dbId -> localRepository.getChangesByDbId(dbId) }
         var dataBody = localRepository.getLastMessage()
         dataBody = if (dataBody == null){
@@ -193,11 +204,12 @@ class Repository @Inject constructor(
             MessageList(localRepository.getCurrentDatabaseId().toString(),dataBody.LastReceived)
         }
 
-        if (networkHelper.isNetworkConnected() && currentProfile != null) {
+        if (networkHelper.checkOnline() && currentProfile != null) {
             return remoteRepository.getChanges(
                 currentProfile.login,
                 currentProfile.password,
-                currentProfile.url + "/changes",
+                //currentProfile.url + "/changes",
+                url,
                 "Error get changes",
                 isDisableCheckCertificate(),
                 dataBody
@@ -223,13 +235,16 @@ class Repository @Inject constructor(
     suspend fun authenticationUser(dataBody:AuthenticationGetRequest): Result<ResponseBody> {
         val currentProfile =
             localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
+        val url = currentProfile?.let { currentProfile.url + "/login" } ?: ""
+        Log.d("apiCallUrl", url)
         //val codeUser = localRepository.getCurrentUserCodeFromSP()
         //dataBody.login = localRepository.getUserByCode(codeUser)?.login.toString()
-        if (networkHelper.isNetworkConnected() && currentProfile != null) {
+        if (networkHelper.checkOnline() && currentProfile != null) {
             return remoteRepository.authenticationUser(
                 currentProfile.login,
                 currentProfile.password,
-                currentProfile.url + "/login",
+                //currentProfile.url + "/login",
+                url,
                 "Error authentication",
                 isDisableCheckCertificate(),
                 dataBody

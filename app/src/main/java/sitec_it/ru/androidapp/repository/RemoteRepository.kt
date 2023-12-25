@@ -35,7 +35,8 @@ class RemoteRepository @Inject constructor(
     ) = networkHelper.safeApiCall(
         //call = { apiService.getTest(username, password) },
         call = {
-            (if (disableCheckCertificate) apiServiceSSLFactory else apiService)
+            //(if (disableCheckCertificate) apiServiceSSLFactory else apiService)
+            getApiService(disableCheckCertificate)
                 .getTest(Credentials.basic(username, password, Charset.forName("UTF-8")), url)
         },
         errorMessage = errorMessage/*"Error Fetching User"*/
@@ -50,7 +51,8 @@ class RemoteRepository @Inject constructor(
         disableCheckCertificate: Boolean
     ) = networkHelper.safeApiCall(
         call = {
-            (if (disableCheckCertificate) apiServiceSSLFactory else apiService)
+            //(if (disableCheckCertificate) apiServiceSSLFactory else apiService)
+            getApiService(disableCheckCertificate)
                 .postNode(
                     Credentials.basic(username, password, Charset.forName("UTF-8")),
                     url,
@@ -68,7 +70,8 @@ class RemoteRepository @Inject constructor(
         disableCheckCertificate: Boolean
     ): sitec_it.ru.androidapp.network.Result<UserResponse?> = networkHelper.safeApiCall(
         call = {
-            (if (disableCheckCertificate) apiServiceSSLFactory else apiService)
+            //(if (disableCheckCertificate) apiServiceSSLFactory else apiService)
+            getApiService(disableCheckCertificate)
                 .loadUsers(Credentials.basic(username, password, Charset.forName("UTF-8")), url)
         },
         errorMessage = errorMessage/*"Error register node"*/
@@ -83,7 +86,8 @@ class RemoteRepository @Inject constructor(
         dataBody: MessageList
     ): sitec_it.ru.androidapp.network.Result<Changes?> = networkHelper.safeApiCall(
         call = {
-            (if (disableCheckCertificate) apiServiceSSLFactory else apiService)
+            //(if (disableCheckCertificate) apiServiceSSLFactory else apiService)
+            getApiService(disableCheckCertificate)
                 .getChanges(
                     Credentials.basic(login, password, Charset.forName("UTF-8")), url,
                     dataBody
@@ -101,7 +105,8 @@ class RemoteRepository @Inject constructor(
         dataBody: AuthenticationGetRequest
     ): sitec_it.ru.androidapp.network.Result<ResponseBody> = networkHelper.safeApiCall(
         call = {
-            (if (disableCheckCertificate) apiServiceSSLFactory else apiService)
+            //(if (disableCheckCertificate) apiServiceSSLFactory else apiService)
+            getApiService(disableCheckCertificate)
                 .authenticationUser(
                     Credentials.basic(login, password, Charset.forName("UTF-8")), url,
                     dataBody
@@ -109,4 +114,8 @@ class RemoteRepository @Inject constructor(
         },
         errorMessage = errorMessage
     )
+
+    private fun getApiService(disableCheckCertificate: Boolean): ApiService{
+        return if (disableCheckCertificate) apiServiceSSLFactory else apiService
+    }
 }

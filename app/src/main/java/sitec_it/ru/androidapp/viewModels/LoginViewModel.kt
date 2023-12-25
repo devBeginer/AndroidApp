@@ -104,7 +104,8 @@ class LoginViewModel @Inject constructor(private val repository: Repository) : V
                         User(
                             userResponse.code,
                             userResponse.login,
-                            userResponse.name/*,
+                            userResponse.name,
+                            databaseID = repository.getCurrentDatabaseId()/*,
                             userResponse.password*/
                         )
                     }
@@ -113,7 +114,7 @@ class LoginViewModel @Inject constructor(private val repository: Repository) : V
                 }
 
                 is Result.Error -> {
-                    Log.d("load user list",response.errorStringFormatLong())
+                    Log.d("loadUsers",response.errorStringFormatLong())
 
                     apiErrorMutableLiveData.postValue(response.errorStringFormat())
                 }
