@@ -63,7 +63,7 @@ class MenuViewModel @Inject constructor(val repository: Repository) : ViewModel(
                     }
                 }
                 is Result.Error -> {
-                    Log.d("changes",response.errorStringFormat())
+                    Log.d("changes",response.errorStringFormatLong())
                     changesError.postValue(response.errorStringFormat())
                 }
             }

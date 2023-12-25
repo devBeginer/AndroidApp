@@ -223,7 +223,7 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
                         }
                     }
                     is Result.Error-> {
-                        Log.d("register node",response.errorStringFormat())
+                        Log.d("register node",response.errorStringFormatLong())
                         apiErrorMutableLiveData.postValue(response.errorStringFormat())
                     }
                 }
@@ -250,12 +250,12 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
         //val profile = repository.getProfileById(id)
 
         return if (profile.ssl)
-            "https://${profile.server}/${profile.base}/hs/MobileClient/"
+            "https://${profile.server}/${profile.base}/hs/MobileClient"
         else {
             if (profile.port.isEmpty())
-                "http://${profile.server}/${profile.base}/hs/MobileClient/"
+                "http://${profile.server}/${profile.base}/hs/MobileClient"
             else
-                "http://${profile.server}/${profile.base}/hs/MobileClient/"
+                "http://${profile.server}/${profile.base}/hs/MobileClient"
         }
     }
 }

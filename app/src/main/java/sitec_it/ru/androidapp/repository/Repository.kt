@@ -110,7 +110,7 @@ class Repository @Inject constructor(
             remoteRepository.getTestFromApi(
                 currentProfile.login,
                 currentProfile.password,
-                currentProfile.url.substring(0, currentProfile.url.length-13) + "service/test",
+                currentProfile.url.substring(0, currentProfile.url.length-13) + "/service/test",
                 "Error test api",
                 isDisableCheckCertificate()
             )
@@ -119,7 +119,7 @@ class Repository @Inject constructor(
                 0,
                 "Error test api",
                 "ERROR - Connection",
-                IOException("Error test api, ERROR - Connection")
+                exception = IOException("Error test api, ERROR - Connection")
             )
         }
     }
@@ -136,7 +136,7 @@ class Repository @Inject constructor(
             remoteRepository.postNodeToApi(
                 username,
                 password,
-                currentProfile.url + "registerNode",
+                currentProfile.url + "/registerNode",
                 nodeRequest,
                 "Error register node",
                 isDisableCheckCertificate()
@@ -146,7 +146,7 @@ class Repository @Inject constructor(
                 0,
                 "Error register node",
                 "ERROR - Connection",
-                IOException("Error register node, ERROR - Connection")
+                exception = IOException("Error register node, ERROR - Connection")
             )
         }
     }
@@ -158,7 +158,7 @@ class Repository @Inject constructor(
             return remoteRepository.loadUsers(
                 currentProfile.login,
                 currentProfile.password,
-                currentProfile.url + "users",
+                currentProfile.url + "/users",
                 "Error Fetching Users",
                 isDisableCheckCertificate()
             )
@@ -168,7 +168,7 @@ class Repository @Inject constructor(
                 0,
                 "Error Fetching Users",
                 "ERROR - Connection",
-                IOException("Error Fetching Users, ERROR - Connection")
+                exception = IOException("Error Fetching Users, ERROR - Connection")
             )
         }
     }
@@ -197,7 +197,7 @@ class Repository @Inject constructor(
             return remoteRepository.getChanges(
                 currentProfile.login,
                 currentProfile.password,
-                currentProfile.url + "changes",
+                currentProfile.url + "/changes",
                 "Error get changes",
                 isDisableCheckCertificate(),
                 dataBody
@@ -208,7 +208,7 @@ class Repository @Inject constructor(
                 0,
                 "Error get changes",
                 "ERROR - Connection",
-                IOException("Error get changes, ERROR - Connection")
+                exception = IOException("Error get changes, ERROR - Connection")
             )
         }
     }
@@ -223,13 +223,13 @@ class Repository @Inject constructor(
     suspend fun authenticationUser(dataBody:AuthenticationGetRequest): Result<ResponseBody> {
         val currentProfile =
             localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
-        val codeUser = localRepository.getCurrentUserCodeFromSP()
-        dataBody.login = localRepository.getUserByCode(codeUser)?.login.toString()
+        //val codeUser = localRepository.getCurrentUserCodeFromSP()
+        //dataBody.login = localRepository.getUserByCode(codeUser)?.login.toString()
         if (networkHelper.isNetworkConnected() && currentProfile != null) {
             return remoteRepository.authenticationUser(
                 currentProfile.login,
                 currentProfile.password,
-                currentProfile.url + "login",
+                currentProfile.url + "/login",
                 "Error authentication",
                 isDisableCheckCertificate(),
                 dataBody
@@ -239,7 +239,7 @@ class Repository @Inject constructor(
                 0,
                 "Error authentication users",
                 "ERROR - authentication, check connect",
-                IOException("Error Fetching Users, ERROR - Connection")
+                exception = IOException("Error Fetching Users, ERROR - Connection")
             )
         }
     }

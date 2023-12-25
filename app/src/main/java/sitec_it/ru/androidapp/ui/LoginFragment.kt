@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
@@ -19,6 +21,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -95,6 +98,7 @@ class LoginFragment : Fragment() {
         val scannerView = view.findViewById<CodeScannerView>(R.id.scanner_view)
         codeScanner = CodeScanner(requireActivity(), scannerView)
         initView()
+        var selectedLogin: String? = ""
 
         /*viewModel.login.observeFutureEvents(viewLifecycleOwner, Observer { code ->
 
@@ -122,16 +126,50 @@ class LoginFragment : Fragment() {
                         listNamesUsers.sortedWith(String.CASE_INSENSITIVE_ORDER)
                     )
                 tvSignName.setAdapter(arrayAdapter)
+
+                tvSignName.doAfterTextChanged {userName->
+                    val user = list.find { it.name == userName.toString() }
+                    val codeUser = user?.code
+                    selectedLogin = user?.login
+                    viewModel.saveUserToSp(codeUser)
+                    sharedViewModel.currentUserName = userName.toString()
+                }
+
                 if (listNamesUsers.size > 0) {
                     tvSignName.setText(listNamesUsers[0], false)
-                    tvSignName.setSelection(tvSignName.text.count())
+                    tvSignName.setSelection(0/*tvSignName.text.count()*/)
                 }
+                tvSignName.onItemSelectedListener = object:OnItemSelectedListener{
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        if (parent != null) {
+                            val user = parent.adapter.getItem(position).toString()
+                            val codeUser = list.find { it.name == user }?.code
+                            selectedLogin = list.find { it.name == user }?.login
+                            viewModel.saveUserToSp(codeUser)
+                            sharedViewModel.currentUserName = user
+                        }
+                    }
+
+                    override fun onNothingSelected(p0: AdapterView<*>?) {
+                        TODO("Not yet implemented")
+                    }
+
+                }
+
                 tvSignName.setOnItemClickListener { adapterView, view, i, l ->
                     val user = adapterView.adapter.getItem(i).toString()
-                    val codeUser = list.find { it.name.equals(user) }?.code
+                    val codeUser = list.find { it.name == user }?.code
+                    selectedLogin = list.find { it.name == user }?.login
                     viewModel.saveUserToSp(codeUser)
                     sharedViewModel.currentUserName = user
                 }
+
+
                 sharedViewModel.updateProgressBar(false)
             }
         })
@@ -191,6 +229,19 @@ class LoginFragment : Fragment() {
 
 
         })
+        viewModel.authenticationUser.observe(viewLifecycleOwner, Observer<String> { result ->
+
+            when(result){
+                "ok" -> activity?.supportFragmentManager?.beginTransaction()
+                    ?.replace(R.id.nav_host_fragment, MenuFragment())
+                    ?.commit()
+                else -> Toast.makeText(context, "Неверный логин/пароль", Toast.LENGTH_LONG)
+                    .show()
+            }
+
+
+
+        })
         viewModel.profile.observeFutureEvents(viewLifecycleOwner, Observer { profile ->
             val text = "${tvProfile.text}\n ${profile.name}"
             tvProfile.text = text
@@ -217,7 +268,7 @@ class LoginFragment : Fragment() {
         })*/
 
         buttonLogin.setOnClickListener {
-            viewModel.login(tvSignName.text.toString(), editTextPassword.text.toString())
+            selectedLogin?.let { login -> viewModel.login(login, editTextPassword.text.toString()) }
         }
         editTextPassword.setOnEditorActionListener { textView, id, keyEvent ->
             if (id == EditorInfo.IME_ACTION_DONE) {

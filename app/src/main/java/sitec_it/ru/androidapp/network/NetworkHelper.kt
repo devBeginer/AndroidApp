@@ -120,11 +120,11 @@ class NetworkHelper(private val context: Context) {
 
                 when (response.code()) {
                     200 -> {
-                        response.errorBody()
                         response.body()?.let { body -> Result.Success(body) } ?: Result.Error(
                             response.code(),
                             errorMessage,
-                            "ERROR - Empty result"
+                            "ERROR - Empty result",
+                            response.toString()
                         )
                     }
 
@@ -132,31 +132,35 @@ class NetworkHelper(private val context: Context) {
                         response.body()?.let { body -> Result.Success(body) } ?: Result.Error(
                             response.code(),
                             errorMessage,
-                            "ERROR - Empty result"
+                            "ERROR - Empty result",
+                            response.toString()
                         )
                     }
+
                     /*  202 -> {
                           response.body()?.let { body -> Result.Success(body) } ?: Result.Error(response.code(), errorMessage, "ERROR - Empty result")
                       }*/
+
                     else -> response.errorBody()
                         ?.let { error ->
                             Result.Error(
                                 response.code(),
                                 errorMessage,
-                                "",
+                                "ERROR - error response code",
+                                response.toString(),
+                                response.body().toString(),
                                 Exception(error.string())
                             )
                         }
-                        ?: Result.Error(response.code(), errorMessage, "")
+                        ?: Result.Error(response.code(), errorMessage, "", response.toString())
 
                 }
             } catch (e: Exception) {
-                Result.Error(0, errorMessage, "ERROR - Connection error", e)
+                Result.Error(code = 0, errorMessage = errorMessage, additionalDescription = "ERROR - Connection error", exception = e)
             }
-
         }
 
-        if (result is Result.Error) Log.d("safeApiCall", "${result.errorStringFormat()}")
+        if (result is Result.Error) Log.d("safeApiCall", result.errorStringFormatLong())
 
 
         return result

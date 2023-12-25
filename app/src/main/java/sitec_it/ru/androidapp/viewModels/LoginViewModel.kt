@@ -56,6 +56,8 @@ class LoginViewModel @Inject constructor(private val repository: Repository) : V
         get() = loginMutableLiveData
 
     val authenticationUserObserver = MutableLiveData<String>()
+    val authenticationUser: LiveData<String>
+        get() = authenticationUserObserver
 
     fun login(login: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -76,7 +78,7 @@ class LoginViewModel @Inject constructor(private val repository: Repository) : V
                     authenticationUserObserver.postValue("ok")
                 }
                 is Result.Error -> {
-                    Log.d("authentication",response.errorStringFormat())
+                    Log.d("authentication",response.errorStringFormatLong())
                     apiErrorMutableLiveData.postValue("errorAuth")
                 }
             }
@@ -111,7 +113,7 @@ class LoginViewModel @Inject constructor(private val repository: Repository) : V
                 }
 
                 is Result.Error -> {
-                    Log.d("load user list",response.errorStringFormat())
+                    Log.d("load user list",response.errorStringFormatLong())
 
                     apiErrorMutableLiveData.postValue(response.errorStringFormat())
                 }
