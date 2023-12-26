@@ -8,6 +8,7 @@ import sitec_it.ru.androidapp.data.models.node.NodeRequest
 import sitec_it.ru.androidapp.data.models.user.UserResponse
 import sitec_it.ru.androidapp.data.models.changes.Changes
 import sitec_it.ru.androidapp.data.models.message.MessageList
+import sitec_it.ru.androidapp.data.models.newForms1.FormRequest
 import sitec_it.ru.androidapp.di.modules.NormalApiService
 import sitec_it.ru.androidapp.di.modules.SSlFactoryApiService
 import sitec_it.ru.androidapp.network.ApiService
@@ -110,6 +111,39 @@ class RemoteRepository @Inject constructor(
                 .authenticationUser(
                     Credentials.basic(login, password, Charset.forName("UTF-8")), url,
                     dataBody
+                )
+        },
+        errorMessage = errorMessage
+    )
+
+    suspend fun loadForms(
+        login: String,
+        password: String,
+        url: String,
+        errorMessage: String,
+        disableCheckCertificate: Boolean
+    ) = networkHelper.safeApiCall(
+        call = {
+            getApiService(disableCheckCertificate)
+                .loadForms(
+                    Credentials.basic(login, password, Charset.forName("UTF-8")), url
+                )
+        },
+        errorMessage = errorMessage
+    )
+
+    suspend fun loadNewForms(
+        login: String,
+        password: String,
+        url: String,
+        errorMessage: String,
+        disableCheckCertificate: Boolean
+    ): sitec_it.ru.androidapp.network.Result<sitec_it.ru.androidapp.data.models.newForms1.Forms> = networkHelper.safeApiCall(
+        call = {
+            getApiService(disableCheckCertificate)
+                .loadNewForms(
+                    Credentials.basic(login, password, Charset.forName("UTF-8")), url,
+                    FormRequest("stroka")
                 )
         },
         errorMessage = errorMessage

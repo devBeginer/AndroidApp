@@ -14,7 +14,16 @@ import sitec_it.ru.androidapp.data.models.user.UserResponse
 import sitec_it.ru.androidapp.data.models.changes.Changes
 import sitec_it.ru.androidapp.data.models.changes.Organization
 import sitec_it.ru.androidapp.data.models.changes.OrganizationDB
+import sitec_it.ru.androidapp.data.models.form.ActionDB
+import sitec_it.ru.androidapp.data.models.form.ArgumentDB
+import sitec_it.ru.androidapp.data.models.form.ElementDB
+import sitec_it.ru.androidapp.data.models.form.FormDB
 import sitec_it.ru.androidapp.data.models.message.MessageList
+import sitec_it.ru.androidapp.data.models.newForms1.Action
+import sitec_it.ru.androidapp.data.models.newForms1.Argument
+import sitec_it.ru.androidapp.data.models.newForms1.Element
+import sitec_it.ru.androidapp.data.models.newForms1.Form
+import sitec_it.ru.androidapp.data.models.newForms1.Forms
 import sitec_it.ru.androidapp.network.NetworkHelper
 import java.io.IOException
 import javax.inject.Inject
@@ -254,8 +263,91 @@ class Repository @Inject constructor(
                 0,
                 "Error authentication users",
                 "ERROR - authentication, check connect",
-                exception = IOException("Error Fetching Users, ERROR - Connection")
+                exception = IOException("Error authentication user, ERROR - Connection")
             )
+        }
+    }
+
+    /*suspend fun getForms(): Result<Forms> {
+        val currentProfile =
+            localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
+        val url = currentProfile?.let { currentProfile.url + "/forms" } ?: ""
+        Log.d("apiCallUrl", url)
+        if (networkHelper.checkOnline() && currentProfile != null) {
+            return remoteRepository.loadForms(
+                currentProfile.login,
+                currentProfile.password,
+                url,
+                "Error load forms",
+                isDisableCheckCertificate()
+                )
+        } else {
+            return Result.Error(
+                0,
+                "Error load forms",
+                "ERROR - load forms, check connect",
+                exception = IOException("Error load forms, ERROR - Connection")
+            )
+        }
+    }*/
+
+    suspend fun getNewForms(): Result<sitec_it.ru.androidapp.data.models.newForms1.Forms> {
+        val currentProfile =
+            localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
+        val url = currentProfile?.let { currentProfile.url + "/forms" } ?: ""
+        Log.d("apiCallUrl", url)
+        if (networkHelper.checkOnline() && currentProfile != null) {
+            return remoteRepository.loadNewForms(
+                currentProfile.login,
+                currentProfile.password,
+                url,
+                "Error load forms",
+                isDisableCheckCertificate()
+                )
+        } else {
+            return Result.Error(
+                0,
+                "Error load forms",
+                "ERROR - load forms, check connect",
+                exception = IOException("Error load forms, ERROR - Connection")
+            )
+        }
+    }
+
+    suspend fun getFormById(formId: String): Form? {
+        val formDb = localRepository.getForm(formId)
+        val elementDb = localRepository.getElement(formId)
+        val elements = elementDb.map { element ->
+            val action = localRepository.getAction(element.elementID).map { actionDB ->
+                val arguments = localRepository.getArgument(actionDB.actionName).map { argumentDB -> Argument(argumentDB.actionName, argumentDB.name, argumentDB.value) }
+                Action(actionDB.actionName, arguments, actionDB.elementID)
+            }
+            Element(action, element.elementID, element.elementName, element.elementType, element.formID, element.nextField)
+        }
+        return formDb?.let { Form(elements, formDb.formID, formDb.formName) }
+    }
+
+    /*suspend fun deleteOldForms() {
+        val oldForms = localRepository.getAllForms()
+        oldForms.forEach { formDB ->
+            localRepository.deleteForm(formDB)
+        }
+    }*/
+
+    suspend fun saveForms(form: Forms) {
+        val dbId = getCurrentDatabaseId()
+        form.Forms.forEach {form->
+            localRepository.insertForm(FormDB(form.FormID, form.FormName, dbId))
+            form.Elements.forEach{element ->
+
+                localRepository.insertElement(ElementDB(/*form.FormID*/element.FormID, element.ElementID, element.ElementName, element.ElementType, element.NextFieldID, dbId))
+                element.Actions.forEach { action ->
+                    localRepository.insertAction(ActionDB(action.Action, action.ElementID, dbId))
+                    action.Arguments.forEach { argument ->
+                        localRepository.insertArgument(ArgumentDB(argument.Action, action.ElementID, argument.Name, argument.Value, dbId))
+                    }
+                }
+            }
         }
     }
 }

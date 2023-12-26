@@ -8,7 +8,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import sitec_it.ru.androidapp.data.models.authentication.AuthenticationGetRequest
 import sitec_it.ru.androidapp.data.models.changes.Changes
+import sitec_it.ru.androidapp.data.models.newForms1.Form
 import sitec_it.ru.androidapp.network.Result
 import sitec_it.ru.androidapp.repository.Repository
 import javax.inject.Inject
@@ -29,6 +31,10 @@ class MenuViewModel @Inject constructor(val repository: Repository) : ViewModel(
     val form: LiveData<ArrayList<Pair<String, String>>>
         get() =  formMutableLiveData
 
+    private val menuFormsMutableLiveData = MutableLiveData<Form?>()
+    val menuForms: LiveData<Form?>
+        get() =  menuFormsMutableLiveData
+
     fun setTvHello() {
         viewModelScope.launch(Dispatchers.IO) {
             val code = repository.getUserFromSP()
@@ -41,7 +47,26 @@ class MenuViewModel @Inject constructor(val repository: Repository) : ViewModel(
 
     fun loadForms(){
         viewModelScope.launch(Dispatchers.IO) {
+            //val response = repository.getForms()
+            val response = repository.getNewForms()
+            when(response){
+                is Result.Success -> {
+                    Log.d("getForms","data ->>> ${response.data}")
+                    Log.d("getForms","формы загружены успешно ->> сохранение forms")
 
+                    //save forms
+                    //repository.deleteOldForms()
+                    repository.saveForms(response.data)
+                    Log.d("getForms"," ->> формы сохранены")
+                    val mainForm = response.data.Forms.find { form -> form.FormName == "Главное меню" }
+
+                    menuFormsMutableLiveData.postValue(mainForm/*response.data.Forms[0]*/)
+                }
+                is Result.Error -> {
+                    Log.d("getForms", response.errorStringFormatLong())
+                    menuFormsMutableLiveData.postValue(null)
+                }
+            }
 
 
         }
@@ -173,6 +198,14 @@ class MenuViewModel @Inject constructor(val repository: Repository) : ViewModel(
                     changesError.postValue(response.errorStringFormat())
                 }
             }
+        }
+    }
+
+    fun getSubMenuForm(formId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            val form = repository.getFormById(formId)
+            menuFormsMutableLiveData.postValue(form)
         }
     }
 

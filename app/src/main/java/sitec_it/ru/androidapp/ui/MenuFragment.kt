@@ -25,6 +25,7 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
+import sitec_it.ru.androidapp.data.models.newForms1.Element
 import sitec_it.ru.androidapp.viewModels.MenuViewModel
 import sitec_it.ru.androidapp.viewModels.SharedViewModel
 
@@ -39,9 +40,13 @@ class MenuFragment : Fragment() {
     private lateinit var scrollView: ScrollView
     private lateinit var mainContainer: LinearLayout
     private var isMainMenu = true
+
+    private val cardViewIcons = arrayListOf<Int>(R.drawable.baseline_note_add_24, R.drawable.baseline_upload_file_24, R.drawable.baseline_local_grocery_store_24, R.drawable.baseline_assignment_turned_in_24)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
+            sharedViewModel.updateProgressBar(true)
             if (isMainMenu) {
                 activity?.supportFragmentManager?.beginTransaction()
                     ?.replace(R.id.nav_host_fragment, LoginFragment())?.commit()
@@ -98,6 +103,8 @@ class MenuFragment : Fragment() {
                 if (element.first == "Главное меню") {
                     when (element.second) {
                         "Приемка" -> drawCardView(index + 100, index + 110, index + 120, element.second) {
+
+                            sharedViewModel.updateProgressBar(true)
                             mainContainer.removeAllViews()
                             //drawSubmenu(arrayListOf("Создать предварительную приемку", "Предварительная приемка", "Закрыть предварительную приемку", "Создать приемку"))
                             viewModel.getSubMenu(element.second)
@@ -109,6 +116,7 @@ class MenuFragment : Fragment() {
                             index + 120,
                             element.second
                         ) {
+                            sharedViewModel.updateProgressBar(true)
                             mainContainer.removeAllViews()
                             //drawSubmenu(arrayListOf("Универсальное размещение", "Размещение контейнеров", "Размещение товара"))
                             viewModel.getSubMenu(element.second)
@@ -120,24 +128,28 @@ class MenuFragment : Fragment() {
                             index + 120,
                             element.second
                         ) {
+                            sharedViewModel.updateProgressBar(true)
                             mainContainer.removeAllViews()
                             //(arrayListOf("Универсальное перемещение", "Перемещение контейнеров", "Свободное перемещение контейнеров", "Перемещение товара"))
                             viewModel.getSubMenu(element.second)
                         }
 
                         "Отбор" -> drawCardView(index + 100, index + 110, index + 120, element.second) {
+                            sharedViewModel.updateProgressBar(true)
                             mainContainer.removeAllViews()
                             //drawSubmenu(arrayListOf("Отбор товара", "Отбор контейнеров", "Кластерный отбор", "Консолидация контейнеров"))
                             viewModel.getSubMenu(element.second)
                         }
 
                         "Отгрузка" -> drawCardView(index + 100, index + 110, index + 120, element.second) {
+                            sharedViewModel.updateProgressBar(true)
                             mainContainer.removeAllViews()
                             //drawSubmenu(arrayListOf("Сортировка", "Упаковка", "Контроль отгрузки", "Отгрузка"))
                             viewModel.getSubMenu(element.second)
                         }
 
                         "Подпитка" -> drawCardView(index + 100, index + 110, index + 120, element.second) {
+                            sharedViewModel.updateProgressBar(true)
                             mainContainer.removeAllViews()
                             //drawSubmenu(arrayListOf("Подпитка контейнеров", "Подпитка товара"))
                             viewModel.getSubMenu(element.second)
@@ -149,6 +161,7 @@ class MenuFragment : Fragment() {
                             index + 120,
                             element.second
                         ) {
+                            sharedViewModel.updateProgressBar(true)
                             mainContainer.removeAllViews()
                             //drawSubmenu(arrayListOf("Контроль качества", "Инвентаризация", "Свободная инвентаризация контейнера", "Маркировка"))
                             viewModel.getSubMenu(element.second)
@@ -160,6 +173,7 @@ class MenuFragment : Fragment() {
                             index + 120,
                             element.second
                         ) {
+                            sharedViewModel.updateProgressBar(true)
                             mainContainer.removeAllViews()
                             //drawSubmenu(arrayListOf("Ввод остатков", "Остатки товаров", "Ввод вгх", "Ввод шк"))
                             viewModel.getSubMenu(element.second)
@@ -170,6 +184,20 @@ class MenuFragment : Fragment() {
                 }
 
             }
+            sharedViewModel.updateProgressBar(false)
+        })
+
+        viewModel.menuForms.observe(viewLifecycleOwner, Observer {form->
+            if(form!=null){
+                mainContainer.removeAllViews()
+                if(form.FormName == "Главное меню"){
+                    drawGridLayout()
+                }
+                val menuElements = form.Elements
+                drawForm(menuElements.reversed(), form.FormName)
+                sharedViewModel.updateProgressBar(false)
+            }
+
         })
         /*card1.setOnClickListener {
             it.startAnimation(AnimationUtils.loadAnimation(requireContext(), R.anim.image_click)
@@ -182,8 +210,10 @@ class MenuFragment : Fragment() {
     }
 
     private fun initData() {
+        sharedViewModel.updateProgressBar(true)
         viewModel.setTvHello()
-        viewModel.getMainForm()
+        //viewModel.getMainForm()
+        viewModel.loadForms()
     }
 
     override fun onResume() {
@@ -207,6 +237,31 @@ class MenuFragment : Fragment() {
                 snackbar.show()
             }
         })
+    }
+
+    private fun drawForm(menuElements: List<Element>, formType: String){
+        menuElements.forEachIndexed { index, element ->
+            when(element.ElementType){
+                "Button"->{
+                    if(formType=="Главное меню"){
+                        drawCardView(index + 100, index + 110, index + 120, element.ElementName) {
+                            sharedViewModel.updateProgressBar(true)
+                            //mainContainer.removeAllViews()
+                            val nextForm = element.Actions
+                                .find { action -> action.Action == "GoToForm" }
+                                ?.Arguments?.find { argument -> argument.Name == "FormID"  }
+                            nextForm?.let { argument ->  viewModel.getSubMenuForm(argument.Value) } ?: sharedViewModel.updateProgressBar(false)
+                        }
+                    }else{
+                        drawSubmenu(element.ElementName)
+                    }
+                }
+                "Field"->{}
+                "Table"->{}
+                "SelectionField"->{}
+                "Text"->{}
+            }
+        }
     }
 
     private fun drawGridLayout() {
@@ -261,7 +316,8 @@ class MenuFragment : Fragment() {
         imageView.setImageDrawable(context?.let {
             ContextCompat.getDrawable(
                 it,
-                R.drawable.baseline_note_add_24
+                /*R.drawable.baseline_note_add_24*/
+                cardViewIcons.random()
             )
         })
         imageView.setColorFilter(
@@ -283,7 +339,7 @@ class MenuFragment : Fragment() {
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
         //textView.layoutParams = linearLayoutParams
         val textViewParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT,
             1f
         )
@@ -293,8 +349,11 @@ class MenuFragment : Fragment() {
             0,
             (8 * Resources.getSystem().displayMetrics.density).toInt()
         )
+        textViewParams.gravity = Gravity.CENTER_HORIZONTAL
         textView.layoutParams = textViewParams
         textView.gravity = Gravity.CENTER_HORIZONTAL
+        textView.maxWidth = (75 * Resources.getSystem().displayMetrics.density).toInt()
+        //textView.maxEms = 3
 
         linearLayout.addView(imageView)
         linearLayout.addView(textView)

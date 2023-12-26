@@ -7,6 +7,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import sitec_it.ru.androidapp.data.AppDatabase
+import sitec_it.ru.androidapp.data.dao.ActionDao
+import sitec_it.ru.androidapp.data.dao.ArgumentDao
+import sitec_it.ru.androidapp.data.dao.ElementDao
+import sitec_it.ru.androidapp.data.dao.FormDao
 import sitec_it.ru.androidapp.data.dao.MessageListDao
 import sitec_it.ru.androidapp.data.dao.NodeDao
 import sitec_it.ru.androidapp.data.dao.OrganizationDao
@@ -52,4 +56,24 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideOrganizationDao(db: AppDatabase): OrganizationDao = db.organizationDao()
+
+
+    @Provides
+    @Singleton
+    fun provideFormDao(db: AppDatabase): FormDao = db.formDao()
+
+
+    @Provides
+    @Singleton
+    fun provideElementDao(db: AppDatabase): ElementDao = db.elementDao()
+
+
+    @Provides
+    @Singleton
+    fun provideArgumentDao(db: AppDatabase): ArgumentDao = db.argumentDao()
+
+
+    @Provides
+    @Singleton
+    fun provideActionDao(db: AppDatabase): ActionDao = db.actionDao()
 }
