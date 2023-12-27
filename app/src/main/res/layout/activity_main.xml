@@ -98,6 +98,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:padding="5dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -106,7 +107,7 @@
 
         android:background="@drawable/background_progress_dialog"
         android:elevation="4dp"
-        android:visibility="gone">
+        android:visibility="visible">
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/pb_circular"
             android:layout_width="wrap_content"
@@ -114,13 +115,20 @@
             app:showAnimationBehavior="inward"
             app:hideAnimationBehavior="outward"
             android:indeterminate="true"
+            android:progress="70"
+            app:trackCornerRadius="15dp"
+            app:trackThickness="10dp"
+            app:minHideDelay="150"
+            app:indicatorSize="100dp"
+            app:trackColor="#CDCDCD"
+            app:indicatorColor="#0252FB"
             android:layout_gravity="center_horizontal"
             android:padding="8dp"/>
         <TextView
             android:id="@+id/pb_main_text1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Получение данных"
+            android:text="Обновление данных"
             android:padding="8dp"
             android:layout_gravity="center_horizontal"/>
     </LinearLayout>

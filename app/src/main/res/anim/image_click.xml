@@ -14,7 +14,7 @@
          android:toYScale = "0.95"
          android:pivotX="50%"
          android:pivotY="50%"
-         android:duration = "85">
+         android:duration = "55">
      </scale>
     <!-- <rotate
          android:fromDegrees="0"

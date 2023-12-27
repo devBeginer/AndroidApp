@@ -9,6 +9,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.GridLayout
 import android.widget.ImageView
@@ -144,7 +145,10 @@ class MenuFragment : Fragment() {
             when (element.ElementType) {
                 "Button" -> {
                     if (formName == "Главное меню") {
-                        drawCardView(element.ElementName) {
+                        drawCardView(element.ElementName) { view ->
+                            view?.startAnimation(
+                                AnimationUtils.loadAnimation(requireContext(), R.anim.image_click)
+                            )
                             sharedViewModel.updateProgressBar(true)
                             val action = element.Actions.find { action -> action.Action == "GoToForm" }
                             val nextForm = action?.Arguments?.find { argument -> argument.Name == "FormID" }
@@ -178,7 +182,7 @@ class MenuFragment : Fragment() {
 
     private fun drawCardView(
         text: String,
-        onClick: () -> Unit
+        onClick: (View?) -> Unit
     ) {
         val cardView = MaterialCardView(requireContext())
         val gridLayoutParams = GridLayout.LayoutParams(
@@ -250,7 +254,7 @@ class MenuFragment : Fragment() {
         cardView.addView(linearLayout)
         glMenu.addView(cardView)
         cardView.setOnClickListener {
-            onClick()
+            onClick(cardView)
         }
 
     }

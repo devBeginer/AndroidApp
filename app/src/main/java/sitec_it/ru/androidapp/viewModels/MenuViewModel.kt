@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import sitec_it.ru.androidapp.data.models.authentication.AuthenticationGetRequest
 import sitec_it.ru.androidapp.data.models.changes.Changes
@@ -190,7 +191,7 @@ class MenuViewModel @Inject constructor(val repository: Repository) : ViewModel(
 
     fun getSubMenuForm(formId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-
+            delay(2500)
             val form = repository.getFormById(formId)
             menuFormsMutableLiveData.postValue(form)
         }
