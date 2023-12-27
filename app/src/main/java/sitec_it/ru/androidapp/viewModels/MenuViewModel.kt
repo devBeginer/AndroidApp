@@ -172,23 +172,10 @@ class MenuViewModel @Inject constructor(val repository: Repository) : ViewModel(
             when(response){
                 is Result.Success -> {
                     response.data?.let { dataBody ->
-                        /*val currentChanges = repository.getChangesByDbId(repository.getCurrentDatabaseId())
-                        val changeId = if(currentChanges!=null){
-                            repository.updateChanges(ChangesDB(currentChanges.id, dataBody.IsWait, dataBody.MessageNumber, dataBody.UniqueDbId))
-                            currentChanges.id
-                        }else{
-                            repository.insertChanges(ChangesDB(isWait =  dataBody.IsWait, messageNumber = dataBody.MessageNumber, uniqueDbId = dataBody.UniqueDbId))
-                        }
-                        val organizations = repository.getOrganizationByChange(changeId)
-                        organizations.forEach { organisation->repository.deleteOrganization(organisation) }
-                        dataBody.Organization.forEach { organization -> repository.insertOrganization(
-                            OrganizationDB(code = organization.Code, name = organization.Name, change = changeId)
-                        ) }*/
                         Log.d("changes","Сохранение данных начато")
 
                         repository.updateMessage(dataBody.MessageNumber)
                         repository.saveOrganizations(dataBody.Organization)
-                        //Log.d("changes",dataBody.toString())
                         Log.d("changes","Сохранение данных завершено")
                         changesObserve.postValue(dataBody)
                     }

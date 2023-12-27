@@ -146,19 +146,30 @@
                     android:singleLine="true" />
             </com.google.android.material.textfield.TextInputLayout>
 
-
-            <Button
-                android:id="@+id/btn_sign_in_qr"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_sign_in_qr"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+
                 android:text="@string/sign_in_qr_btn"
                 app:layout_constraintTop_toBottomOf="@id/til_password"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
 
                 android:layout_marginTop="24dp"
                 android:layout_marginStart="42dp"
                 android:layout_marginEnd="42dp"/>
+            <ImageView
+                android:id="@+id/iv_sign_in_qr"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/baseline_qr_code_24"
+
+                app:layout_constraintTop_toTopOf="@id/tv_sign_in_qr"
+                app:layout_constraintBottom_toBottomOf="@id/tv_sign_in_qr"
+                app:layout_constraintEnd_toEndOf="parent"
+
+                android:layout_marginEnd="42dp"/>
+
 
 
             <Button
@@ -166,7 +177,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/sign_in_btn"
-                app:layout_constraintTop_toBottomOf="@id/btn_sign_in_qr"
+                app:layout_constraintTop_toBottomOf="@id/tv_sign_in_qr"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
 
