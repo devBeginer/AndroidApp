@@ -78,11 +78,17 @@ class MenuFragment : Fragment() {
         mainContainer = view.findViewById(R.id.ll_main_container)
         val toolbar = view.findViewById<MaterialToolbar>(R.id.toolbar_menu)
 
-        toolbar.setNavigationIcon(R.drawable.baseline_logout_24)
+        toolbar.setNavigationIcon(R.drawable.baseline_menu_24)
         toolbar.setNavigationOnClickListener {
-            activity?.supportFragmentManager?.beginTransaction()
+            /*activity?.supportFragmentManager?.beginTransaction()
                 ?.replace(R.id.nav_host_fragment, LoginFragment())
-                ?.commit()
+                ?.commit()*/
+
+            val actionMenuDialogFragment = ActionMenuDialogFragment()
+            activity?.supportFragmentManager
+                ?.let { manager ->
+                    actionMenuDialogFragment.show(manager, actionMenuDialogFragment.tag)
+                }
         }
 
         initData()
