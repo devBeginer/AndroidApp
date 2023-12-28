@@ -26,7 +26,7 @@ class StartAppIntro : AppIntro2() {
 
         addSlide(
             AppIntroFragment.createInstance(
-            title = "Добро пожаловать...",
+            title = "Добро пожаловать",
             description = "Изучите основные возможности приложения",
             imageDrawable = R.drawable.screen_start_fragment,
             backgroundColorRes = R.color.app_intro_background,
@@ -35,7 +35,7 @@ class StartAppIntro : AppIntro2() {
         ))
         addSlide(AppIntroFragment.createInstance(
             title = "Настройки подключения",
-            description = "Заполните все поля или отсканируйте QR код с настройками и переходите к следующему шагу",
+            description = "Заполните все поля или отсканируйте QR код с настройками ",
             imageDrawable = R.drawable.screen_base_fragment,
             //backgroundDrawable = R.drawable.screen_base_fragment,
             //titleColorRes = R.color.yellow,
@@ -55,8 +55,8 @@ class StartAppIntro : AppIntro2() {
             descriptionColorRes = R.color.black
         ))
         addSlide(AppIntroFragment.createInstance(
-            title = "На этом все...",
-            description = "Переходим к работе",
+            title = "Переходим к работе",
+            description = "Нажмите вперед для начала работы",
 
             backgroundColorRes = R.color.app_intro_background,
             titleColorRes = R.color.black,
@@ -72,6 +72,7 @@ class StartAppIntro : AppIntro2() {
         //setTransformer(AppIntroPageTransformerType.Zoom)
         isIndicatorEnabled = true
         setImmersiveMode()
+        isWizardMode = true
         isSystemBackButtonLocked = true
         askForPermissions(
             permissions = arrayOf(Manifest.permission.CAMERA),

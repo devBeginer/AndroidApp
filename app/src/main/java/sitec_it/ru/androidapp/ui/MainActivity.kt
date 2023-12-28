@@ -68,23 +68,26 @@ class MainActivity : AppCompatActivity() {
         if(isFirstStartApp){
             val intent = Intent(this, StartAppIntro::class.java)
             startActivity(intent)
-        }
+        } /*else {
+
+        }*/
 
 
-        /*viewModel.initData()
-        viewModel.profileList.observe(this, Observer { count->
-            if(count>0)
-                supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, LoginFragment())
-                    .commit()
-            else
-                supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, StartFragment())
-                    .commit()
-        })*/
+
 
         if(!isFirstStartApp) {
-            supportFragmentManager.beginTransaction()
+            viewModel.initData()
+            viewModel.profileList.observe(this, Observer { count->
+                if(count>0)
+                    supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, LoginFragment())
+                        .commit()
+                else
+                    supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, StartFragment())
+                        .commit()
+            })
+           /* supportFragmentManager.beginTransaction()
                 .replace(R.id.nav_host_fragment, LoginFragment())
-                .commit()
+                .commit()*/
         }
         else {
             supportFragmentManager.beginTransaction()

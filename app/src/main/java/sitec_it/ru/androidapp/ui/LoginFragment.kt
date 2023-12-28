@@ -128,7 +128,7 @@ class LoginFragment : Fragment() {
                     )
                 tvSignName.setAdapter(arrayAdapter)
 
-                tvSignName.doAfterTextChanged {userName->
+                tvSignName.doAfterTextChanged { userName ->
                     val user = list.find { it.name == userName.toString() }
                     val codeUser = user?.code
                     selectedLogin = user?.login
@@ -140,7 +140,7 @@ class LoginFragment : Fragment() {
                     tvSignName.setText(listNamesUsers[0], false)
                     tvSignName.setSelection(0/*tvSignName.text.count()*/)
                 }
-                tvSignName.onItemSelectedListener = object:OnItemSelectedListener{
+                tvSignName.onItemSelectedListener = object : OnItemSelectedListener {
                     override fun onItemSelected(
                         parent: AdapterView<*>?,
                         view: View?,
@@ -210,7 +210,17 @@ class LoginFragment : Fragment() {
                             Snackbar.LENGTH_LONG
                         ).show()
                     }
+
+                    else -> {
+                        sharedViewModel.updateProgressBar(false)
+                        Snackbar.make(
+                            requireView(),
+                            "Ошибка подключения к базе. Проверьте данные в настройках и попробуйте еще раз.",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
                 }
+
             }
         })
         viewModel.user.observeFutureEvents(viewLifecycleOwner, Observer<User?> { user ->
@@ -232,14 +242,14 @@ class LoginFragment : Fragment() {
         })
         viewModel.authenticationUser.observe(viewLifecycleOwner, Observer<String> { result ->
 
-            when(result){
+            when (result) {
                 "ok" -> activity?.supportFragmentManager?.beginTransaction()
                     ?.replace(R.id.nav_host_fragment, MenuFragment())
                     ?.commit()
+
                 else -> Toast.makeText(context, "Неверный логин/пароль", Toast.LENGTH_LONG)
                     .show()
             }
-
 
 
         })
@@ -269,7 +279,13 @@ class LoginFragment : Fragment() {
         })*/
 
         buttonLogin.setOnClickListener {
-            selectedLogin?.let { login -> viewModel.login(login, editTextPassword.text.toString()) }
+            selectedLogin?.let { login ->
+                if (login.equals("")){
+                    Toast.makeText(requireContext(),"Выберите пользователя",Toast.LENGTH_SHORT).show()
+                } else {
+                    viewModel.login(login, editTextPassword.text.toString())
+                }
+            }
         }
         editTextPassword.setOnEditorActionListener { textView, id, keyEvent ->
             if (id == EditorInfo.IME_ACTION_DONE) {
