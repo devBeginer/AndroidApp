@@ -26,8 +26,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val viewModel: SharedViewModel by viewModels()
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
 
     //lateinit var progressBar: ProgressBar
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         var pbLinear: LinearLayout = findViewById(R.id.pb_main_linear)
         //var fadeTransition: Transition = Fade()
         //fadeTransition.addTarget(pbLinear)
-        val isFirstStartApp = viewModel.isFirstStartApp()//sharedPreferences.getBoolean("firstStartApp", true)
+        val isFirstStartApp = viewModel.isFirstStartApp()
 
 
 
