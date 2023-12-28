@@ -66,6 +66,8 @@ class Repository @Inject constructor(
     suspend fun getProfileLicense(id: Long) = localRepository.getProfileLicenseByProfile(id)
 
 
+    fun isFirstAppStartFromSP() = localRepository.isFirstAppStartFromSP()
+
     fun getProfileFromSP() = localRepository.getCurrentProfileIdFromSP()
     fun saveProfileToSP(id: Long) = localRepository.saveCurrentProfileIdToSP(id)
 

@@ -2,6 +2,8 @@ package sitec_it.ru.androidapp.ui
 
 import android.app.ProgressDialog
 import android.content.DialogInterface
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
@@ -17,11 +19,15 @@ import androidx.transition.TransitionManager
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
+import sitec_it.ru.androidapp.repository.LocalRepository
 import sitec_it.ru.androidapp.viewModels.SharedViewModel
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val viewModel: SharedViewModel by viewModels()
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
 
     //lateinit var progressBar: ProgressBar
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +39,9 @@ class MainActivity : AppCompatActivity() {
         var pbLinear: LinearLayout = findViewById(R.id.pb_main_linear)
         //var fadeTransition: Transition = Fade()
         //fadeTransition.addTarget(pbLinear)
+        val isFirstStartApp = viewModel.isFirstStartApp()//sharedPreferences.getBoolean("firstStartApp", true)
+
+
 
         viewModel.pbVisibility.observe(this, Observer { visibility->
             if(visibility) {
@@ -58,8 +67,13 @@ class MainActivity : AppCompatActivity() {
 
         })
 
+        if(isFirstStartApp){
+            val intent = Intent(this, StartAppIntro::class.java)
+            startActivity(intent)
+        }
 
-        viewModel.initData()
+
+        /*viewModel.initData()
         viewModel.profileList.observe(this, Observer { count->
             if(count>0)
                 supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, LoginFragment())
@@ -67,7 +81,18 @@ class MainActivity : AppCompatActivity() {
             else
                 supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, StartFragment())
                     .commit()
-        })
+        })*/
+
+        if(!isFirstStartApp) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.nav_host_fragment, LoginFragment())
+                .commit()
+        }
+        else {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.nav_host_fragment, StartFragment())
+                .commit()
+        }
 
 
 

@@ -41,6 +41,7 @@ class LocalRepository @Inject constructor(
         const val PROFILE_ID = "profile_id"
         const val USER_CODE = "user_code"
         const val CurrentDatabaseId = "CurrentDatabaseId"
+        const val FIRST_APP_START = "firstStartApp"
     }
 
 
@@ -77,6 +78,10 @@ class LocalRepository @Inject constructor(
     suspend fun getProfileLicenseByProfile(id: Long) =
         profileLicenseDao.getProfileLicenseByProfile(id)
 
+
+    fun isFirstAppStartFromSP(): Boolean {
+        return sharedPreferences.getBoolean(FIRST_APP_START, true)
+    }
 
     fun getCurrentProfileIdFromSP(): Long {
         return sharedPreferences.getLong(PROFILE_ID, 1)

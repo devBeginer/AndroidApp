@@ -46,4 +46,7 @@ class SharedViewModel @Inject constructor(private val repository: Repository): V
         scanResultMutableLiveData.postValue(result)
         //scanResult = result
     }
+    fun isFirstStartApp(): Boolean{
+        return repository.isFirstAppStartFromSP()
+    }
 }

@@ -43,6 +43,7 @@ class StartFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        sharedViewModel.updateProgressBar(false)
 
         viewModel.initDefaultProfile()
         val btnManual: Button = view.findViewById(R.id.btn_start_set_manually)
@@ -58,9 +59,7 @@ class StartFragment: Fragment() {
                 ?.addToBackStack(null)
                 ?.commit()
         }
-        if(!permissionsGranted()){
-            permissionsRequest()
-        }
+
 
         sharedViewModel.scanResult.observeFutureEvents(viewLifecycleOwner, Observer { scanResult->
             if(scanResult!=null){
@@ -68,6 +67,14 @@ class StartFragment: Fragment() {
                 sharedViewModel.postScanResult(null)
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if(viewModel.isUserEducated() && !permissionsGranted()){
+            permissionsRequest()
+        }
     }
 
     fun permissionsGranted(): Boolean {

@@ -119,6 +119,9 @@ dependencies {
     implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
     // guava hash
     implementation("com.google.guava:guava:24.0-jre")
+
+    // App Intro
+    implementation 'com.github.AppIntro:AppIntro:6.3.1'
 }
 
 // Allow references to generated code
