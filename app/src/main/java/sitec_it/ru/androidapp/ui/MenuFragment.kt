@@ -197,7 +197,7 @@ class MenuFragment : Fragment() {
         )
         gridLayoutParams.width = 0
         gridLayoutParams.height = GridLayout.LayoutParams.WRAP_CONTENT
-        val margin = (5 * Resources.getSystem().displayMetrics.density).toInt()
+        val margin = (7 * Resources.getSystem().displayMetrics.density).toInt()
         gridLayoutParams.setMargins(margin, margin, margin, margin)
 
         cardView.layoutParams = gridLayoutParams
