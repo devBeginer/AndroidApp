@@ -1,24 +1,20 @@
 package sitec_it.ru.androidapp.ui
 
 import android.Manifest
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import com.github.appintro.AppIntroFragment
 import androidx.fragment.app.Fragment
 import com.github.appintro.AppIntro2
-import com.github.appintro.AppIntroPageTransformerType
-import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
-import sitec_it.ru.androidapp.SharedPreferencesUtils.editPref
-import javax.inject.Inject
-@AndroidEntryPoint
+
+
 class StartAppIntro : AppIntro2() {
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedPreferences.editPref("firstStartApp", false)
+
         // Make sure you don't call setContentView!
 
         // Call addSlide passing your Fragments.
@@ -72,7 +68,7 @@ class StartAppIntro : AppIntro2() {
         //setTransformer(AppIntroPageTransformerType.Zoom)
         isIndicatorEnabled = true
         setImmersiveMode()
-        isWizardMode = true
+        //isWizardMode = true
         isSystemBackButtonLocked = true
         askForPermissions(
             permissions = arrayOf(Manifest.permission.CAMERA),

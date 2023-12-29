@@ -1,6 +1,7 @@
 package sitec_it.ru.androidapp.viewModels
 
 import android.os.Build
+import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,8 +9,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.withContext
+import sitec_it.ru.androidapp.Utils
 import sitec_it.ru.androidapp.data.models.node.Node
 import sitec_it.ru.androidapp.data.models.node.NodeRequest
 import sitec_it.ru.androidapp.data.models.node.NodeResponse
@@ -43,6 +48,23 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
     val apiError: LiveData<String>
         get() = apiErrorMutableLiveData
     var url: String = ""
+
+    private val baseConnectionMutableLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
+    val baseConnection: LiveData<Boolean>
+        get() = baseConnectionMutableLiveData
+
+
+
+    private val serverConnectionMutableLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
+    val serverConnection: LiveData<Boolean>
+        get() = serverConnectionMutableLiveData
+
+    private var checkConnectionHandler: Handler? = null
+    private var checkConnectionRunnable: Runnable? = null
+
+    var job: Job? = null
+    private var shouldCheckConnection = true
+
 
     fun initView() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -256,6 +278,35 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
                 "http://${profile.server}/${profile.base}/hs/MobileClient"
             else
                 "http://${profile.server}/${profile.base}/hs/MobileClient"
+        }
+    }
+
+    fun stopCheckConnection(){
+        /*checkConnectionRunnable?.let { checkConnectionHandler?.removeCallbacks(it) }
+        checkConnectionHandler = null*/
+        shouldCheckConnection = false
+
+        job?.cancel()
+
+    }
+
+    fun startCheckConnection(){
+        //checkConnectionHandler = Handler()
+        job = viewModelScope.launch(Dispatchers.IO) {
+            /*checkConnectionRunnable = Runnable {
+                profile.value?.let { serverConnectionMutableLiveData.postValue(Utils.hostIsReachable(it.server)) }
+                profile.value?.let { baseConnectionMutableLiveData.postValue(Utils.hostIsReachable(it.server)) }
+                startCheckConnection()
+            }
+            checkConnectionRunnable?.let {checkConnectionHandler?.postDelayed(it, 3000)}*/
+
+
+            profile.value?.let { serverConnectionMutableLiveData.postValue(Utils.hostIsReachable(it.server)) }
+            profile.value?.let { baseConnectionMutableLiveData.postValue(Utils.hostIsReachable(it.server)) }
+            delay(3000)
+
+            startCheckConnection()
+
         }
     }
 }

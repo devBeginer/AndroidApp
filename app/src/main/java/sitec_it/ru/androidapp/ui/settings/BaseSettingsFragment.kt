@@ -24,13 +24,13 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
 import sitec_it.ru.androidapp.Utils.observeFutureEvents
-import sitec_it.ru.androidapp.ui.BarcodeScannerFragment
+import sitec_it.ru.androidapp.data.models.DialogParams
 import sitec_it.ru.androidapp.data.models.profile.Profile
 import sitec_it.ru.androidapp.data.models.profile.ProfileSpinnerItem
+import sitec_it.ru.androidapp.ui.BarcodeScannerFragment
 import sitec_it.ru.androidapp.ui.LoginFragment
 import sitec_it.ru.androidapp.viewModels.BaseSettingsViewModel
 import sitec_it.ru.androidapp.viewModels.SharedViewModel
-import java.util.ArrayList
 
 @AndroidEntryPoint
 class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
@@ -42,6 +42,8 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
 
 
         sharedViewModel.updateProgressBar(true)
+
+        sharedViewModel.markNotFirstAppStart()
         viewModel.initView()
 
         val server: EditText = view.findViewById(R.id.et_base_settings_server)
@@ -119,6 +121,42 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
             if(scanResult!=null){
                 Toast.makeText(activity, scanResult, Toast.LENGTH_LONG).show()
                 sharedViewModel.postScanResult(null)
+            }
+        })
+
+        viewModel.baseConnection.observe(viewLifecycleOwner, Observer { connected->
+            if (connected) {
+                base.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    0,
+                    0,
+                    R.drawable.baseline_check_24,
+                    0
+                )
+            } else {
+                base.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    0,
+                    0,
+                    0,
+                    0
+                )
+            }
+        })
+
+        viewModel.serverConnection.observe(viewLifecycleOwner, Observer { connected->
+            if (connected) {
+                server.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    0,
+                    0,
+                    R.drawable.baseline_check_24,
+                    0
+                )
+            } else {
+                server.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    0,
+                    0,
+                    0,
+                    0
+                )
             }
         })
 
@@ -202,7 +240,8 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
                 if (parent != null) {
                     viewModel.initView((parent.selectedItem as ProfileSpinnerItem).id)
                     sharedViewModel.updateProgressBar(true)
-
+                    base.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0)
+                    server.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0)
                 }
             }
 
@@ -283,8 +322,9 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
 
         val back = view.findViewById<ImageView>(R.id.iv_base_settings_back)
         back.setOnClickListener {
-            activity?.supportFragmentManager?.beginTransaction()
-                ?.replace(R.id.nav_host_fragment, LoginFragment())?.commit()
+            /*activity?.supportFragmentManager?.beginTransaction()
+                ?.replace(R.id.nav_host_fragment, LoginFragment())?.commit()*/
+            processBack()
 
         }
 
@@ -303,6 +343,34 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
 
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        viewModel.startCheckConnection()
+    }
+
+    override fun onPause() {
+
+        viewModel.stopCheckConnection()
+        super.onPause()
+
+    }
+
+    private fun processBack(){
+        if(sharedViewModel.databaseId != ""){
+            activity?.supportFragmentManager?.beginTransaction()
+                ?.replace(R.id.nav_host_fragment, LoginFragment())?.commit()
+        }else{
+            sharedViewModel.postDialog(
+                DialogParams(
+                    "Для продолжения необходимо создать узел подключения",
+                    "Внимание",
+                    "Ok"
+                )
+            )
+        }
     }
 
 

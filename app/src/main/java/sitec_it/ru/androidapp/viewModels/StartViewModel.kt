@@ -46,7 +46,4 @@ class StartViewModel @Inject constructor(private val repository: Repository): Vi
         }
     }
 
-    fun isUserEducated(): Boolean{
-        return !repository.isFirstAppStartFromSP()
-    }
 }

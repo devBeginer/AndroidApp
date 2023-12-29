@@ -83,6 +83,10 @@ class LocalRepository @Inject constructor(
         return sharedPreferences.getBoolean(FIRST_APP_START, true)
     }
 
+    fun saveFirstAppStartToSP(isFirstStart: Boolean) {
+        return sharedPreferences.editPref(FIRST_APP_START, isFirstStart)
+    }
+
     fun getCurrentProfileIdFromSP(): Long {
         return sharedPreferences.getLong(PROFILE_ID, 1)
     }

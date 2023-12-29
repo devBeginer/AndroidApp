@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import sitec_it.ru.androidapp.data.models.DialogParams
 import sitec_it.ru.androidapp.repository.Repository
 import javax.inject.Inject
 
@@ -19,6 +20,10 @@ class SharedViewModel @Inject constructor(private val repository: Repository): V
     private val pbVisibilityMutableLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val pbVisibility: LiveData<Boolean>
         get() = pbVisibilityMutableLiveData
+
+    private val dialogMutableLiveData: MutableLiveData<DialogParams> = MutableLiveData()
+    val dialog: LiveData<DialogParams>
+        get() = dialogMutableLiveData
 
     private val scanResultMutableLiveData: MutableLiveData<String?> = MutableLiveData(null)
     val scanResult: LiveData<String?>
@@ -40,6 +45,9 @@ class SharedViewModel @Inject constructor(private val repository: Repository): V
     }
 
 
+    fun postDialog(dialogParams: DialogParams){
+        dialogMutableLiveData.postValue(dialogParams)
+    }
 
 
     fun postScanResult(result: String?){
@@ -48,5 +56,10 @@ class SharedViewModel @Inject constructor(private val repository: Repository): V
     }
     fun isFirstStartApp(): Boolean{
         return repository.isFirstAppStartFromSP()
+    }
+
+
+    fun markNotFirstAppStart(){
+        repository.saveFirstAppStartToSP(false)
     }
 }

@@ -254,9 +254,15 @@ class LoginFragment : Fragment() {
 
         })
         viewModel.profile.observeFutureEvents(viewLifecycleOwner, Observer { profile ->
-            val text = "${tvProfile.text}\n ${profile.name}"
-            tvProfile.text = text
-
+            if(profile.databaseID!=""){
+                val text = "${tvProfile.text}\n ${profile.name}"
+                tvProfile.text = text
+            }else{
+                sharedViewModel.updateProgressBar(false)
+                activity?.supportFragmentManager?.beginTransaction()
+                    ?.replace(R.id.nav_host_fragment, StartFragment())
+                    ?.commit()
+            }
         })
         /*viewModel.user.observeFutureEvents(viewLifecycleOwner, Observer {
             if(it!=null){

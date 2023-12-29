@@ -72,9 +72,9 @@ class StartFragment: Fragment() {
     override fun onResume() {
         super.onResume()
 
-        if(viewModel.isUserEducated() && !permissionsGranted()){
+        /*if(sharedViewModel.isFirstStartApp() && !permissionsGranted()){
             permissionsRequest()
-        }
+        }*/
     }
 
     fun permissionsGranted(): Boolean {
