@@ -203,6 +203,10 @@ class Repository @Inject constructor(
         return localRepository.getUserByCode(code)
     }
 
+    suspend fun getUserByDbId(databaseId: String): List<User> {
+        return localRepository.getUserByDbId(databaseId)
+    }
+
     suspend fun getChanges():Result<Changes?> {
         val currentProfile =
             localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())

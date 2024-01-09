@@ -105,6 +105,9 @@ class LocalRepository @Inject constructor(
     }
 
     suspend fun getUserByCode(code: String): User? = userDao.getUserByCode(code)
+    suspend fun getUserByDbId(databaseId: String): List<User> {
+        return userDao.getUsersByDbId(databaseId)
+    }
     fun getLastMessage(): MessageList? {
 
         return messageListDao.getRecordById(getCurrentDatabaseId())

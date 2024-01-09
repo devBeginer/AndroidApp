@@ -209,20 +209,22 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
                             )
                             )
 
+                            val newProfile = Profile(
+                                id = currentProfile.id,
+                                name = currentProfile.name,
+                                base = currentProfile.base,
+                                server = currentProfile.server,
+                                ssl = currentProfile.ssl,
+                                notCheckCertificate = currentProfile.notCheckCertificate,
+                                port = currentProfile.port,
+                                login = currentProfile.login,
+                                password = currentProfile.password,
+                                url = currentProfile.url,
+                                databaseID = data.nodeId
+                            )
+
                             repository.updateProfile(
-                                Profile(
-                                    id = currentProfile.id,
-                                    name = currentProfile.name,
-                                    base = currentProfile.base,
-                                    server = currentProfile.server,
-                                    ssl = currentProfile.ssl,
-                                    notCheckCertificate = currentProfile.notCheckCertificate,
-                                    port = currentProfile.port,
-                                    login = currentProfile.login,
-                                    password = currentProfile.password,
-                                    url = currentProfile.url,
-                                    databaseID = data.nodeId
-                                    )
+                                newProfile
                             )
                             repository.saveCurrentDatabaseId(data.nodeId)
                             val profileLicense = repository.getProfileLicense(currentProfile.id)
@@ -239,9 +241,11 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
                                     )
                                 )
                             }
-                            val users = repository.getAllUsers()
+                            //val users = repository.getAllUsers()
+                            val users = repository.getUserByDbId(currentProfile.databaseID)
                             users.forEach { user->repository.updateUser(User(user.code, user.login, user.name, user.password, data.nodeId)) }
                             nodeResponseMutableLiveData.postValue(data)
+                            profileMutableLiveData.postValue(newProfile)
                         }
                     }
                     is Result.Error-> {
