@@ -26,7 +26,11 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
-import sitec_it.ru.androidapp.data.models.newForms1.Element
+import sitec_it.ru.androidapp.TypeForms
+import sitec_it.ru.androidapp.data.models.menu.Action
+import sitec_it.ru.androidapp.data.models.menu.Element
+import sitec_it.ru.androidapp.data.models.menu.Form
+import sitec_it.ru.androidapp.data.models.menu.SubMenu
 import sitec_it.ru.androidapp.viewModels.MenuViewModel
 import sitec_it.ru.androidapp.viewModels.SharedViewModel
 
@@ -41,6 +45,9 @@ class MenuFragment : Fragment() {
     private lateinit var scrollView: ScrollView
     private lateinit var mainContainer: LinearLayout
     private var isMainMenu = true
+    private var currentTypeForm:TypeForms = TypeForms.MENU
+     var menuForm : Form? = null
+    var currentThreadID:String? = ""
 
     private val cardViewIcons = arrayListOf<Int>(
         R.drawable.baseline_note_add_24,
@@ -51,14 +58,22 @@ class MenuFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
-            sharedViewModel.updateProgressBar(true)
-            if (isMainMenu) {
-                activity?.supportFragmentManager?.beginTransaction()
-                    ?.replace(R.id.nav_host_fragment, LoginFragment())?.commit()
-            } else {
-                viewModel.getMainForm()
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+           // sharedViewModel.updateProgressBar(true)
+            when(currentTypeForm){
+                TypeForms.SUBMENU ->{
+                    menuForm?.Elements?.let { drawMainMenu(it) }
+                }
+                TypeForms.MENU -> {
+                    activity?.supportFragmentManager?.beginTransaction()
+                        ?.replace(R.id.nav_host_fragment, LoginFragment())?.commit()
+                }
+                TypeForms.GENERALFORM ->{
+
+                }
             }
+
+
         }
     }
 
@@ -80,13 +95,9 @@ class MenuFragment : Fragment() {
 
         toolbar.setNavigationIcon(R.drawable.baseline_menu_24)
         toolbar.setNavigationOnClickListener {
-            /*activity?.supportFragmentManager?.beginTransaction()
-                ?.replace(R.id.nav_host_fragment, LoginFragment())
-                ?.commit()*/
-
             val actionMenuDialogFragment = ActionMenuDialogFragment()
-            activity?.supportFragmentManager
-                ?.let { manager ->
+            requireActivity().supportFragmentManager
+                .let { manager ->
                     actionMenuDialogFragment.show(manager, actionMenuDialogFragment.tag)
                 }
         }
@@ -101,23 +112,26 @@ class MenuFragment : Fragment() {
             }
         })
 
-        viewModel.menuForms.observe(viewLifecycleOwner, Observer { form ->
+       /* viewModel.menuForms.observe(viewLifecycleOwner, Observer { form ->
             if (form != null) {
                 mainContainer.removeAllViews()
 
                 val menuElements = form.Elements
-                drawForm(menuElements, form.FormName)
+                if (form.FormName == "Главное меню") {
+                    drawGridLayout()
+                }
+             //   drawForm(menuElements, form.FormName)
                 sharedViewModel.updateProgressBar(false)
             }
 
-        })
+        })*/
 
     }
 
     private fun initData() {
         sharedViewModel.updateProgressBar(true)
         viewModel.setTvHello()
-        viewModel.loadForms()
+      //  viewModel.loadForms()
     }
 
     override fun onResume() {
@@ -141,36 +155,62 @@ class MenuFragment : Fragment() {
                 snackbar.show()
             }
         })
+
+        sharedViewModel.menuForms.observe(viewLifecycleOwner, Observer {
+            it?.let { allData ->
+
+               menuForm = allData.forms.find { form -> form.FormType == "menu" }
+               // currentThreadID = formMenu?.FormID
+                val formName = menuForm?.FormName
+
+                menuForm?.let { useFormMenu ->
+                    Log.d("drawForm","нашли главное меню")
+
+                    drawMainMenu(useFormMenu.Elements)
+                }
+            }
+        })
     }
 
-    private fun drawForm(menuElements: List<Element>, formName: String) {
-        if (formName == "Главное меню") {
-            drawGridLayout()
-        }
-        menuElements.forEach { element ->
-            when (element.ElementType) {
+    private fun drawMainMenu(elements: List<Element>) {
+        mainContainer.removeAllViews()
+        drawGridLayout()
+        currentTypeForm = TypeForms.MENU
+        elements.forEach { elementForm ->
+
+            when(elementForm.ElementType){
                 "Button" -> {
-                    if (formName == "Главное меню") {
-                        drawCardView(element.ElementName) { view ->
-                            view?.startAnimation(
-                                AnimationUtils.loadAnimation(requireContext(), R.anim.image_click)
-                            )
-                            sharedViewModel.updateProgressBar(true)
-                            val action = element.Actions.find { action -> action.Action == "GoToForm" }
-                            val nextForm = action?.Arguments?.find { argument -> argument.Name == "FormID" }
-                            nextForm?.let { argument -> viewModel.getSubMenuForm(argument.Value) }
-                        }
-                    } else {
-                        drawSubmenu(element.ElementName)
+                    drawCardView(elementForm.Text){ view ->
+                        view?.startAnimation(
+                            AnimationUtils.loadAnimation(requireContext(), R.anim.image_click)
+                        )
+
+                        // отрисовка подменю по нажатию
+                        mainContainer.removeAllViews()
+                        drawSubMenu(elementForm.SubMenu,"")
                     }
                 }
-
-                "Field" -> {}
-                "Table" -> {}
-                "SelectionField" -> {}
-                "Text" -> {}
             }
         }
+
+        sharedViewModel.updateProgressBar(false)
+    }
+
+    private fun drawSubMenu(
+        subMenu: List<SubMenu>,
+        formType: String?
+    ) {
+        currentTypeForm = TypeForms.SUBMENU
+        mainContainer.removeAllViews()
+        subMenu.forEach { element ->
+            when(element.ElementType){
+                "Button" ->{
+                    drawButton(element.Text,element.Actions)
+                }
+            }
+
+        }
+        sharedViewModel.updateProgressBar(false)
     }
 
     private fun drawGridLayout() {
@@ -265,7 +305,7 @@ class MenuFragment : Fragment() {
 
     }
 
-    private fun drawSubmenu(subAction: String) {
+    private fun drawButton(text: String, actions: List<Action>) {
         isMainMenu = false
 
         val button = Button(requireContext())
@@ -276,7 +316,16 @@ class MenuFragment : Fragment() {
         val margin = (5 * Resources.getSystem().displayMetrics.density).toInt()
         layoutParams.setMargins(margin, margin, margin, margin)
         button.layoutParams = layoutParams
-        button.text = subAction
+        button.text = text
+        button.setOnClickListener {
+            Snackbar.make(requireView(),text,Snackbar.LENGTH_SHORT).show()
+            actions.forEach { itemAction ->
+                  if (itemAction.Save != null){
+                      currentThreadID = itemAction.Save.ThreadID
+              }
+                // достать форму из БД и перейти на нее
+            }
+        }
         mainContainer.addView(button)
 
     }

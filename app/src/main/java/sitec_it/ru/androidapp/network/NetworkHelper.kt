@@ -157,6 +157,7 @@ class NetworkHelper(private val context: Context) {
             } catch (e: Exception) {
                 Log.d("safeApiCall", e.toString())
                 Result.Error(code = 0, errorMessage = errorMessage, additionalDescription = "ERROR - Unresolved exception", exception = e)
+                    // дописать нормальный ответ ошибки
             }
         }
 

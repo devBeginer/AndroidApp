@@ -18,12 +18,14 @@ import sitec_it.ru.androidapp.data.models.form.ActionDB
 import sitec_it.ru.androidapp.data.models.form.ArgumentDB
 import sitec_it.ru.androidapp.data.models.form.ElementDB
 import sitec_it.ru.androidapp.data.models.form.FormDB
+import sitec_it.ru.androidapp.data.models.menu.MenuForm
 import sitec_it.ru.androidapp.data.models.message.MessageList
 import sitec_it.ru.androidapp.data.models.newForms1.Action
 import sitec_it.ru.androidapp.data.models.newForms1.Argument
 import sitec_it.ru.androidapp.data.models.newForms1.Element
 import sitec_it.ru.androidapp.data.models.newForms1.Form
 import sitec_it.ru.androidapp.data.models.newForms1.Forms
+import sitec_it.ru.androidapp.data.models.operations.Operations
 import sitec_it.ru.androidapp.network.NetworkHelper
 import java.io.IOException
 import javax.inject.Inject
@@ -248,7 +250,7 @@ class Repository @Inject constructor(
         return localRepository.getCurrentDatabaseId() ?: ""
     }
 
-    suspend fun authenticationUser(dataBody:AuthenticationGetRequest): Result<ResponseBody> {
+    suspend fun authenticationUser(dataBody:AuthenticationGetRequest): Result<MenuForm> {
         val currentProfile =
             localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
         val url = currentProfile?.let { currentProfile.url + "/login" } ?: ""

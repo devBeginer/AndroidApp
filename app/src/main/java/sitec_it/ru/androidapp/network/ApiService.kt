@@ -14,8 +14,10 @@ import sitec_it.ru.androidapp.data.models.node.NodeResponse
 import sitec_it.ru.androidapp.data.models.user.UserResponse
 import sitec_it.ru.androidapp.data.models.changes.Changes
 import sitec_it.ru.androidapp.data.models.form.Forms
+import sitec_it.ru.androidapp.data.models.menu.MenuForm
 import sitec_it.ru.androidapp.data.models.message.MessageList
 import sitec_it.ru.androidapp.data.models.newForms1.FormRequest
+import sitec_it.ru.androidapp.data.models.operations.Operations
 
 interface ApiService {
 
@@ -54,7 +56,7 @@ interface ApiService {
         @Header("Authorization") basic: String,
         @Url url: String,
         @Body dataBody: AuthenticationGetRequest
-    ): Response<ResponseBody>
+    ): Response<MenuForm>
 
     @GET
    suspend fun loadForms(

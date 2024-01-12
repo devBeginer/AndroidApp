@@ -73,24 +73,6 @@ class MenuViewModel @Inject constructor(val repository: Repository) : ViewModel(
         }
     }
 
-    fun getMainForm(){
-        viewModelScope.launch(Dispatchers.IO) {
-
-            val menuElements = arrayListOf<Pair<String, String>>(
-                Pair("Главное меню","Приемка"),
-                Pair("Главное меню","Размещение"),
-                Pair("Главное меню","Перемещение"),
-                Pair("Главное меню","Отбор"),
-                Pair("Главное меню","Отгрузка"),
-                Pair("Главное меню","Подпитка"),
-                Pair("Главное меню","Регламентные"),
-                Pair("Главное меню","Сервисные")
-            )
-
-            formMutableLiveData.postValue(menuElements)
-        }
-    }
-
     fun getSubMenu(section: String){
 
 

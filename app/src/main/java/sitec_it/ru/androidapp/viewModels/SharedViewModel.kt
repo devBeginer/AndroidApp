@@ -8,11 +8,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import sitec_it.ru.androidapp.data.models.DialogParams
+import sitec_it.ru.androidapp.data.models.menu.MenuForm
+import sitec_it.ru.androidapp.data.models.operations.Operations
 import sitec_it.ru.androidapp.repository.Repository
 import javax.inject.Inject
 
 @HiltViewModel
 class SharedViewModel @Inject constructor(private val repository: Repository): ViewModel()  {
+    val menuForms = MutableLiveData<MenuForm>()
     private val profileCountMutableLiveData: MutableLiveData<Int> = MutableLiveData()
     val profileList: LiveData<Int>
         get() = profileCountMutableLiveData

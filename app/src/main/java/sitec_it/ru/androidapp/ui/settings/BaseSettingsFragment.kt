@@ -19,8 +19,10 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.switchmaterial.SwitchMaterial
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
 import sitec_it.ru.androidapp.Utils.observeFutureEvents
@@ -51,12 +53,12 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
         val base: EditText = view.findViewById(R.id.et_base_settings_base)
         val login: EditText = view.findViewById(R.id.et_base_settings_login)
         val password: EditText = view.findViewById(R.id.et_base_settings_password)
-        val ssl: Switch = view.findViewById(R.id.switch_base_settings_UseHTTPS)
-        val notCheckCertificate: Switch = view.findViewById(R.id.switch_base_settings_DisableCheckSSL)
+        val ssl: SwitchMaterial = view.findViewById(R.id.switch_base_settings_UseHTTPS)
+        val notCheckCertificate: SwitchMaterial = view.findViewById(R.id.switch_base_settings_DisableCheckSSL)
         val spinnerProfile: Spinner = view.findViewById(R.id.spinner_base_name)
         val btnNewProfile: Button = view.findViewById(R.id.btn_base_settings_new_profile)
         val btnDeleteProfile: Button = view.findViewById(R.id.btn_base_settings_delete_profile)
-        val btnCreateNode: Button = view.findViewById(R.id.btn_base_settings_create_node)
+        val btnCreateNode: MaterialButton = view.findViewById(R.id.btn_base_settings_create_node)
         val btnScanQR: Button = view.findViewById(R.id.btn_base_settings_scan)
         var currentProfile: Profile? = null
 

@@ -7,8 +7,10 @@ import sitec_it.ru.androidapp.data.models.authentication.AuthenticationGetReques
 import sitec_it.ru.androidapp.data.models.node.NodeRequest
 import sitec_it.ru.androidapp.data.models.user.UserResponse
 import sitec_it.ru.androidapp.data.models.changes.Changes
+import sitec_it.ru.androidapp.data.models.menu.MenuForm
 import sitec_it.ru.androidapp.data.models.message.MessageList
 import sitec_it.ru.androidapp.data.models.newForms1.FormRequest
+import sitec_it.ru.androidapp.data.models.operations.Operations
 import sitec_it.ru.androidapp.di.modules.NormalApiService
 import sitec_it.ru.androidapp.di.modules.SSlFactoryApiService
 import sitec_it.ru.androidapp.network.ApiService
@@ -104,7 +106,7 @@ class RemoteRepository @Inject constructor(
         errorMessage: String,
         disableCheckCertificate: Boolean,
         dataBody: AuthenticationGetRequest
-    ): sitec_it.ru.androidapp.network.Result<ResponseBody> = networkHelper.safeApiCall(
+    ): sitec_it.ru.androidapp.network.Result<MenuForm> = networkHelper.safeApiCall(
         call = {
             //(if (disableCheckCertificate) apiServiceSSLFactory else apiService)
             getApiService(disableCheckCertificate)

@@ -48,7 +48,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:backgroundTint="?attr/colorAccent"
+        android:backgroundTint="#818183"
         android:text="Выход"
         app:layout_constraintEnd_toEndOf="@+id/btn_action_dialog_settings"
         app:layout_constraintStart_toStartOf="@+id/btn_action_dialog_settings"

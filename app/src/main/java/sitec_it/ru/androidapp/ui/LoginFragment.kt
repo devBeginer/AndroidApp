@@ -157,7 +157,7 @@ class LoginFragment : Fragment() {
                     }
 
                     override fun onNothingSelected(p0: AdapterView<*>?) {
-                        TODO("Not yet implemented")
+
                     }
 
                 }
@@ -223,7 +223,7 @@ class LoginFragment : Fragment() {
 
             }
         })
-        viewModel.user.observeFutureEvents(viewLifecycleOwner, Observer<User?> { user ->
+    /*    viewModel.user.observeFutureEvents(viewLifecycleOwner, Observer<User?> { user ->
 
             if (user != null) {
 
@@ -239,7 +239,16 @@ class LoginFragment : Fragment() {
             }
 
 
+        })*/
+        viewModel.responseGetLogin.observe(viewLifecycleOwner, Observer {
+            it?.let { response ->
+                sharedViewModel.menuForms.postValue(response)
+                activity?.supportFragmentManager?.beginTransaction()
+                    ?.replace(R.id.nav_host_fragment, MenuFragment())
+                    ?.commit()
+            }
         })
+
         viewModel.authenticationUser.observe(viewLifecycleOwner, Observer<String> { result ->
 
             when (result) {

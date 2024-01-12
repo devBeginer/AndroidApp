@@ -68,3 +68,6 @@ object Utils {
         Toast.makeText(context, text, Toast.LENGTH_LONG).show()
     }
 }
+enum class TypeForms{
+    MENU,SUBMENU,GENERALFORM
+}
