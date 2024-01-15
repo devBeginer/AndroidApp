@@ -395,9 +395,9 @@ class MenuFragment : Fragment() {
         et.layoutParams = etLayoutParams
         et.setHint(text)
         et.setTextSize(19f)
-        et.maxLines = 1
+        et.isSingleLine = true
         et.setImeActionLabel("Custom text", KeyEvent.KEYCODE_ENTER);
-        et.setOnKeyListener { view, keyCode, keyEvent ->
+      /*  et.setOnKeyListener { view, keyCode, keyEvent ->
             if (keyCode == KeyEvent.KEYCODE_ENTER && keyEvent.action == KeyEvent.ACTION_DOWN) {
                // сделать запрос и перейти на новый фрагмент и форму
                 actions.forEach { action ->
@@ -430,6 +430,38 @@ class MenuFragment : Fragment() {
 
                 }
                 return@setOnKeyListener true
+            }
+            false
+        }*/
+        et.setOnEditorActionListener { textView, i, keyEvent ->
+            actions.forEach { action ->
+                when(action.Action){
+                    "Save" -> {
+                        if (action.Argument != null)
+                            mapArguments[action.Argument] = et.text.toString()
+                    }
+                    "gеtRemoteForm" -> {
+                        val request = remoteFormRequest.find { request -> request.FormID.equals(action.Value) }
+                        val listArguments = mutableListOf<String>()
+                        request?.Arguments?.forEach { item ->
+                            when(item){
+                                "ThreadID" -> {
+                                    mapArguments["ThreadID"]?.let { listArguments.add(it) }
+                                }
+                                "GateID" -> {
+                                    mapArguments["GateID"]?.let { listArguments.add(it) }
+                                }
+                            }
+                        }
+                        val body = BodyForRequest(
+                            request?.FormID.toString(),
+                            listArguments
+                        )
+                        Toast.makeText(requireContext(),body.toString(),Toast.LENGTH_SHORT).show()
+
+                    }
+                }
+
             }
             false
         }
