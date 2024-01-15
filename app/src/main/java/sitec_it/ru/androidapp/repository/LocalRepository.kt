@@ -71,7 +71,7 @@ class LocalRepository @Inject constructor(
     suspend fun updateProfileLicense(profileLicense: ProfileLicense) =
         profileLicenseDao.updateProfileLicense(profileLicense)
 
-    suspend fun insertProfileLicense(profileLicense: ProfileLicense) =
+    suspend fun insertProfileLicense(profileLicense: ProfileLicense): Long =
         profileLicenseDao.insertProfileLicense(profileLicense)
 
     suspend fun getProfileLicense(id: Long) = profileLicenseDao.getProfileLicenseById(id)

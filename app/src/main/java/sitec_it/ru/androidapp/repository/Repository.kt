@@ -27,7 +27,19 @@ class Repository @Inject constructor(
     private val networkHelper: NetworkHelper
 ) {
 
-    suspend fun updateProfile(profile: Profile) = localRepository.updateProfile(profile)
+    //suspend fun updateProfile(profile: Profile) = localRepository.updateProfile(profile)
+    suspend fun updateProfile(profile: Profile): Long {
+        val existingProfile = localRepository.getProfileById(profile.id)
+        var profileId: Long
+        if (existingProfile!=null){
+            localRepository.updateProfile(profile)
+            profileId = existingProfile.id
+        }else{
+            profileId = localRepository.insertProfile(profile)
+        }
+        Log.d("profile","Профиль обновлен")
+        return profileId
+    }
     suspend fun insertProfile(profile: Profile): Long = localRepository.insertProfile(profile)
     suspend fun deleteProfile(profile: Profile) = localRepository.deleteProfile(profile)
     suspend fun getProfile(name: String) = localRepository.getProfile(name)
@@ -47,8 +59,18 @@ class Repository @Inject constructor(
     suspend fun getUser(login: String) = localRepository.getUser(login)
     suspend fun getAllUsers() = localRepository.getAllUsers()
 
-    suspend fun updateProfileLicense(profileLicense: ProfileLicense) =
-        localRepository.updateProfileLicense(profileLicense)
+    suspend fun updateProfileLicense(profileLicense: ProfileLicense): Long {
+        val existingProfileLicense = localRepository.getProfileLicenseByProfile(profileLicense.profile)
+        var licenseId: Long
+        if (existingProfileLicense!=null){
+            localRepository.updateProfileLicense(profileLicense)
+            licenseId = existingProfileLicense.id
+        }else{
+            licenseId = localRepository.insertProfileLicense(profileLicense)
+        }
+        Log.d("profileLicense","Профиль обновлен")
+        return licenseId
+    }
 
     suspend fun insertProfileLicense(profileLicense: ProfileLicense) =
         localRepository.insertProfileLicense(profileLicense)

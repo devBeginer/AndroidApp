@@ -20,6 +20,7 @@ import sitec_it.ru.androidapp.data.models.node.NodeRequest
 import sitec_it.ru.androidapp.data.models.node.NodeResponse
 import sitec_it.ru.androidapp.data.models.profile.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
+import sitec_it.ru.androidapp.data.models.Settings
 import sitec_it.ru.androidapp.data.models.profile.ProfileSpinnerItem
 import sitec_it.ru.androidapp.data.models.user.User
 import sitec_it.ru.androidapp.network.Result
@@ -122,6 +123,73 @@ class BaseSettingsViewModel @Inject constructor(private val repository: Reposito
 
             //sharedViewModel.buildUrl(profile.id)
             //buildUrl(profile.id)
+        }
+
+    }
+
+    fun updateSettings(settings: Settings, currentProfile: Profile?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val profile = if(currentProfile != null && currentProfile.name == settings.profileName){
+                currentProfile.base = settings.base
+                currentProfile.server = settings.server
+                currentProfile.ssl = settings.ssl
+                currentProfile.port = settings.port
+                currentProfile.login = settings.login
+                currentProfile.password = settings.password
+                currentProfile
+            }else{
+                Profile(
+                    name = settings.profileName,
+                    base = settings.base,
+                    server = settings.server,
+                    ssl = settings.ssl,
+                    port = settings.port,
+                    login = settings.login,
+                    password = settings.password,
+                    url = "http://192.168.1.0:8080/TMP_Test/"
+                )
+            }
+            profile.url = buildProfileUrl(profile)
+            val id = repository.updateProfile(profile)
+            val newProfile = repository.getProfileById(id)
+
+            if (newProfile != null) {
+                repository.saveProfileToSP(newProfile.id)
+                val profileLicense = repository.getProfileLicense(id)
+                val newProfileLicense = if(profileLicense!=null){
+                    profileLicense.server = settings.licenseServer
+                    profileLicense.port = settings.licensePort
+                    profileLicense.login = settings.licenseLogin
+                    profileLicense.password = settings.licensePassword
+                    profileLicense
+                }else{
+                    ProfileLicense(
+                        profile = newProfile.id,
+                        server = settings.licenseServer,
+                        port = settings.licensePort,
+                        login = settings.licenseLogin,
+                        password = settings.licensePassword
+                    )
+                }
+                repository.updateProfileLicense(
+                    newProfileLicense
+                )
+            }
+            /*val newProfile = repository.getProfileById(profile.id)
+
+            if (newProfile != null) {
+                repository.saveProfileToSP(newProfile.id)
+                repository.insertProfileLicense(
+                    ProfileLicense(
+                        profile = newProfile.id,
+                        server = "192.168.1.0",
+                        port = "8080",
+                        login = "test",
+                        password = "test"
+                    )
+                )
+            }*/
+            initView()
         }
 
     }

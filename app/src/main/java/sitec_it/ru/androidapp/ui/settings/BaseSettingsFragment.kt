@@ -10,26 +10,36 @@ import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.ScrollView
 import android.widget.Spinner
-import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.budiyev.android.codescanner.CodeScanner
+import com.budiyev.android.codescanner.CodeScannerView
+import com.budiyev.android.codescanner.DecodeCallback
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.google.gson.JsonSyntaxException
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import sitec_it.ru.androidapp.R
+import sitec_it.ru.androidapp.SettingsParser
 import sitec_it.ru.androidapp.Utils.observeFutureEvents
 import sitec_it.ru.androidapp.data.models.DialogParams
 import sitec_it.ru.androidapp.data.models.profile.Profile
 import sitec_it.ru.androidapp.data.models.profile.ProfileSpinnerItem
-import sitec_it.ru.androidapp.ui.BarcodeScannerFragment
 import sitec_it.ru.androidapp.ui.LoginFragment
 import sitec_it.ru.androidapp.viewModels.BaseSettingsViewModel
 import sitec_it.ru.androidapp.viewModels.SharedViewModel
@@ -38,7 +48,27 @@ import sitec_it.ru.androidapp.viewModels.SharedViewModel
 class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
     private val viewModel: BaseSettingsViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by viewModels({requireActivity()})
+    private var isScannerMode: Boolean = false
+    private lateinit var codeScanner: CodeScanner
+    private lateinit var flScanner: FrameLayout
+    private lateinit var scrollView: ScrollView
+    private var currentProfile: Profile? = null
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
+            if (isScannerMode) {
+                flScanner.visibility = View.GONE
+                scrollView.visibility = View.VISIBLE
+                isScannerMode = false
+                codeScanner.releaseResources()
+            }else{
+                val settingsOnBackCallback = SettingsOnBackCallback()
+                settingsOnBackCallback.settingsOnBack(sharedViewModel, requireActivity())
+            }
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -60,7 +90,11 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
         val btnDeleteProfile: Button = view.findViewById(R.id.btn_base_settings_delete_profile)
         val btnCreateNode: MaterialButton = view.findViewById(R.id.btn_base_settings_create_node)
         val btnScanQR: Button = view.findViewById(R.id.btn_base_settings_scan)
-        var currentProfile: Profile? = null
+        //var currentProfile: Profile? = null
+        scrollView = view.findViewById(R.id.scrollView_baseSettings)
+        flScanner = view.findViewById(R.id.frameLayout_settings_scan_qr)
+        val scannerView = view.findViewById<CodeScannerView>(R.id.scanner_view)
+        codeScanner = CodeScanner(requireActivity(), scannerView)
 
         viewModel.nodeResponse.observeFutureEvents(viewLifecycleOwner) { response ->
             val text = if (response != null) {
@@ -338,11 +372,12 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
 
 
         btnScanQR.setOnClickListener {
-            activity?.supportFragmentManager?.beginTransaction()
+            /*activity?.supportFragmentManager?.beginTransaction()
                 ?.replace(R.id.nav_host_fragment, BarcodeScannerFragment())
                 ?.addToBackStack(null)
-                ?.commit()
+                ?.commit()*/
 
+            showScannerView()
         }
 
     }
@@ -375,5 +410,40 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
         }
     }
 
+
+    private fun showScannerView() {
+        isScannerMode = true
+        scrollView.visibility = View.GONE
+        flScanner.visibility = View.VISIBLE
+
+
+        codeScanner.decodeCallback = DecodeCallback { result ->
+            CoroutineScope(Dispatchers.IO).launch {
+
+
+                withContext(Dispatchers.Main) {
+                    Snackbar.make(requireView(), result.text.toString(), Snackbar.LENGTH_SHORT)
+                        .show()
+                    val settingsParser = SettingsParser()
+
+                    try {
+                        val settings = settingsParser.parseSettings(result.text.toString())
+                        viewModel.updateSettings(settings, currentProfile)
+                    } catch (e: JsonSyntaxException) {
+                        Snackbar.make(requireView(), "Некорректный QR-код", Snackbar.LENGTH_SHORT)
+                            .show()
+                    } catch (e: IllegalStateException) {
+                        Snackbar.make(requireView(), "Некорректный QR-код", Snackbar.LENGTH_SHORT)
+                            .show()
+                    }
+                    flScanner.visibility = View.GONE
+                    scrollView.visibility = View.VISIBLE
+                    isScannerMode = false
+                    codeScanner.releaseResources()
+                }
+            }
+        }
+        codeScanner.startPreview()
+    }
 
 }

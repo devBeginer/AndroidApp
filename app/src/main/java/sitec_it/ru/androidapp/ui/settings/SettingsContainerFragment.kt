@@ -19,7 +19,7 @@ class SettingsContainerFragment: Fragment(R.layout.fragment_settings_container) 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // This callback is only called when MyFragment is at least started
-        val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
+        /*val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
             if (sharedViewModel.databaseId!=""){
                 activity?.supportFragmentManager?.beginTransaction()
                     ?.replace(R.id.nav_host_fragment, LoginFragment())?.commit()
@@ -32,7 +32,7 @@ class SettingsContainerFragment: Fragment(R.layout.fragment_settings_container) 
                     )
                 )
             }
-        }
+        }*/
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

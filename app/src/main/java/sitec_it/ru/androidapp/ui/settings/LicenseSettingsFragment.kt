@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.activity.addCallback
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -21,6 +22,15 @@ class LicenseSettingsFragment: Fragment(R.layout.fragment_license_settings) {
     private val viewModel: LicenseSettingsViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by viewModels({requireActivity()})
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
+
+            val settingsOnBackCallback = SettingsOnBackCallback()
+            settingsOnBackCallback.settingsOnBack(sharedViewModel, requireActivity())
+
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

@@ -11,7 +11,7 @@ import sitec_it.ru.androidapp.data.models.ProfileLicense
 @Dao
 interface ProfileLicenseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertProfileLicense(profileLicense: ProfileLicense)
+    suspend fun insertProfileLicense(profileLicense: ProfileLicense): Long
 
     @Update
     suspend fun updateProfileLicense(profileLicense: ProfileLicense)
