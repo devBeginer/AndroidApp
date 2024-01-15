@@ -206,6 +206,7 @@ class MenuFragment : Fragment() {
         mainContainer.removeAllViews()
         drawGridLayout()
         currentTypeForm = TypeForms.MENU
+        toolbar.title = menuForm?.FormName
         elements.forEach { elementForm ->
 
             when (elementForm.ElementType) {
@@ -217,7 +218,7 @@ class MenuFragment : Fragment() {
 
                         // отрисовка подменю по нажатию
                         mainContainer.removeAllViews()
-                        drawSubMenu(elementForm.SubMenu, "")
+                        drawSubMenu(elementForm.SubMenu, elementForm.Text)
                     }
                 }
             }
@@ -228,10 +229,11 @@ class MenuFragment : Fragment() {
 
     private fun drawSubMenu(
         subMenu: List<SubMenu>,
-        formType: String?
+        formName: String?
     ) {
         currentTypeForm = TypeForms.SUBMENU
         mainContainer.removeAllViews()
+        toolbar.title = formName
         subMenu.forEach { element ->
             when (element.ElementType) {
                 "Button" -> {
