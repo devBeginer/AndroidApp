@@ -18,6 +18,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -420,6 +421,7 @@ class MenuFragment : Fragment() {
                                 request?.FormID.toString(),
                                 listArguments
                             )
+                        Toast.makeText(requireContext(),body.toString(),Toast.LENGTH_SHORT).show()
 
                         }
                     }
