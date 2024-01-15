@@ -6,11 +6,13 @@ import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.Button
+import android.widget.EditText
 import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -24,13 +26,19 @@ import androidx.lifecycle.Observer
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textview.MaterialTextView
 import dagger.hilt.android.AndroidEntryPoint
 import sitec_it.ru.androidapp.R
 import sitec_it.ru.androidapp.TypeForms
-import sitec_it.ru.androidapp.data.models.menu.Action
-import sitec_it.ru.androidapp.data.models.menu.Element
-import sitec_it.ru.androidapp.data.models.menu.Form
+import sitec_it.ru.androidapp.data.models.menu.BodyForRequest
+import sitec_it.ru.androidapp.data.models.menu.GeneralForm
+import sitec_it.ru.androidapp.data.models.menu.GeneralFormAction
+import sitec_it.ru.androidapp.data.models.menu.GeneralFormElement
+import sitec_it.ru.androidapp.data.models.menu.MenuForm
+import sitec_it.ru.androidapp.data.models.menu.MenuFormElement
+import sitec_it.ru.androidapp.data.models.menu.RemoteFormRequest
 import sitec_it.ru.androidapp.data.models.menu.SubMenu
+import sitec_it.ru.androidapp.data.models.menu.SubMenuAction
 import sitec_it.ru.androidapp.viewModels.MenuViewModel
 import sitec_it.ru.androidapp.viewModels.SharedViewModel
 
@@ -45,9 +53,12 @@ class MenuFragment : Fragment() {
     private lateinit var scrollView: ScrollView
     private lateinit var mainContainer: LinearLayout
     private var isMainMenu = true
-    private var currentTypeForm:TypeForms = TypeForms.MENU
-     var menuForm : Form? = null
-    var currentThreadID:String? = ""
+    private var currentTypeForm: TypeForms = TypeForms.MENU
+    var menuForm: MenuForm? = null
+    var generalForm: List<GeneralForm>? = null
+    var currentThreadID: String? = ""
+    lateinit var toolbar:MaterialToolbar
+    val mapArguments = HashMap<String,String>()
 
     private val cardViewIcons = arrayListOf<Int>(
         R.drawable.baseline_note_add_24,
@@ -59,17 +70,19 @@ class MenuFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().onBackPressedDispatcher.addCallback(this) {
-           // sharedViewModel.updateProgressBar(true)
-            when(currentTypeForm){
-                TypeForms.SUBMENU ->{
+            // sharedViewModel.updateProgressBar(true)
+            when (currentTypeForm) {
+                TypeForms.SUBMENU -> {
                     menuForm?.Elements?.let { drawMainMenu(it) }
                 }
+
                 TypeForms.MENU -> {
                     activity?.supportFragmentManager?.beginTransaction()
                         ?.replace(R.id.nav_host_fragment, LoginFragment())?.commit()
                 }
-                TypeForms.GENERALFORM ->{
 
+                TypeForms.GENERALFORM -> {
+                    menuForm?.Elements?.let { drawMainMenu(it) }
                 }
             }
 
@@ -91,7 +104,8 @@ class MenuFragment : Fragment() {
         tvTest = view.findViewById(R.id.test_tv)
         scrollView = view.findViewById(R.id.mainScroll)
         mainContainer = view.findViewById(R.id.ll_main_container)
-        val toolbar = view.findViewById<MaterialToolbar>(R.id.toolbar_menu)
+        toolbar = view.findViewById<MaterialToolbar>(R.id.toolbar_menu)
+
 
         toolbar.setNavigationIcon(R.drawable.baseline_menu_24)
         toolbar.setNavigationOnClickListener {
@@ -112,26 +126,26 @@ class MenuFragment : Fragment() {
             }
         })
 
-       /* viewModel.menuForms.observe(viewLifecycleOwner, Observer { form ->
-            if (form != null) {
-                mainContainer.removeAllViews()
+        /* viewModel.menuForms.observe(viewLifecycleOwner, Observer { form ->
+             if (form != null) {
+                 mainContainer.removeAllViews()
 
-                val menuElements = form.Elements
-                if (form.FormName == "Главное меню") {
-                    drawGridLayout()
-                }
-             //   drawForm(menuElements, form.FormName)
-                sharedViewModel.updateProgressBar(false)
-            }
+                 val menuElements = form.Elements
+                 if (form.FormName == "Главное меню") {
+                     drawGridLayout()
+                 }
+              //   drawForm(menuElements, form.FormName)
+                 sharedViewModel.updateProgressBar(false)
+             }
 
-        })*/
+         })*/
 
     }
 
     private fun initData() {
         sharedViewModel.updateProgressBar(true)
         viewModel.setTvHello()
-      //  viewModel.loadForms()
+        //  viewModel.loadForms()
     }
 
     override fun onResume() {
@@ -158,36 +172,36 @@ class MenuFragment : Fragment() {
 
         sharedViewModel.menuForms.observe(viewLifecycleOwner, Observer {
             it?.let { allData ->
-
-               menuForm = allData.forms.find { form -> form.FormType == "menu" }
-               // currentThreadID = formMenu?.FormID
+                generalForm = allData.GeneralForms
+                menuForm = allData.MenuForms.find { form -> form.FormType == "menu" }
+                // currentThreadID = formMenu?.FormID
                 val formName = menuForm?.FormName
 
                 menuForm?.let { useFormMenu ->
-                    Log.d("drawForm","нашли главное меню")
-
+                    Log.d("drawForm", "нашли главное меню")
+                    toolbar.title = menuForm?.FormName
                     drawMainMenu(useFormMenu.Elements)
                 }
             }
         })
     }
 
-    private fun drawMainMenu(elements: List<Element>) {
+    private fun drawMainMenu(elements: List<MenuFormElement>) {
         mainContainer.removeAllViews()
         drawGridLayout()
         currentTypeForm = TypeForms.MENU
         elements.forEach { elementForm ->
 
-            when(elementForm.ElementType){
+            when (elementForm.ElementType) {
                 "Button" -> {
-                    drawCardView(elementForm.Text){ view ->
+                    drawCardView(elementForm.Text) { view ->
                         view?.startAnimation(
                             AnimationUtils.loadAnimation(requireContext(), R.anim.image_click)
                         )
 
                         // отрисовка подменю по нажатию
                         mainContainer.removeAllViews()
-                        drawSubMenu(elementForm.SubMenu,"")
+                        drawSubMenu(elementForm.SubMenu, "")
                     }
                 }
             }
@@ -203,9 +217,9 @@ class MenuFragment : Fragment() {
         currentTypeForm = TypeForms.SUBMENU
         mainContainer.removeAllViews()
         subMenu.forEach { element ->
-            when(element.ElementType){
-                "Button" ->{
-                    drawButton(element.Text,element.Actions)
+            when (element.ElementType) {
+                "Button" -> {
+                    drawButton(element.Text, element.Actions)
                 }
             }
 
@@ -305,7 +319,7 @@ class MenuFragment : Fragment() {
 
     }
 
-    private fun drawButton(text: String, actions: List<Action>) {
+    private fun drawButton(text: String, actions: List<SubMenuAction>) {
         isMainMenu = false
 
         val button = Button(requireContext())
@@ -318,15 +332,116 @@ class MenuFragment : Fragment() {
         button.layoutParams = layoutParams
         button.text = text
         button.setOnClickListener {
-            Snackbar.make(requireView(),text,Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(requireView(), text, Snackbar.LENGTH_SHORT).show()
             actions.forEach { itemAction ->
-                  if (itemAction.Save != null){
-                      currentThreadID = itemAction.Save.ThreadID
-              }
-                // достать форму из БД и перейти на нее
+                when(itemAction.Action){
+                    "Save" -> {
+                        mapArguments[itemAction.Argument] = itemAction.Value
+                        currentThreadID = itemAction.Value
+                    }
+                    "GoToForm" -> {
+                        Log.d("drawForm", "subMenu itemAction.Action -->${itemAction.Action}")
+                        Log.d("drawForm", "subMenu itemAction.Value -->${itemAction.Value}")
+                        // переход на другую форму
+                        // достать форму из БД и перейти на нее
+                        val form = generalForm?.find { form -> form.FormType == "generalForm" }
+                        if (form != null) {
+                            if (form.FormID.equals(itemAction.Value)){
+                                drawForm(form.FormDescription,form.Elements,form.RemoteFormRequest)
+                            }
+                        }
+
+                    }
+                }
             }
         }
         mainContainer.addView(button)
 
+    }
+
+    private fun drawForm(
+        formDescription: String,
+        elements: List<GeneralFormElement>,
+        remoteFormRequest: List<RemoteFormRequest>
+    ) {
+        currentTypeForm = TypeForms.GENERALFORM
+        mainContainer.removeAllViews()
+        toolbar.title = formDescription
+        elements.forEach { elementForm ->
+            when(elementForm.ElementType){
+                "TextView" -> {
+                    drawTextView(elementForm.Text,elementForm.Actions)
+                }
+                "EditText" -> {
+                    drawEditText(elementForm.Text,elementForm.Actions,remoteFormRequest)
+                }
+            }
+        }
+
+    }
+
+    private fun drawEditText(
+        text: String,
+        actions: List<GeneralFormAction>,
+        remoteFormRequest: List<RemoteFormRequest>
+    ) {
+        val et = EditText(requireContext())
+        val etLayoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        et.gravity = Gravity.CENTER_HORIZONTAL
+        et.layoutParams = etLayoutParams
+        et.setHint(text)
+        et.setTextSize(19f)
+        et.setOnKeyListener { view, keyCode, keyEvent ->
+            if (keyCode == KeyEvent.KEYCODE_ENTER && keyEvent.action == KeyEvent.ACTION_UP) {
+               // сделать запрос и перейти на новый фрагмент и форму
+                actions.forEach { action ->
+                    when(action.Action){
+                        "Save" -> {
+                            if (action.Argument != null)
+                                mapArguments[action.Argument] = et.text.toString()
+                        }
+                        "gеtRemoteForm" -> {
+                        val request = remoteFormRequest.find { request -> request.FormID.equals(action.Value) }
+                           val listArguments = mutableListOf<String>()
+                            request?.Arguments?.forEach { item ->
+                                when(item){
+                                    "ThreadID" -> {
+                                        mapArguments["ThreadID"]?.let { listArguments.add(it) }
+                                    }
+                                    "GateID" -> {
+                                        mapArguments["GateID"]?.let { listArguments.add(it) }
+                                    }
+                                }
+                            }
+                            val body = BodyForRequest(
+                                request?.FormID.toString(),
+                                listArguments
+                            )
+
+                        }
+                    }
+
+                }
+            }
+            false
+        }
+        mainContainer.addView(et)
+    }
+
+    private fun drawTextView(text: String, actions: List<GeneralFormAction>) {
+        val tv = MaterialTextView(requireContext())
+        val tvLayoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        tv.gravity = Gravity.CENTER_HORIZONTAL
+        tv.layoutParams = tvLayoutParams
+        tv.setText(text)
+        tv.setTextSize(19f)
+
+        mainContainer.addView(tv)
     }
 }

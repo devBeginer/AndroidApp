@@ -1,8 +1,8 @@
 package sitec_it.ru.androidapp.data.models.menu
 
-import com.google.gson.annotations.SerializedName
-
 data class MenuForm(
-    @SerializedName("forms")
-    val forms: List<Form>
+    val Elements: List<MenuFormElement>,
+    val FormID: String,
+    val FormName: String,
+    val FormType: String
 )

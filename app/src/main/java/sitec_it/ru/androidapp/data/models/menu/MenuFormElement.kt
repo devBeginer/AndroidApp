@@ -1,7 +1,7 @@
-package sitec_it.ru.androidapp.data.models.menuV2
+package sitec_it.ru.androidapp.data.models.menu
 
 data class MenuFormElement(
-    val Actions: Any,
+    val Actions: String?,
     val ElementType: String,
     val SubMenu: List<SubMenu>,
     val Text: String

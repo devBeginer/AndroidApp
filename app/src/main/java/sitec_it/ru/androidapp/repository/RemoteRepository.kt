@@ -1,16 +1,12 @@
 package sitec_it.ru.androidapp.repository
 
-import android.util.Log
 import okhttp3.Credentials
-import okhttp3.ResponseBody
 import sitec_it.ru.androidapp.data.models.authentication.AuthenticationGetRequest
+import sitec_it.ru.androidapp.data.models.changes.Changes
+import sitec_it.ru.androidapp.data.models.menu.Form
+import sitec_it.ru.androidapp.data.models.message.MessageList
 import sitec_it.ru.androidapp.data.models.node.NodeRequest
 import sitec_it.ru.androidapp.data.models.user.UserResponse
-import sitec_it.ru.androidapp.data.models.changes.Changes
-import sitec_it.ru.androidapp.data.models.menu.MenuForm
-import sitec_it.ru.androidapp.data.models.message.MessageList
-import sitec_it.ru.androidapp.data.models.newForms1.FormRequest
-import sitec_it.ru.androidapp.data.models.operations.Operations
 import sitec_it.ru.androidapp.di.modules.NormalApiService
 import sitec_it.ru.androidapp.di.modules.SSlFactoryApiService
 import sitec_it.ru.androidapp.network.ApiService
@@ -106,7 +102,7 @@ class RemoteRepository @Inject constructor(
         errorMessage: String,
         disableCheckCertificate: Boolean,
         dataBody: AuthenticationGetRequest
-    ): sitec_it.ru.androidapp.network.Result<MenuForm> = networkHelper.safeApiCall(
+    ): sitec_it.ru.androidapp.network.Result<Form> = networkHelper.safeApiCall(
         call = {
             //(if (disableCheckCertificate) apiServiceSSLFactory else apiService)
             getApiService(disableCheckCertificate)
@@ -134,22 +130,7 @@ class RemoteRepository @Inject constructor(
         errorMessage = errorMessage
     )
 
-    suspend fun loadNewForms(
-        login: String,
-        password: String,
-        url: String,
-        errorMessage: String,
-        disableCheckCertificate: Boolean
-    ): sitec_it.ru.androidapp.network.Result<sitec_it.ru.androidapp.data.models.newForms1.Forms> = networkHelper.safeApiCall(
-        call = {
-            getApiService(disableCheckCertificate)
-                .loadNewForms(
-                    Credentials.basic(login, password, Charset.forName("UTF-8")), url,
-                    FormRequest("stroka")
-                )
-        },
-        errorMessage = errorMessage
-    )
+
 
     private fun getApiService(disableCheckCertificate: Boolean): ApiService{
         return if (disableCheckCertificate) apiServiceSSLFactory else apiService

@@ -12,8 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import sitec_it.ru.androidapp.data.models.authentication.AuthenticationGetRequest
-import sitec_it.ru.androidapp.data.models.menu.MenuForm
-import sitec_it.ru.androidapp.data.models.operations.Operations
+import sitec_it.ru.androidapp.data.models.menu.Form
 import sitec_it.ru.androidapp.data.models.profile.Profile
 import sitec_it.ru.androidapp.data.models.user.User
 import sitec_it.ru.androidapp.network.Result
@@ -56,7 +55,7 @@ class LoginViewModel @Inject constructor(private val repository: Repository) : V
     private val loginMutableLiveData: MutableLiveData<String?> = MutableLiveData(null)
     val login: LiveData<String?>
         get() = loginMutableLiveData
-    val responseGetLogin = MutableLiveData<MenuForm?>()
+    val responseGetLogin = MutableLiveData<Form?>()
     val authenticationUserObserver = MutableLiveData<String>()
     val authenticationUser: LiveData<String>
         get() = authenticationUserObserver

@@ -2,35 +2,23 @@ package sitec_it.ru.androidapp.repository
 
 import android.util.Log
 import dagger.hilt.android.scopes.ViewModelScoped
-import okhttp3.ResponseBody
+import sitec_it.ru.androidapp.data.models.ProfileLicense
+import sitec_it.ru.androidapp.data.models.authentication.AuthenticationGetRequest
+import sitec_it.ru.androidapp.data.models.changes.Changes
+import sitec_it.ru.androidapp.data.models.changes.Organization
+import sitec_it.ru.androidapp.data.models.changes.OrganizationDB
+import sitec_it.ru.androidapp.data.models.menu.Form
+import sitec_it.ru.androidapp.data.models.message.MessageList
 import sitec_it.ru.androidapp.data.models.node.Node
 import sitec_it.ru.androidapp.data.models.node.NodeRequest
 import sitec_it.ru.androidapp.data.models.node.NodeResponse
 import sitec_it.ru.androidapp.data.models.profile.Profile
-import sitec_it.ru.androidapp.data.models.ProfileLicense
-import sitec_it.ru.androidapp.data.models.authentication.AuthenticationGetRequest
 import sitec_it.ru.androidapp.data.models.user.User
 import sitec_it.ru.androidapp.data.models.user.UserResponse
-import sitec_it.ru.androidapp.data.models.changes.Changes
-import sitec_it.ru.androidapp.data.models.changes.Organization
-import sitec_it.ru.androidapp.data.models.changes.OrganizationDB
-import sitec_it.ru.androidapp.data.models.form.ActionDB
-import sitec_it.ru.androidapp.data.models.form.ArgumentDB
-import sitec_it.ru.androidapp.data.models.form.ElementDB
-import sitec_it.ru.androidapp.data.models.form.FormDB
-import sitec_it.ru.androidapp.data.models.menu.MenuForm
-import sitec_it.ru.androidapp.data.models.message.MessageList
-import sitec_it.ru.androidapp.data.models.newForms1.Action
-import sitec_it.ru.androidapp.data.models.newForms1.Argument
-import sitec_it.ru.androidapp.data.models.newForms1.Element
-import sitec_it.ru.androidapp.data.models.newForms1.Form
-import sitec_it.ru.androidapp.data.models.newForms1.Forms
-import sitec_it.ru.androidapp.data.models.operations.Operations
 import sitec_it.ru.androidapp.network.NetworkHelper
+import sitec_it.ru.androidapp.network.Result
 import java.io.IOException
 import javax.inject.Inject
-
-import sitec_it.ru.androidapp.network.Result
 
 @ViewModelScoped
 class Repository @Inject constructor(
@@ -250,7 +238,7 @@ class Repository @Inject constructor(
         return localRepository.getCurrentDatabaseId() ?: ""
     }
 
-    suspend fun authenticationUser(dataBody:AuthenticationGetRequest): Result<MenuForm> {
+    suspend fun authenticationUser(dataBody:AuthenticationGetRequest): Result<Form> {
         val currentProfile =
             localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
         val url = currentProfile?.let { currentProfile.url + "/login" } ?: ""
@@ -300,30 +288,9 @@ class Repository @Inject constructor(
         }
     }*/
 
-    suspend fun getNewForms(): Result<sitec_it.ru.androidapp.data.models.newForms1.Forms> {
-        val currentProfile =
-            localRepository.getProfileById(localRepository.getCurrentProfileIdFromSP())
-        val url = currentProfile?.let { currentProfile.url + "/forms" } ?: ""
-        Log.d("apiCallUrl", url)
-        if (networkHelper.checkOnline() && currentProfile != null) {
-            return remoteRepository.loadNewForms(
-                currentProfile.login,
-                currentProfile.password,
-                url,
-                "Error load forms",
-                isDisableCheckCertificate()
-                )
-        } else {
-            return Result.Error(
-                0,
-                "Error load forms",
-                "ERROR - load forms, check connect",
-                exception = IOException("Error load forms, ERROR - Connection")
-            )
-        }
-    }
 
-    suspend fun getFormById(formId: String): Form? {
+
+   /* suspend fun getFormById(formId: String): Form? {
         val formDb = localRepository.getForm(formId)
         val elementDb = localRepository.getElement(formId)
         val elements = elementDb.map { element ->
@@ -334,7 +301,7 @@ class Repository @Inject constructor(
             Element(action, element.elementID, element.elementName, element.elementType, element.formID, element.nextField)
         }
         return formDb?.let { Form(elements, formDb.formID, formDb.formName) }
-    }
+    }*/
 
     /*suspend fun deleteOldForms() {
         val oldForms = localRepository.getAllForms()
@@ -343,13 +310,13 @@ class Repository @Inject constructor(
         }
     }*/
 
-    suspend fun saveForms(form: Forms) {
+   /* suspend fun saveForms(form: Forms) {
         val dbId = getCurrentDatabaseId()
         form.Forms.forEach {form->
             localRepository.insertForm(FormDB(form.FormID, form.FormName, dbId))
             form.Elements.forEach{element ->
 
-                localRepository.insertElement(ElementDB(/*form.FormID*/element.FormID, element.ElementID, element.ElementName, element.ElementType, element.NextFieldID, dbId))
+                localRepository.insertElement(ElementDB(*//*form.FormID*//*element.FormID, element.ElementID, element.ElementName, element.ElementType, element.NextFieldID, dbId))
                 element.Actions.forEach { action ->
                     localRepository.insertAction(ActionDB(action.Action, action.ElementID, dbId))
                     action.Arguments.forEach { argument ->
@@ -358,5 +325,5 @@ class Repository @Inject constructor(
                 }
             }
         }
-    }
+    }*/
 }

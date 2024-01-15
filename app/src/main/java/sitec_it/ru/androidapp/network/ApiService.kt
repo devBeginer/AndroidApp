@@ -1,6 +1,5 @@
 package sitec_it.ru.androidapp.network
 
-import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -9,15 +8,13 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Url
 import sitec_it.ru.androidapp.data.models.authentication.AuthenticationGetRequest
+import sitec_it.ru.androidapp.data.models.changes.Changes
+import sitec_it.ru.androidapp.data.models.form.Forms
+import sitec_it.ru.androidapp.data.models.menu.Form
+import sitec_it.ru.androidapp.data.models.message.MessageList
 import sitec_it.ru.androidapp.data.models.node.NodeRequest
 import sitec_it.ru.androidapp.data.models.node.NodeResponse
 import sitec_it.ru.androidapp.data.models.user.UserResponse
-import sitec_it.ru.androidapp.data.models.changes.Changes
-import sitec_it.ru.androidapp.data.models.form.Forms
-import sitec_it.ru.androidapp.data.models.menu.MenuForm
-import sitec_it.ru.androidapp.data.models.message.MessageList
-import sitec_it.ru.androidapp.data.models.newForms1.FormRequest
-import sitec_it.ru.androidapp.data.models.operations.Operations
 
 interface ApiService {
 
@@ -56,7 +53,7 @@ interface ApiService {
         @Header("Authorization") basic: String,
         @Url url: String,
         @Body dataBody: AuthenticationGetRequest
-    ): Response<MenuForm>
+    ): Response<Form>
 
     @GET
    suspend fun loadForms(
@@ -64,11 +61,6 @@ interface ApiService {
         @Url url: String
     ): Response<Forms>
 
-    @POST
-   suspend fun loadNewForms(
-        @Header("Authorization") basic: String,
-        @Url url: String,
-        @Body request: FormRequest
-    ): Response<sitec_it.ru.androidapp.data.models.newForms1.Forms>
+
 
 }
