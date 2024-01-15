@@ -75,7 +75,7 @@ class LoginViewModel @Inject constructor(private val repository: Repository) : V
                     foundUser?.let { repository.saveUserToSP(it.code) }
                     Log.d("authentication"," ->> сохранение меню")
                     // save local menu
-
+                    repository.saveForms(response.data)
 
                   //  authenticationUserObserver.postValue("ok")
                 }

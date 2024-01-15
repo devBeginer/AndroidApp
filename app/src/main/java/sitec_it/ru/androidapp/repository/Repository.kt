@@ -8,6 +8,7 @@ import sitec_it.ru.androidapp.data.models.changes.Changes
 import sitec_it.ru.androidapp.data.models.changes.Organization
 import sitec_it.ru.androidapp.data.models.changes.OrganizationDB
 import sitec_it.ru.androidapp.data.models.menu.Form
+import sitec_it.ru.androidapp.data.models.menu.db.FormDB
 import sitec_it.ru.androidapp.data.models.message.MessageList
 import sitec_it.ru.androidapp.data.models.node.Node
 import sitec_it.ru.androidapp.data.models.node.NodeRequest
@@ -18,6 +19,9 @@ import sitec_it.ru.androidapp.data.models.user.UserResponse
 import sitec_it.ru.androidapp.network.NetworkHelper
 import sitec_it.ru.androidapp.network.Result
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
 import javax.inject.Inject
 
 @ViewModelScoped
@@ -312,40 +316,32 @@ class Repository @Inject constructor(
 
 
 
-   /* suspend fun getFormById(formId: String): Form? {
-        val formDb = localRepository.getForm(formId)
-        val elementDb = localRepository.getElement(formId)
-        val elements = elementDb.map { element ->
-            val action = localRepository.getAction(element.elementID).map { actionDB ->
-                val arguments = localRepository.getArgument(actionDB.actionName).map { argumentDB -> Argument(argumentDB.actionName, argumentDB.name, argumentDB.value) }
-                Action(actionDB.actionName, arguments, actionDB.elementID)
-            }
-            Element(action, element.elementID, element.elementName, element.elementType, element.formID, element.nextField)
+    suspend fun getFormById(): Form? {
+        val formDb = localRepository.getForm()
+        val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
+        val currentDate = if(formDb!=null){
+            sdf.format(formDb.date)
+        } else {
+            null
         }
-        return formDb?.let { Form(elements, formDb.formID, formDb.formName) }
-    }*/
+        return formDb?.json
+    }
 
-    /*suspend fun deleteOldForms() {
+    suspend fun deleteOldForms() {
         val oldForms = localRepository.getAllForms()
         oldForms.forEach { formDB ->
             localRepository.deleteForm(formDB)
         }
-    }*/
+    }
 
-   /* suspend fun saveForms(form: Forms) {
+    suspend fun saveForms(form: Form) {
         val dbId = getCurrentDatabaseId()
-        form.Forms.forEach {form->
-            localRepository.insertForm(FormDB(form.FormID, form.FormName, dbId))
-            form.Elements.forEach{element ->
 
-                localRepository.insertElement(ElementDB(*//*form.FormID*//*element.FormID, element.ElementID, element.ElementName, element.ElementType, element.NextFieldID, dbId))
-                element.Actions.forEach { action ->
-                    localRepository.insertAction(ActionDB(action.Action, action.ElementID, dbId))
-                    action.Arguments.forEach { argument ->
-                        localRepository.insertArgument(ArgumentDB(argument.Action, action.ElementID, argument.Name, argument.Value, dbId))
-                    }
-                }
-            }
+        var currentForm = localRepository.getForm()
+        if(currentForm!=null){
+            localRepository.updateForm(FormDB(form, dbId, Date()))
+        }else{
+            localRepository.insertForm(FormDB(form, dbId, Date()))
         }
-    }*/
+    }
 }

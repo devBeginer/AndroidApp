@@ -11,6 +11,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 import sitec_it.ru.androidapp.data.models.changes.Changes
+import sitec_it.ru.androidapp.data.models.menu.Form
 
 import sitec_it.ru.androidapp.network.Result
 import sitec_it.ru.androidapp.repository.Repository
@@ -28,8 +29,8 @@ class MenuViewModel @Inject constructor(val repository: Repository) : ViewModel(
     val error: LiveData<String?>
         get() =  changesError
 
-    private val formMutableLiveData = MutableLiveData<ArrayList<Pair<String, String>>>()
-    val form: LiveData<ArrayList<Pair<String, String>>>
+    private val formMutableLiveData = MutableLiveData<Form?>()
+    val form: LiveData<Form?>
         get() =  formMutableLiveData
 
 
@@ -41,6 +42,13 @@ class MenuViewModel @Inject constructor(val repository: Repository) : ViewModel(
             val nameUser = repository.getUserByCode(code)?.name
             Log.d("user","vm -> $nameUser")
             nameForLabel.postValue(nameUser)
+        }
+    }
+
+    fun loadForms(){
+        viewModelScope.launch(Dispatchers.IO) {
+            val form = repository.getFormById()
+            formMutableLiveData.postValue(form)
         }
     }
 
@@ -71,7 +79,7 @@ class MenuViewModel @Inject constructor(val repository: Repository) : ViewModel(
         }
     }*/
 
-    fun getSubMenu(section: String){
+    /*fun getSubMenu(section: String){
 
 
         val form: ArrayList<Pair<String, String>> = when (section) {
@@ -145,7 +153,7 @@ class MenuViewModel @Inject constructor(val repository: Repository) : ViewModel(
 
         }
         formMutableLiveData.postValue(form)
-    }
+    }*/
 
     fun getChanges() {
         viewModelScope.launch(Dispatchers.IO) {

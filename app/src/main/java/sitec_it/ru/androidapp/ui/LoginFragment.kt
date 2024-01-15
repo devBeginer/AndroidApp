@@ -242,7 +242,7 @@ class LoginFragment : Fragment() {
         })*/
         viewModel.responseGetLogin.observe(viewLifecycleOwner, Observer {
             it?.let { response ->
-                sharedViewModel.menuForms.postValue(response)
+                //sharedViewModel.menuForms.postValue(response)
                 activity?.supportFragmentManager?.beginTransaction()
                     ?.replace(R.id.nav_host_fragment, MenuFragment())
                     ?.commit()

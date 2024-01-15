@@ -10,7 +10,6 @@ import retrofit2.http.POST
 import retrofit2.http.Url
 import sitec_it.ru.androidapp.data.models.authentication.AuthenticationGetRequest
 import sitec_it.ru.androidapp.data.models.changes.Changes
-import sitec_it.ru.androidapp.data.models.form.Forms
 import sitec_it.ru.androidapp.data.models.menu.Form
 import sitec_it.ru.androidapp.data.models.message.MessageList
 import sitec_it.ru.androidapp.data.models.node.NodeRequest
@@ -55,12 +54,6 @@ interface ApiService {
         @Url url: String,
         @Body dataBody: AuthenticationGetRequest
     ): Response<Form>
-
-    @GET
-   suspend fun loadForms(
-        @Header("Authorization") basic: String,
-        @Url url: String
-    ): Response<Forms>
 
 
 

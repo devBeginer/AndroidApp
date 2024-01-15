@@ -114,7 +114,7 @@ class RemoteRepository @Inject constructor(
         errorMessage = errorMessage
     )
 
-    suspend fun loadForms(
+    /*suspend fun loadForms(
         login: String,
         password: String,
         url: String,
@@ -128,7 +128,7 @@ class RemoteRepository @Inject constructor(
                 )
         },
         errorMessage = errorMessage
-    )
+    )*/
 
 
 

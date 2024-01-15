@@ -2,9 +2,6 @@ package sitec_it.ru.androidapp.repository
 
 import android.content.SharedPreferences
 import sitec_it.ru.androidapp.SharedPreferencesUtils.editPref
-import sitec_it.ru.androidapp.data.dao.ActionDao
-import sitec_it.ru.androidapp.data.dao.ArgumentDao
-import sitec_it.ru.androidapp.data.dao.ElementDao
 import sitec_it.ru.androidapp.data.dao.FormDao
 import sitec_it.ru.androidapp.data.dao.MessageListDao
 import sitec_it.ru.androidapp.data.dao.NodeDao
@@ -17,10 +14,7 @@ import sitec_it.ru.androidapp.data.models.profile.Profile
 import sitec_it.ru.androidapp.data.models.ProfileLicense
 import sitec_it.ru.androidapp.data.models.user.User
 import sitec_it.ru.androidapp.data.models.changes.OrganizationDB
-import sitec_it.ru.androidapp.data.models.form.ActionDB
-import sitec_it.ru.androidapp.data.models.form.ArgumentDB
-import sitec_it.ru.androidapp.data.models.form.ElementDB
-import sitec_it.ru.androidapp.data.models.form.FormDB
+import sitec_it.ru.androidapp.data.models.menu.db.FormDB
 import sitec_it.ru.androidapp.data.models.message.MessageList
 import javax.inject.Inject
 
@@ -32,10 +26,10 @@ class LocalRepository @Inject constructor(
     private val sharedPreferences: SharedPreferences,
     private val messageListDao: MessageListDao,
     private val organizationDao: OrganizationDao,
-    private val formDao: FormDao,
+    private val formDao: FormDao/*,
     private val elementDao: ElementDao,
     private val argumentDao: ArgumentDao,
-    private val actionDao: ActionDao
+    private val actionDao: ActionDao*/
 ) {
     companion object {
         const val PROFILE_ID = "profile_id"
@@ -142,7 +136,7 @@ class LocalRepository @Inject constructor(
 
     suspend fun updateForm(formDB: FormDB) = formDao.updateForm(formDB)
     suspend fun insertForm(formDB: FormDB) {
-        val form = formDao.getRecordById(getCurrentDatabaseId(), formDB.formID)
+        val form = formDao.getRecordById(getCurrentDatabaseId())
         if(form==null){
             formDao.insertForm(formDB)
         }else{
@@ -150,13 +144,13 @@ class LocalRepository @Inject constructor(
         }
     }
     suspend fun deleteForm(formDB: FormDB) = formDao.deleteForm(formDB)
-    suspend fun getForm(formId: String) = formDao.getRecordById(getCurrentDatabaseId(), formId)
+    suspend fun getForm() = formDao.getRecordById(getCurrentDatabaseId())
     suspend fun getAllForms() = formDao.getAllForms()
 
 
 
 
-    suspend fun updateElement(elementDB: ElementDB) = elementDao.updateElement(elementDB)
+    /*suspend fun updateElement(elementDB: ElementDB) = elementDao.updateElement(elementDB)
     suspend fun insertElement(elementDB: ElementDB) {
         val element = elementDao.getRecordById(getCurrentDatabaseId(), elementDB.elementID)
         if(element==null){
@@ -196,7 +190,7 @@ class LocalRepository @Inject constructor(
         }
     }
     suspend fun deleteAction(actionDB: ActionDB) = actionDao.deleteAction(actionDB)
-    suspend fun getAction(elementId: String) = actionDao.getActionsByElement(getCurrentDatabaseId(), elementId)
+    suspend fun getAction(elementId: String) = actionDao.getActionsByElement(getCurrentDatabaseId(), elementId)*/
 
 
 }

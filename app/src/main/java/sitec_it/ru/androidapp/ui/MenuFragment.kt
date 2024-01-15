@@ -146,7 +146,7 @@ class MenuFragment : Fragment() {
     private fun initData() {
         sharedViewModel.updateProgressBar(true)
         viewModel.setTvHello()
-        //  viewModel.loadForms()
+        viewModel.loadForms()
     }
 
     override fun onResume() {
@@ -171,8 +171,8 @@ class MenuFragment : Fragment() {
             }
         })
 
-        sharedViewModel.menuForms.observe(viewLifecycleOwner, Observer {
-            it?.let { allData ->
+        viewModel.form.observe(viewLifecycleOwner, Observer { forms ->
+            forms?.let { allData ->
                 generalForm = allData.GeneralForms
                 menuForm = allData.MenuForms.find { form -> form.FormType == "menu" }
                 // currentThreadID = formMenu?.FormID
@@ -185,6 +185,21 @@ class MenuFragment : Fragment() {
                 }
             }
         })
+
+        /*sharedViewModel.menuForms.observe(viewLifecycleOwner, Observer {
+            it?.let { allData ->
+                generalForm = allData.GeneralForms
+                menuForm = allData.MenuForms.find { form -> form.FormType == "menu" }
+                // currentThreadID = formMenu?.FormID
+                val formName = menuForm?.FormName
+
+                menuForm?.let { useFormMenu ->
+                    Log.d("drawForm", "нашли главное меню")
+                    toolbar.title = menuForm?.FormName
+                    drawMainMenu(useFormMenu.Elements)
+                }
+            }
+        })*/
     }
 
     private fun drawMainMenu(elements: List<MenuFormElement>) {
@@ -332,6 +347,7 @@ class MenuFragment : Fragment() {
         layoutParams.setMargins(margin, margin, margin, margin)
         button.layoutParams = layoutParams
         button.text = text
+        button.setBackgroundColor(Color.parseColor("#03A9F4"))
         button.setOnClickListener {
             Snackbar.make(requireView(), text, Snackbar.LENGTH_SHORT).show()
             actions.forEach { itemAction ->
