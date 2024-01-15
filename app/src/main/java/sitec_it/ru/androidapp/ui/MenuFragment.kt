@@ -395,8 +395,10 @@ class MenuFragment : Fragment() {
         et.layoutParams = etLayoutParams
         et.setHint(text)
         et.setTextSize(19f)
+        et.maxLines = 1
+        et.setImeActionLabel("Custom text", KeyEvent.KEYCODE_ENTER);
         et.setOnKeyListener { view, keyCode, keyEvent ->
-            if (keyCode == KeyEvent.KEYCODE_ENTER && keyEvent.action == KeyEvent.ACTION_UP) {
+            if (keyCode == KeyEvent.KEYCODE_ENTER && keyEvent.action == KeyEvent.ACTION_DOWN) {
                // сделать запрос и перейти на новый фрагмент и форму
                 actions.forEach { action ->
                     when(action.Action){
@@ -427,6 +429,7 @@ class MenuFragment : Fragment() {
                     }
 
                 }
+                return@setOnKeyListener true
             }
             false
         }
