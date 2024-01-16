@@ -30,7 +30,7 @@ class BarcodeScannerFragment : Fragment() {
             /*activity.runOnUiThread {
                 Toast.makeText(activity, result.text, Toast.LENGTH_LONG).show()
             }*/
-            sharedViewModel.postScanResult(result.text)
+            //sharedViewModel.postScanResult(result.text)
             activity.supportFragmentManager.popBackStack()
         }
         scannerView.setOnClickListener {

@@ -94,20 +94,16 @@ class StartFragment: Fragment() {
         }
 
 
-        /*sharedViewModel.scanResult.observeFutureEvents(viewLifecycleOwner, Observer { scanResult->
-            if(scanResult!=null){
-                Toast.makeText(activity, scanResult, Toast.LENGTH_LONG).show()
-                sharedViewModel.postScanResult(null)
-            }
-        })*/
-
-        viewModel.scanResult.observe(viewLifecycleOwner, Observer { result->
-            if(result){
+        sharedViewModel.scanResult.observeFutureEvents(viewLifecycleOwner, Observer { scanResult->
+            if(scanResult!=null && scanResult){
                 activity?.supportFragmentManager?.beginTransaction()
                     ?.replace(R.id.nav_host_fragment, SettingsContainerFragment())
                     ?.commit()
+                sharedViewModel.postScanResult(null)
             }
         })
+
+
 
     }
 
@@ -185,7 +181,7 @@ class StartFragment: Fragment() {
 
                     try {
                         val settings = settingsParser.parseSettings(result.text.toString())
-                        viewModel.updateSettings(settings)
+                        sharedViewModel.updateSettings(settings)
                     } catch (e: JsonSyntaxException) {
                         Snackbar.make(requireView(), "Некорректный QR-код", Snackbar.LENGTH_SHORT)
                             .show()

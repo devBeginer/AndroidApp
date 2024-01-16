@@ -16,9 +16,6 @@ import javax.inject.Inject
 @HiltViewModel
 class StartViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
-    val scanResultMutableLiveData: MutableLiveData<Boolean> = MutableLiveData()
-    val scanResult: LiveData<Boolean>
-        get() = scanResultMutableLiveData
 
     fun initDefaultProfile() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -55,70 +52,5 @@ class StartViewModel @Inject constructor(private val repository: Repository) : V
     }
 
 
-    fun updateSettings(settings: Settings) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val currentProfile = repository.getProfile(settings.profileName)
-            val profile =
-                if (currentProfile != null) {
-                    currentProfile.base = settings.base
-                    currentProfile.server = settings.server
-                    currentProfile.ssl = settings.ssl
-                    currentProfile.port = settings.port
-                    currentProfile.login = settings.login
-                    currentProfile.password = settings.password
-                    currentProfile
-                } else {
-                    Profile(
-                        name = settings.profileName,
-                        base = settings.base,
-                        server = settings.server,
-                        ssl = settings.ssl,
-                        port = settings.port,
-                        login = settings.login,
-                        password = settings.password,
-                        url = "http://192.168.1.0:8080/TMP_Test/"
-                    )
-                }
-            profile.url = buildProfileUrl(profile)
-            val id = repository.updateProfile(profile)
-            val newProfile = repository.getProfileById(id)
 
-            if (newProfile != null) {
-                repository.saveProfileToSP(newProfile.id)
-                val profileLicense = repository.getProfileLicense(id)
-                val newProfileLicense = if (profileLicense != null) {
-                    profileLicense.server = settings.licenseServer
-                    profileLicense.port = settings.licensePort
-                    profileLicense.login = settings.licenseLogin
-                    profileLicense.password = settings.licensePassword
-                    profileLicense
-                } else {
-                    ProfileLicense(
-                        profile = newProfile.id,
-                        server = settings.licenseServer,
-                        port = settings.licensePort,
-                        login = settings.licenseLogin,
-                        password = settings.licensePassword
-                    )
-                }
-                repository.updateProfileLicense(
-                    newProfileLicense
-                )
-                scanResultMutableLiveData.postValue(true)
-            }
-        }
-
-    }
-
-    private fun buildProfileUrl(profile: Profile): String {
-
-        return if (profile.ssl)
-            "https://${profile.server}/${profile.base}/hs/MobileClient"
-        else {
-            if (profile.port.isEmpty())
-                "http://${profile.server}/${profile.base}/hs/MobileClient"
-            else
-                "http://${profile.server}/${profile.base}/hs/MobileClient"
-        }
-    }
 }

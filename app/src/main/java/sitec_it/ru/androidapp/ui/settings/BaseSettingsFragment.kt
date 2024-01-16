@@ -48,21 +48,17 @@ import sitec_it.ru.androidapp.viewModels.SharedViewModel
 class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
     private val viewModel: BaseSettingsViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by viewModels({requireActivity()})
-    private var isScannerMode: Boolean = false
-    private lateinit var codeScanner: CodeScanner
-    private lateinit var flScanner: FrameLayout
-    private lateinit var scrollView: ScrollView
+
     private var currentProfile: Profile? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
-            if (isScannerMode) {
-                flScanner.visibility = View.GONE
-                scrollView.visibility = View.VISIBLE
-                isScannerMode = false
-                codeScanner.releaseResources()
+            val isScannerMode = sharedViewModel.scanMode.value
+            if (isScannerMode!=null && isScannerMode) {
+
+                sharedViewModel.enableScanMode(false)
             }else{
                 val settingsOnBackCallback = SettingsOnBackCallback()
                 settingsOnBackCallback.settingsOnBack(sharedViewModel, requireActivity())
@@ -91,10 +87,7 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
         val btnCreateNode: MaterialButton = view.findViewById(R.id.btn_base_settings_create_node)
         val btnScanQR: Button = view.findViewById(R.id.btn_base_settings_scan)
         //var currentProfile: Profile? = null
-        scrollView = view.findViewById(R.id.scrollView_baseSettings)
-        flScanner = view.findViewById(R.id.frameLayout_settings_scan_qr)
-        val scannerView = view.findViewById<CodeScannerView>(R.id.scanner_view)
-        codeScanner = CodeScanner(requireActivity(), scannerView)
+
 
         viewModel.nodeResponse.observeFutureEvents(viewLifecycleOwner) { response ->
             val text = if (response != null) {
@@ -154,8 +147,8 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
         }
 
         sharedViewModel.scanResult.observeFutureEvents(viewLifecycleOwner, Observer { scanResult->
-            if(scanResult!=null){
-                Toast.makeText(activity, scanResult, Toast.LENGTH_LONG).show()
+            if(scanResult!=null && scanResult){
+                viewModel.initView()
                 sharedViewModel.postScanResult(null)
             }
         })
@@ -372,12 +365,8 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
 
 
         btnScanQR.setOnClickListener {
-            /*activity?.supportFragmentManager?.beginTransaction()
-                ?.replace(R.id.nav_host_fragment, BarcodeScannerFragment())
-                ?.addToBackStack(null)
-                ?.commit()*/
 
-            showScannerView()
+            sharedViewModel.enableScanMode(true)
         }
 
     }
@@ -411,39 +400,5 @@ class BaseSettingsFragment : Fragment(R.layout.fragment_base_settings) {
     }
 
 
-    private fun showScannerView() {
-        isScannerMode = true
-        scrollView.visibility = View.GONE
-        flScanner.visibility = View.VISIBLE
-
-
-        codeScanner.decodeCallback = DecodeCallback { result ->
-            CoroutineScope(Dispatchers.IO).launch {
-
-
-                withContext(Dispatchers.Main) {
-                    Snackbar.make(requireView(), result.text.toString(), Snackbar.LENGTH_SHORT)
-                        .show()
-                    val settingsParser = SettingsParser()
-
-                    try {
-                        val settings = settingsParser.parseSettings(result.text.toString())
-                        viewModel.updateSettings(settings, currentProfile)
-                    } catch (e: JsonSyntaxException) {
-                        Snackbar.make(requireView(), "Некорректный QR-код", Snackbar.LENGTH_SHORT)
-                            .show()
-                    } catch (e: IllegalStateException) {
-                        Snackbar.make(requireView(), "Некорректный QR-код", Snackbar.LENGTH_SHORT)
-                            .show()
-                    }
-                    flScanner.visibility = View.GONE
-                    scrollView.visibility = View.VISIBLE
-                    isScannerMode = false
-                    codeScanner.releaseResources()
-                }
-            }
-        }
-        codeScanner.startPreview()
-    }
 
 }
