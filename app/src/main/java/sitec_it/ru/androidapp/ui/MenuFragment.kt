@@ -40,6 +40,7 @@ import sitec_it.ru.androidapp.data.models.menu.MenuFormElement
 import sitec_it.ru.androidapp.data.models.menu.RemoteFormRequest
 import sitec_it.ru.androidapp.data.models.menu.SubMenu
 import sitec_it.ru.androidapp.data.models.menu.SubMenuAction
+import sitec_it.ru.androidapp.other.showSnack
 import sitec_it.ru.androidapp.viewModels.MenuViewModel
 import sitec_it.ru.androidapp.viewModels.SharedViewModel
 
@@ -459,7 +460,7 @@ class MenuFragment : Fragment() {
                             request?.FormID.toString(),
                             listArguments
                         )
-                        Toast.makeText(requireContext(),body.toString(),Toast.LENGTH_SHORT).show()
+                       showSnack(requireView(),body.toString(),6)
 
                     }
                 }
