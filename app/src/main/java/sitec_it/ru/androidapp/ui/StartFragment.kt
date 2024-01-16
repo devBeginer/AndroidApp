@@ -3,23 +3,35 @@ package sitec_it.ru.androidapp.ui
 import android.Manifest
 import android.content.DialogInterface
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
+import androidx.constraintlayout.widget.Group
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.budiyev.android.codescanner.CodeScanner
+import com.budiyev.android.codescanner.CodeScannerView
+import com.budiyev.android.codescanner.DecodeCallback
+import com.google.android.material.snackbar.Snackbar
+import com.google.gson.JsonSyntaxException
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import sitec_it.ru.androidapp.R
+import sitec_it.ru.androidapp.SettingsParser
 import sitec_it.ru.androidapp.Utils.observeFutureEvents
 import sitec_it.ru.androidapp.ui.settings.SettingsContainerFragment
+import sitec_it.ru.androidapp.ui.settings.SettingsOnBackCallback
 import sitec_it.ru.androidapp.viewModels.SharedViewModel
 import sitec_it.ru.androidapp.viewModels.StartViewModel
 import kotlin.system.exitProcess
@@ -32,6 +44,22 @@ class StartFragment: Fragment() {
 
     private val viewModel: StartViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by viewModels({requireActivity()})
+
+    private var isScannerMode: Boolean = false
+    private lateinit var codeScanner: CodeScanner
+    private lateinit var flScanner: FrameLayout
+    private lateinit var group: Group
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
+            if (isScannerMode) {
+                flScanner.visibility = View.GONE
+                group.visibility = View.VISIBLE
+                isScannerMode = false
+                codeScanner.releaseResources()
+            }
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,6 +72,10 @@ class StartFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         sharedViewModel.updateProgressBar(false)
+        group = view.findViewById(R.id.viewGroup)
+        flScanner = view.findViewById(R.id.frameLayout_start_scan_qr)
+        val scannerView = view.findViewById<CodeScannerView>(R.id.scanner_view)
+        codeScanner = CodeScanner(requireActivity(), scannerView)
 
         viewModel.initDefaultProfile()
         val btnManual: Button = view.findViewById(R.id.btn_start_set_manually)
@@ -54,19 +86,29 @@ class StartFragment: Fragment() {
                 ?.commit()
         }
         btnScan.setOnClickListener {
-            activity?.supportFragmentManager?.beginTransaction()
+            /*activity?.supportFragmentManager?.beginTransaction()
                 ?.replace(R.id.nav_host_fragment, BarcodeScannerFragment())
                 ?.addToBackStack(null)
-                ?.commit()
+                ?.commit()*/
+            showScannerView()
         }
 
 
-        sharedViewModel.scanResult.observeFutureEvents(viewLifecycleOwner, Observer { scanResult->
+        /*sharedViewModel.scanResult.observeFutureEvents(viewLifecycleOwner, Observer { scanResult->
             if(scanResult!=null){
                 Toast.makeText(activity, scanResult, Toast.LENGTH_LONG).show()
                 sharedViewModel.postScanResult(null)
             }
+        })*/
+
+        viewModel.scanResult.observe(viewLifecycleOwner, Observer { result->
+            if(result){
+                activity?.supportFragmentManager?.beginTransaction()
+                    ?.replace(R.id.nav_host_fragment, SettingsContainerFragment())
+                    ?.commit()
+            }
         })
+
     }
 
     override fun onResume() {
@@ -126,5 +168,39 @@ class StartFragment: Fragment() {
         }
     }
 
+    private fun showScannerView() {
+        isScannerMode = true
+        group.visibility = View.GONE
+        flScanner.visibility = View.VISIBLE
+
+
+        codeScanner.decodeCallback = DecodeCallback { result ->
+            CoroutineScope(Dispatchers.IO).launch {
+
+
+                withContext(Dispatchers.Main) {
+                    Snackbar.make(requireView(), result.text.toString(), Snackbar.LENGTH_SHORT)
+                        .show()
+                    val settingsParser = SettingsParser()
+
+                    try {
+                        val settings = settingsParser.parseSettings(result.text.toString())
+                        viewModel.updateSettings(settings)
+                    } catch (e: JsonSyntaxException) {
+                        Snackbar.make(requireView(), "Некорректный QR-код", Snackbar.LENGTH_SHORT)
+                            .show()
+                    } catch (e: IllegalStateException) {
+                        Snackbar.make(requireView(), "Некорректный QR-код", Snackbar.LENGTH_SHORT)
+                            .show()
+                    }
+                    flScanner.visibility = View.GONE
+                    group.visibility = View.VISIBLE
+                    isScannerMode = false
+                    codeScanner.releaseResources()
+                }
+            }
+        }
+        codeScanner.startPreview()
+    }
 
 }

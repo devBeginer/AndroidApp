@@ -349,6 +349,7 @@ class MenuFragment : Fragment() {
         layoutParams.setMargins(margin, margin, margin, margin)
         button.layoutParams = layoutParams
         button.text = text
+        button.setTextColor(Color.WHITE)
         button.setBackgroundColor(Color.parseColor("#03A9F4"))
         button.setOnClickListener {
             Snackbar.make(requireView(), text, Snackbar.LENGTH_SHORT).show()
